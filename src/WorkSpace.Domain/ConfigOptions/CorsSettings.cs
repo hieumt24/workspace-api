@@ -1,0 +1,7 @@
+namespace WorkSpace.Domain.ConfigOptions;
+
+public class CorsSettings
+{
+    public string[] AllowedOrigins { get; set; } = Array.Empty<string>();
+}
+

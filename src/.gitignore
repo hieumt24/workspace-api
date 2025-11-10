@@ -1,0 +1,31 @@
+# Build folders
+bin/
+obj/
+
+# User-specific files
+.vs/
+*.user
+*.suo
+
+# Configuration files
+appsettings.json
+appsettings.Development.json
+appsettings.Production.json
+appsettings.Local.json
+
+# Logs
+*.log
+
+# Publish output
+publish/
+dist/
+
+# Secrets
+secrets.json
+
+# System files
+Thumbs.db
+.DS_Store
+
+# Others
+*.tmp
