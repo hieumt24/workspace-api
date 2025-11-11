@@ -30,6 +30,8 @@ public class AppUser : IdentityUser<int>
     public virtual List<WorkSpaceFavorite> WorkSpaceFavorites { get; set; } = new();
     public virtual List<PromotionUsage> PromotionUsages { get; set; } = new();
     public virtual List<Post> Posts { get; set; } = new();
+    public virtual List<ChatMessage> ChatMessages { get; set; } = new();
+    public virtual List<ChatParticipant> ChatParticipants { get; set; } = new();
 
     public string GetFullName()
     {

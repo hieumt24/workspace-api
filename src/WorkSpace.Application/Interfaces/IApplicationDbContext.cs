@@ -29,6 +29,9 @@ namespace WorkSpace.Application.Interfaces
         DbSet<WorkSpaceRoomImage> WorkSpaceRoomImages { get; }
         DbSet<WorkSpaceRoomAmenity> WorkSpaceRoomAmenities { get; }
         DbSet<WorkSpaceType> WorkSpaceTypes { get; }
+        DbSet<ChatThread> ChatThreads { get; }
+        DbSet<ChatMessage> ChatMessages { get; }
+        DbSet<ChatParticipant> ChatParticipants { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
         DbSet<TEntity> Set<TEntity>() where TEntity : class;
