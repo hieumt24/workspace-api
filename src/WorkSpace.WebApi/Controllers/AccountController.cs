@@ -72,6 +72,15 @@ namespace WorkSpace.WebApi.Controllers
             var result = await _accountService.RevokeTokenAsync(refreshToken, GenerateIPAddress());
             return Ok(result.Data);
         }
+        
+        [HttpPost("google-login")]
+        // API Request URL: POST /api/accounts/google-login
+        public async Task<IActionResult> GoogleLogin(GoogleLoginRequest request)
+        {
+            var result = await _accountService.GoogleLoginAsync(request, GenerateIPAddress());
+            return Ok(result.Data);
+        }
+        
         private string GenerateIPAddress()
         {
             if (Request.Headers.ContainsKey("X-Forwarded-For"))

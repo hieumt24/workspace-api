@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
@@ -27,12 +28,14 @@ public class AccountService : IAccountService
         private readonly SignInManager<AppUser> _signInManager;
         private readonly IEmailService _emailService;
         private readonly JWTSettings _jwtSettings;
+        private readonly GoogleSettings _googleSettings;
         private readonly IDateTimeService _dateTimeService;
         private readonly ILogger<AccountService> _logger;
         
         public AccountService(UserManager<AppUser> userManager, 
             RoleManager<AppRole> roleManager, 
             IOptions<JWTSettings> jwtSettings, 
+            IOptions<GoogleSettings> googleSettings,
             IDateTimeService dateTimeService, 
             SignInManager<AppUser> signInManager,
             IEmailService emailService,
@@ -41,6 +44,7 @@ public class AccountService : IAccountService
             _userManager = userManager;
             _roleManager = roleManager;
             _jwtSettings = jwtSettings.Value;
+            _googleSettings = googleSettings.Value;
             _dateTimeService = dateTimeService;
             _signInManager = signInManager;
             _emailService = emailService;
@@ -108,73 +112,99 @@ public class AccountService : IAccountService
 
         public async Task<Response<AuthenticationResponse>> RegisterAsync(RegisterRequest request, string origin, string ipAddress)
         {
-            var userWithSameUserName = await _userManager.FindByNameAsync(request.UserName);
-            if (userWithSameUserName != null)
+            try
             {
-                throw new ApiException($"Username '{request.UserName}' is already taken.");
-            }
-            var user = new AppUser()
-            {
-                Email = request.Email,
-                UserName = request.UserName,
-                DateCreated = DateTime.UtcNow,
-                IsActive = true,
-            };
-            var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
-            if (userWithSameEmail == null)
-            {
-                var result = await _userManager.CreateAsync(user, request.Password);
-                if (result.Succeeded)
+                _logger.LogInformation("Registration attempt for email: {Email}, username: {UserName}", request.Email, request.UserName);
+                
+                // Check if Customer role exists
+                var customerRole = Roles.Customer.ToString();
+                if (!await _roleManager.RoleExistsAsync(customerRole))
                 {
-                    await _userManager.AddToRoleAsync(user, Roles.Customer.ToString());
-                    
-                    // Auto confirm email for now (skip email verification)
-                    var emailConfirmToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-                    await _userManager.ConfirmEmailAsync(user, emailConfirmToken);
-                    
-                    // TODO: Enable email verification later when SMTP is configured
-                    // var verificationUri = await SendVerificationEmail(user, origin);
-                    // await _emailService.SendAsync(new Application.DTOs.Email.EmailRequest() 
-                    // { 
-                    //     From = "mail@codewithmukesh.com", 
-                    //     To = user.Email, 
-                    //     Body = $"Please confirm your account by visiting this URL {verificationUri}", 
-                    //     Subject = "Confirm Registration" 
-                    // });
-                    
-                    _logger.LogInformation("User registered successfully: {UserId} ({Email})", user.Id, user.Email);
-                    
-                    // Auto login after registration - Generate JWT token
-                    JwtSecurityToken jwtSecurityToken = await GenerateJWToken(user);
-                    AuthenticationResponse response = new AuthenticationResponse();
-                    response.Id = user.Id.ToString();
-                    response.JWToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
-                    response.Email = user.Email;
-                    response.UserName = user.UserName;
-                    var rolesList = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
-                    response.Roles = rolesList.ToList();
-                    response.IsVerified = user.EmailConfirmed;
-                    var refreshToken = GenerateRefreshToken(ipAddress);
-                    response.RefreshToken = refreshToken.Token;
-                    
-                    // Save refresh token to database
-                    user.RefreshToken = refreshToken.Token;
-                    user.RefreshTokenExpiryTime = refreshToken.Expires;
-                    user.LastLoginDate = DateTime.UtcNow;
-                    await _userManager.UpdateAsync(user);
-                    
-                    return new Response<AuthenticationResponse>(response, $"User registered and authenticated successfully");
+                    _logger.LogError("Customer role does not exist in database. Database may not be seeded properly.");
+                    throw new ApiException($"Role '{customerRole}' does not exist. Please contact administrator.");
                 }
-                else
+                
+                // Check username
+                var userWithSameUserName = await _userManager.FindByNameAsync(request.UserName);
+                if (userWithSameUserName != null)
+                {
+                    throw new ApiException($"Username '{request.UserName}' is already taken.");
+                }
+                
+                // Check email
+                var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
+                if (userWithSameEmail != null)
+                {
+                    throw new ApiException($"Email '{request.Email}' is already registered.");
+                }
+                
+                var user = new AppUser()
+                {
+                    Email = request.Email,
+                    UserName = request.UserName,
+                    DateCreated = DateTime.UtcNow,
+                    IsActive = true,
+                };
+                
+                var result = await _userManager.CreateAsync(user, request.Password);
+                if (!result.Succeeded)
                 {
                     var errors = string.Join(", ", result.Errors.Select(e => e.Description));
-                    _logger.LogError("User registration failed for email {Email}: {Errors}", request.Email, errors);
+                    _logger.LogError("User creation failed for email {Email}: {Errors}", request.Email, errors);
                     throw new ApiException($"Registration failed: {errors}");
                 }
+                
+                // Add to Customer role
+                var roleResult = await _userManager.AddToRoleAsync(user, customerRole);
+                if (!roleResult.Succeeded)
+                {
+                    var errors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
+                    _logger.LogError("Failed to add role '{Role}' to user {UserId}: {Errors}", customerRole, user.Id, errors);
+                    
+                    // Rollback: delete the user if role assignment fails
+                    await _userManager.DeleteAsync(user);
+                    throw new ApiException($"Failed to assign customer role: {errors}");
+                }
+                
+                // Auto confirm email for now (skip email verification)
+                var emailConfirmToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+                var confirmResult = await _userManager.ConfirmEmailAsync(user, emailConfirmToken);
+                if (!confirmResult.Succeeded)
+                {
+                    _logger.LogWarning("Email confirmation failed for user {UserId}, but continuing registration", user.Id);
+                }
+                
+                _logger.LogInformation("User registered successfully: {UserId} ({Email})", user.Id, user.Email);
+                
+                // Auto login after registration - Generate JWT token
+                JwtSecurityToken jwtSecurityToken = await GenerateJWToken(user);
+                AuthenticationResponse response = new AuthenticationResponse();
+                response.Id = user.Id.ToString();
+                response.JWToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+                response.Email = user.Email;
+                response.UserName = user.UserName;
+                var rolesList = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+                response.Roles = rolesList.ToList();
+                response.IsVerified = user.EmailConfirmed;
+                var refreshToken = GenerateRefreshToken(ipAddress);
+                response.RefreshToken = refreshToken.Token;
+                
+                // Save refresh token to database
+                user.RefreshToken = refreshToken.Token;
+                user.RefreshTokenExpiryTime = refreshToken.Expires;
+                user.LastLoginDate = DateTime.UtcNow;
+                await _userManager.UpdateAsync(user);
+                
+                return new Response<AuthenticationResponse>(response, $"User registered and authenticated successfully");
             }
-            else
+            catch (ApiException)
             {
-                throw new ApiException($"Email {request.Email } is already registered.");
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Unexpected error during registration for email {Email}", request.Email);
+                throw new ApiException("An error occurred during registration. Please try again.");
             }
         }
 
@@ -654,6 +684,132 @@ public class AccountService : IAccountService
             {
                 _logger.LogError(ex, "Error updating user status for user ID: {UserId}", userId);
                 throw new ApiException("An error occurred while updating user status");
+            }
+        }
+
+        public async Task<Response<AuthenticationResponse>> GoogleLoginAsync(GoogleLoginRequest request, string ipAddress)
+        {
+            try
+            {
+                _logger.LogInformation("Google login attempt from IP: {IpAddress}", ipAddress);
+                
+                // Verify Google ID Token
+                GoogleJsonWebSignature.Payload payload;
+                try
+                {
+                    var settings = new GoogleJsonWebSignature.ValidationSettings
+                    {
+                        Audience = new[] { _googleSettings.ClientId }
+                    };
+                    
+                    payload = await GoogleJsonWebSignature.ValidateAsync(request.IdToken, settings);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Invalid Google ID token");
+                    throw new ApiException("Invalid Google token");
+                }
+                
+                if (string.IsNullOrEmpty(payload.Email))
+                {
+                    throw new ApiException("Email not provided by Google");
+                }
+                
+                // Check if user exists
+                var user = await _userManager.FindByEmailAsync(payload.Email);
+                
+                if (user == null)
+                {
+                    // Create new user
+                    _logger.LogInformation("Creating new user from Google login: {Email}", payload.Email);
+                    
+                    // Check if Customer role exists
+                    var customerRole = Roles.Customer.ToString();
+                    if (!await _roleManager.RoleExistsAsync(customerRole))
+                    {
+                        _logger.LogError("Customer role does not exist in database");
+                        throw new ApiException($"Role '{customerRole}' does not exist. Please contact administrator.");
+                    }
+                    
+                    user = new AppUser
+                    {
+                        Email = payload.Email,
+                        UserName = payload.Email,
+                        EmailConfirmed = true, // Auto-confirm since Google verified it
+                        FirstName = payload.GivenName ?? "",
+                        LastName = payload.FamilyName ?? "",
+                        Avatar = payload.Picture,
+                        DateCreated = DateTime.UtcNow,
+                        IsActive = true
+                    };
+                    
+                    var result = await _userManager.CreateAsync(user);
+                    if (!result.Succeeded)
+                    {
+                        var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                        _logger.LogError("Failed to create user from Google login: {Errors}", errors);
+                        throw new ApiException($"User creation failed: {errors}");
+                    }
+                    
+                    // Add to Customer role
+                    var roleResult = await _userManager.AddToRoleAsync(user, customerRole);
+                    if (!roleResult.Succeeded)
+                    {
+                        var errors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
+                        _logger.LogError("Failed to add role to Google user {UserId}: {Errors}", user.Id, errors);
+                        
+                        // Rollback: delete the user
+                        await _userManager.DeleteAsync(user);
+                        throw new ApiException($"Failed to assign customer role: {errors}");
+                    }
+                    
+                    _logger.LogInformation("New user created from Google login: {UserId} ({Email})", user.Id, user.Email);
+                }
+                else
+                {
+                    // Check if user is active
+                    if (!user.IsActive)
+                    {
+                        _logger.LogWarning("Inactive user attempted Google login: {Email}", user.Email);
+                        throw new ApiException("Your account has been deactivated. Please contact support.");
+                    }
+                    
+                    _logger.LogInformation("Existing user logging in via Google: {UserId} ({Email})", user.Id, user.Email);
+                }
+                
+                // Generate JWT token
+                JwtSecurityToken jwtSecurityToken = await GenerateJWToken(user);
+                AuthenticationResponse response = new AuthenticationResponse
+                {
+                    Id = user.Id.ToString(),
+                    JWToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+                    Email = user.Email,
+                    UserName = user.UserName,
+                    Roles = (await _userManager.GetRolesAsync(user)).ToList(),
+                    IsVerified = user.EmailConfirmed
+                };
+                
+                var refreshToken = GenerateRefreshToken(ipAddress);
+                response.RefreshToken = refreshToken.Token;
+                
+                // Save refresh token to database
+                user.RefreshToken = refreshToken.Token;
+                user.RefreshTokenExpiryTime = refreshToken.Expires;
+                user.LastLoginDate = DateTime.UtcNow;
+                await _userManager.UpdateAsync(user);
+                
+                _logger.LogInformation("Google login successful for user {UserId} ({Email})", user.Id, user.Email);
+                
+                return new Response<AuthenticationResponse>(response, "Google authentication successful");
+            }
+            catch (ApiException)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error during Google login");
+                throw new ApiException("An error occurred during Google authentication. Please try again.");
             }
         }
     }

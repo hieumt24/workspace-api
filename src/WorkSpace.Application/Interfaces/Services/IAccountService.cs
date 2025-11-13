@@ -12,6 +12,7 @@ public interface  IAccountService
     Task<Response<string>> ResetPassword(ResetPasswordRequest model);
     Task<Response<AuthenticationResponse>> RefreshTokenAsync(RefreshTokenRequest request, string ipAddress);
     Task<Response<string>> RevokeTokenAsync(string token, string ipAddress);
+    Task<Response<AuthenticationResponse>> GoogleLoginAsync(GoogleLoginRequest request, string ipAddress);
     
     // Admin functions
     Task<PagedResponse<List<UserDto>>> GetAllUsersAsync(GetAllUsersRequestDto request);

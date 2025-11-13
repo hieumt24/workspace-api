@@ -62,6 +62,7 @@ public static class ServiceRegistration
         services.Configure<JWTSettings>(configuration.GetSection("JWTSettings"));
         services.Configure<MailSettings>(configuration.GetSection("MailSettings"));
         services.Configure<VNPaySettings>(configuration.GetSection("VNPaySettings"));
+        services.Configure<GoogleSettings>(configuration.GetSection("GoogleSettings"));
         #endregion
         
         #region Authentication
