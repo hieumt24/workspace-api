@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkSpace.Infrastructure;
 
@@ -11,9 +12,11 @@ using WorkSpace.Infrastructure;
 namespace WorkSpace.Infrastructure.Migrations
 {
     [DbContext(typeof(WorkSpaceContext))]
-    partial class WorkSpaceContextModelSnapshot : ModelSnapshot
+    [Migration("20251113012050_Add ChatThread,Chat Message, Chat Participant entites")]
+    partial class AddChatThreadChatMessageChatParticipantentites
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -582,7 +585,7 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("LastModifiedUtc")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTimeOffset?>("ReadAtUtc")
+                    b.Property<DateTimeOffset>("ReadAtUtc")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<int>("SenderId")
@@ -600,6 +603,47 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.ToTable("ChatMessages");
                 });
 
+            modelBuilder.Entity("WorkSpace.Domain.Entities.ChatParticipant", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<bool>("IsMuted")
+                        .HasColumnType("bit");
+
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTimeOffset?>("LastReadAtUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("ThreadId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ThreadId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ChatParticipants");
+                });
+
             modelBuilder.Entity("WorkSpace.Domain.Entities.ChatThread", b =>
                 {
                     b.Property<int>("Id")
@@ -608,30 +652,11 @@ namespace WorkSpace.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("BookingId")
-                        .HasColumnType("int");
-
                     b.Property<DateTimeOffset>("CreateUtc")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
-
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("HasUnreadMessages")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("HostUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LastMessagePreview")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTimeOffset?>("LastMessageUtc")
-                        .HasColumnType("datetimeoffset");
 
                     b.Property<int?>("LastModifiedById")
                         .HasColumnType("int");
@@ -644,12 +669,6 @@ namespace WorkSpace.Infrastructure.Migrations
                         .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BookingId");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("HostUserId");
 
                     b.ToTable("ChatThreads");
                 });
@@ -1454,28 +1473,23 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.Navigation("Thread");
                 });
 
-            modelBuilder.Entity("WorkSpace.Domain.Entities.ChatThread", b =>
+            modelBuilder.Entity("WorkSpace.Domain.Entities.ChatParticipant", b =>
                 {
-                    b.HasOne("WorkSpace.Domain.Entities.Booking", "Booking")
-                        .WithMany("ChatThreads")
-                        .HasForeignKey("BookingId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                    b.HasOne("WorkSpace.Domain.Entities.ChatThread", "Thread")
+                        .WithMany("Participants")
+                        .HasForeignKey("ThreadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "Customer")
-                        .WithMany("CustomerChatThreads")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "User")
+                        .WithMany("ChatParticipants")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "HostUser")
-                        .WithMany("HostChatThreads")
-                        .HasForeignKey("HostUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
+                    b.Navigation("Thread");
 
-                    b.Navigation("Booking");
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("HostUser");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.HostProfile", b =>
@@ -1713,9 +1727,7 @@ namespace WorkSpace.Infrastructure.Migrations
 
                     b.Navigation("ChatMessages");
 
-                    b.Navigation("CustomerChatThreads");
-
-                    b.Navigation("HostChatThreads");
+                    b.Navigation("ChatParticipants");
 
                     b.Navigation("HostProfile");
 
@@ -1732,8 +1744,6 @@ namespace WorkSpace.Infrastructure.Migrations
                 {
                     b.Navigation("BookingParticipants");
 
-                    b.Navigation("ChatThreads");
-
                     b.Navigation("Payment");
 
                     b.Navigation("PromotionUsages");
@@ -1749,6 +1759,8 @@ namespace WorkSpace.Infrastructure.Migrations
             modelBuilder.Entity("WorkSpace.Domain.Entities.ChatThread", b =>
                 {
                     b.Navigation("Messages");
+
+                    b.Navigation("Participants");
                 });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.HostProfile", b =>

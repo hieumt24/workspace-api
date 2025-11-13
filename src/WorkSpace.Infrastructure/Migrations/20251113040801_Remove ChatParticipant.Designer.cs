@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkSpace.Infrastructure;
 
@@ -11,9 +12,11 @@ using WorkSpace.Infrastructure;
 namespace WorkSpace.Infrastructure.Migrations
 {
     [DbContext(typeof(WorkSpaceContext))]
-    partial class WorkSpaceContextModelSnapshot : ModelSnapshot
+    [Migration("20251113040801_Remove ChatParticipant")]
+    partial class RemoveChatParticipant
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -582,7 +585,7 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("LastModifiedUtc")
                         .HasColumnType("datetimeoffset");
 
-                    b.Property<DateTimeOffset?>("ReadAtUtc")
+                    b.Property<DateTimeOffset>("ReadAtUtc")
                         .HasColumnType("datetimeoffset");
 
                     b.Property<int>("SenderId")
@@ -609,6 +612,9 @@ namespace WorkSpace.Infrastructure.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("BookingId1")
                         .HasColumnType("int");
 
                     b.Property<DateTimeOffset>("CreateUtc")
@@ -646,6 +652,8 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("BookingId");
+
+                    b.HasIndex("BookingId1");
 
                     b.HasIndex("CustomerId");
 
@@ -1457,17 +1465,21 @@ namespace WorkSpace.Infrastructure.Migrations
             modelBuilder.Entity("WorkSpace.Domain.Entities.ChatThread", b =>
                 {
                     b.HasOne("WorkSpace.Domain.Entities.Booking", "Booking")
-                        .WithMany("ChatThreads")
+                        .WithMany()
                         .HasForeignKey("BookingId")
                         .OnDelete(DeleteBehavior.NoAction);
 
+                    b.HasOne("WorkSpace.Domain.Entities.Booking", null)
+                        .WithMany("ChatThreads")
+                        .HasForeignKey("BookingId1");
+
                     b.HasOne("WorkSpace.Domain.Entities.AppUser", "Customer")
-                        .WithMany("CustomerChatThreads")
+                        .WithMany()
                         .HasForeignKey("CustomerId")
                         .OnDelete(DeleteBehavior.NoAction);
 
                     b.HasOne("WorkSpace.Domain.Entities.AppUser", "HostUser")
-                        .WithMany("HostChatThreads")
+                        .WithMany()
                         .HasForeignKey("HostUserId")
                         .OnDelete(DeleteBehavior.NoAction);
 
@@ -1712,10 +1724,6 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.Navigation("Bookings");
 
                     b.Navigation("ChatMessages");
-
-                    b.Navigation("CustomerChatThreads");
-
-                    b.Navigation("HostChatThreads");
 
                     b.Navigation("HostProfile");
 

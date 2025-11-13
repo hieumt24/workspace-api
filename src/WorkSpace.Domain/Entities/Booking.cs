@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 using WorkSpace.Domain.Common;
 
 namespace WorkSpace.Domain.Entities;
@@ -45,4 +46,6 @@ public class Booking : AuditableBaseEntity
     public virtual List<BookingParticipant> BookingParticipants { get; set; } = new();
     public virtual List<Review> Reviews { get; set; } = new();
     public virtual List<PromotionUsage> PromotionUsages { get; set; } = new();
+    
+    public virtual List<ChatThread> ChatThreads { get; set; } = new();
 }

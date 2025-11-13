@@ -3,6 +3,7 @@ using WorkSpace.Application.Extensions;
 using WorkSpace.Infrastructure;
 using WorkSpace.Infrastructure.Seeds;
 using WorkSpace.WebApi.Extensions;
+using WorkSpace.WebApi.Hubs;
 using WorkSpace.WebApi.Middlewares;
 
 
@@ -50,4 +51,6 @@ app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
+
+app.MapHub<ChatHub>("/hubs/chat");
 app.Run();

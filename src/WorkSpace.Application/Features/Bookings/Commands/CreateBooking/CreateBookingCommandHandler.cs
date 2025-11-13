@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using WorkSpace.Application.Interfaces.Repositories;
 using WorkSpace.Application.Interfaces.Services;
 using WorkSpace.Application.Wrappers;
@@ -17,12 +18,12 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
     private readonly IBlockedTimeSlotRepository _blockedTimeSlotRepo;
     private readonly UserManager<AppUser> _userManager;
     private readonly IMapper _mapper;
-    
-    
+
+
     public CreateBookingCommandHandler(
-        IBookingRepository bookingRepo, 
-        IAvailabilityService availability, 
-        IBookingPricingService pricing, 
+        IBookingRepository bookingRepo,
+        IAvailabilityService availability,
+        IBookingPricingService pricing,
         IPromotionService promotionService,
         IBlockedTimeSlotRepository blockedTimeSlotRepo,
         UserManager<AppUser> userManager,
@@ -36,49 +37,52 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
         _userManager = userManager;
         _mapper = mapper;
     }
-    
-    
+
+
     public async Task<Response<int>> Handle(CreateBookingCommand request, CancellationToken cancellationToken)
     {
         var m = request.Model;
-        
+
         // Update user profile if new info provided
-        if (!string.IsNullOrWhiteSpace(m.FirstName) || !string.IsNullOrWhiteSpace(m.LastName) || !string.IsNullOrWhiteSpace(m.PhoneNumber))
+        if (!string.IsNullOrWhiteSpace(m.FirstName) || !string.IsNullOrWhiteSpace(m.LastName) ||
+            !string.IsNullOrWhiteSpace(m.PhoneNumber))
         {
             var user = await _userManager.FindByIdAsync(m.CustomerId.ToString());
             if (user != null)
             {
                 bool needsUpdate = false;
-                
+
                 if (!string.IsNullOrWhiteSpace(m.FirstName) && string.IsNullOrWhiteSpace(user.FirstName))
                 {
                     user.FirstName = m.FirstName;
                     needsUpdate = true;
                 }
-                
+
                 if (!string.IsNullOrWhiteSpace(m.LastName) && string.IsNullOrWhiteSpace(user.LastName))
                 {
                     user.LastName = m.LastName;
                     needsUpdate = true;
                 }
-                
+
                 if (!string.IsNullOrWhiteSpace(m.PhoneNumber) && string.IsNullOrWhiteSpace(user.PhoneNumber))
                 {
                     user.PhoneNumber = m.PhoneNumber;
                     needsUpdate = true;
                 }
-                
+
                 if (needsUpdate)
                 {
                     await _userManager.UpdateAsync(user);
                 }
             }
         }
-        
-        var available = await _availability.IsAvailableAsync(m.WorkspaceId, m.StartTimeUtc, m.EndTimeUtc, cancellationToken);
+
+        var available =
+            await _availability.IsAvailableAsync(m.WorkspaceId, m.StartTimeUtc, m.EndTimeUtc, cancellationToken);
         if (!available) return new Response<int>("Time range is not available.");
 
-        var quote = await _pricing.QuoteAsync(m.WorkspaceId, m.StartTimeUtc, m.EndTimeUtc, m.NumberOfParticipants, cancellationToken);
+        var quote = await _pricing.QuoteAsync(m.WorkspaceId, m.StartTimeUtc, m.EndTimeUtc, m.NumberOfParticipants,
+            cancellationToken);
 
         // Apply promotion if provided
         decimal discountAmount = 0;
@@ -117,10 +121,10 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
             TaxAmount = quote.TaxAmount,
             ServiceFee = quote.ServiceFee,
             FinalAmount = finalAmount,
-            BookingStatusId = 1 // PendingPayment
+            BookingStatusId = 1 // PendingPayment,
         };
 
-        var model = await _bookingRepo.AddAsync(booking);
+        var model = await _bookingRepo.AddAsync(booking, cancellationToken);
 
         // IMPORTANT: Block time slot immediately to prevent double booking
         await _blockedTimeSlotRepo.CreateBlockedTimeSlotForBookingAsync(
@@ -134,14 +138,14 @@ public class CreateBookingCommandHandler : IRequestHandler<CreateBookingCommand,
         if (appliedPromotion != null)
         {
             await _promotionService.RecordPromotionUsageAsync(
-                appliedPromotion.Id, 
-                model.Id, 
-                m.CustomerId, 
-                discountAmount, 
+                appliedPromotion.Id,
+                model.Id,
+                m.CustomerId,
+                discountAmount,
                 cancellationToken);
         }
 
-        var message = discountAmount > 0 
+        var message = discountAmount > 0
             ? $"Booking created with {discountAmount:N0} VND discount applied. Complete payment to confirm."
             : "Booking created with PendingPayment. Complete payment to confirm.";
 

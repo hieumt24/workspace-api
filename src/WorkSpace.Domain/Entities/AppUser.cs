@@ -30,7 +30,12 @@ public class AppUser : IdentityUser<int>
     public virtual List<WorkSpaceFavorite> WorkSpaceFavorites { get; set; } = new();
     public virtual List<PromotionUsage> PromotionUsages { get; set; } = new();
     public virtual List<Post> Posts { get; set; } = new();
+    
+    public virtual List<ChatMessage> ChatMessages { get; set; } = new();
 
+    public virtual List<ChatThread> CustomerChatThreads { get; set; } = new();
+    
+    public virtual List<ChatThread> HostChatThreads  { get; set; } = new();
     public string GetFullName()
     {
         if (string.IsNullOrEmpty(FirstName) && string.IsNullOrEmpty(LastName))

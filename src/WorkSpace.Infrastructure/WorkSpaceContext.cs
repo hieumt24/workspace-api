@@ -36,6 +36,9 @@ namespace WorkSpace.Infrastructure
 
         public DbSet<SupportTicket> SupportTickets { get; set; }
         public DbSet<SupportTicketReply> SupportTicketReplies { get; set; }
+        
+        public DbSet<ChatThread> ChatThreads { get; set; }
+        public DbSet<ChatMessage> ChatMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -229,6 +232,26 @@ namespace WorkSpace.Infrastructure
                         .HasForeignKey(r => r.RepliedByUserId)
                         .OnDelete(DeleteBehavior.Restrict);
                 });
+                
+                // Chat Thread - Customer 
+                modelBuilder.Entity<ChatThread>()
+                    .HasOne(ct => ct.Customer)
+                    .WithMany(u => u.CustomerChatThreads)
+                    .HasForeignKey(ct => ct.CustomerId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+                modelBuilder.Entity<ChatThread>()
+                    .HasOne(ct => ct.HostUser)
+                    .WithMany(u => u.HostChatThreads)
+                    .HasForeignKey(ct => ct.HostUserId)
+                    .OnDelete(DeleteBehavior.NoAction);
+
+
+                modelBuilder.Entity<ChatThread>()
+                    .HasOne(ct => ct.Booking)
+                    .WithMany(b => b.ChatThreads)
+                    .HasForeignKey(ct => ct.BookingId)
+                    .OnDelete(DeleteBehavior.NoAction);
 
                 #endregion
 
