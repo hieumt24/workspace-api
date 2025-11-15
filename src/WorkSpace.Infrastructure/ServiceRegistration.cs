@@ -38,6 +38,7 @@ public static class ServiceRegistration
         services.AddScoped(typeof(IPostRepository), typeof(PostRepository));
         services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
         services.AddScoped(typeof(IChatMessageRepository), typeof(ChatMessageRepository));
+        
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<WorkSpaceContext>());
         #endregion
@@ -53,6 +54,8 @@ public static class ServiceRegistration
         services.AddScoped<IPromotionService, PromotionService>();
         services.AddScoped<IBookingService, BookingService>();
         services.AddScoped<IUserService, UserService>();
+        services.AddScoped(typeof(IBookingPricingService), typeof(BookingPricingService));
+        services.AddScoped(typeof(IRecommendationService), typeof(RecommendationService));
         services.AddHttpContextAccessor();
         #endregion
 

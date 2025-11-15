@@ -3,7 +3,7 @@ using WorkSpace.Domain.Entities;
 
 namespace WorkSpace.Application.Interfaces.Repositories;
 
-public interface IBookingRepository 
+public interface IBookingRepository : IGenericRepositoryAsync<Booking>
 {
     Task<IEnumerable<Booking>> GetAllBookingsAsync();
     Task<Booking> GetBookingByIdAsync(int id);

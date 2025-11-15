@@ -6,13 +6,14 @@ using WorkSpace.Domain.Entities;
 
 namespace WorkSpace.Infrastructure.Repositories;
 
-public class BookingRepository : IBookingRepository
+public class BookingRepository : GenericRepositoryAsync<Booking>,IBookingRepository
 {
     private readonly WorkSpaceContext _context;
 
-    public BookingRepository(WorkSpaceContext dbContext)
+
+    public BookingRepository(WorkSpaceContext dbContext, WorkSpaceContext context) : base(dbContext)
     {
-        _context = dbContext;
+        _context = context;
     }
 
     private string GenerateBookingCode()

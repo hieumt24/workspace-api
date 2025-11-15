@@ -559,11 +559,8 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.ToTable("BookingStatuses");
                 });
 
-<<<<<<< HEAD
+            // --- Guest entity (HEAD) ---
             modelBuilder.Entity("WorkSpace.Domain.Entities.Guest", b =>
-=======
-            modelBuilder.Entity("WorkSpace.Domain.Entities.ChatMessage", b =>
->>>>>>> d6aa4e2dc494dc5bf039465a788a4eb765d73209
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -571,7 +568,6 @@ namespace WorkSpace.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-<<<<<<< HEAD
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -594,7 +590,17 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Guests");
-=======
+                });
+
+            // --- ChatMessage entity (branch) ---
+            modelBuilder.Entity("WorkSpace.Domain.Entities.ChatMessage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(5000)
@@ -633,6 +639,7 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.ToTable("ChatMessages");
                 });
 
+            // --- ChatThread entity (branch) ---
             modelBuilder.Entity("WorkSpace.Domain.Entities.ChatThread", b =>
                 {
                     b.Property<int>("Id")
@@ -685,7 +692,6 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.HasIndex("HostUserId");
 
                     b.ToTable("ChatThreads");
->>>>>>> d6aa4e2dc494dc5bf039465a788a4eb765d73209
                 });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.HostProfile", b =>
@@ -1421,6 +1427,10 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.ToTable("WorkSpaceRoomAmenities");
                 });
 
+            // ======================
+            // Relationships
+            // ======================
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
                     b.HasOne("WorkSpace.Domain.Entities.AppRole", null)
@@ -1800,6 +1810,10 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.Navigation("WorkSpaceRoom");
                 });
 
+            // ======================
+            // Navigation properties
+            // ======================
+
             modelBuilder.Entity("WorkSpace.Domain.Entities.Address", b =>
                 {
                     b.Navigation("Workspaces");
@@ -1849,15 +1863,14 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.Navigation("Bookings");
                 });
 
-<<<<<<< HEAD
             modelBuilder.Entity("WorkSpace.Domain.Entities.Guest", b =>
                 {
                     b.Navigation("Bookings");
-=======
+                });
+
             modelBuilder.Entity("WorkSpace.Domain.Entities.ChatThread", b =>
                 {
                     b.Navigation("Messages");
->>>>>>> d6aa4e2dc494dc5bf039465a788a4eb765d73209
                 });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.HostProfile", b =>
