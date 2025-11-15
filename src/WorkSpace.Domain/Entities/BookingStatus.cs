@@ -17,7 +17,4 @@ public class BookingStatus : AuditableBaseEntity
     public virtual List<Booking> Bookings { get; set; } = new();
 }
 
-        //Pending,
-        //Confirmed,
-        //Completed,
-        //Canceled,
+

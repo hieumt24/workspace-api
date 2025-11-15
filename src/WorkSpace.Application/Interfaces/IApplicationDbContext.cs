@@ -11,7 +11,7 @@ namespace WorkSpace.Application.Interfaces
         DbSet<AppUser> Users { get; }
         DbSet<WorkSpaceRoom> WorkSpaceRooms { get; }
         DbSet<BookingStatus> BookingStatuses { get; }
-        DbSet<Payment> Payments { get; }
+        DbSet<PaymentMethod> PaymentMethods { get; }
         DbSet<SupportTicket> SupportTickets { get; }
         DbSet<SupportTicketReply> SupportTicketReplies { get; }
 

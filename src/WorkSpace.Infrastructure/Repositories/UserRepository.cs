@@ -22,5 +22,20 @@ namespace WorkSpace.Infrastructure.Repositories
         {
             return await _context.Users.FindAsync(userId);
         }
+
+        public async Task<bool> UpdateUserBasicInfoAsync(int userId, CustomerInfo customerInfo)
+        {
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return false;
+            }
+            user.FirstName = customerInfo.FirstName;
+            user.LastName = customerInfo.LastName;
+            user.PhoneNumber = customerInfo.PhoneNumber;
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }

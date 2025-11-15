@@ -1,111 +1,112 @@
-using MediatR;
-using WorkSpace.Application.DTOs.Payment;
-using WorkSpace.Application.Interfaces.Repositories;
-using WorkSpace.Application.Interfaces.Services;
-using WorkSpace.Application.Wrappers;
-using WorkSpace.Domain.Entities;
+//using MediatR;
+//using WorkSpace.Application.DTOs.Payment;
+//using WorkSpace.Application.Interfaces.Repositories;
+//using WorkSpace.Application.Interfaces.Services;
+//using WorkSpace.Application.Wrappers;
+//using WorkSpace.Domain.Entities;
 
-namespace WorkSpace.Application.Features.Payments.Commands;
+//namespace WorkSpace.Application.Features.Payments.Commands;
 
-public class CreatePaymentCommand : IRequest<Response<VNPayResponseDto>>
-{
-    public int UserId { get; set; }
-    public int BookingId { get; set; }
-    public string IpAddress { get; set; } = string.Empty;
-}
+//public class CreatePaymentCommand : IRequest<Response<VNPayResponseDto>>
+//{
+//    public int UserId { get; set; }
+//    public int BookingId { get; set; }
+//    public string IpAddress { get; set; } = string.Empty;
+//}
 
-public class CreatePaymentCommandHandler : IRequestHandler<CreatePaymentCommand, Response<VNPayResponseDto>>
-{
-    private readonly IBookingRepository _bookingRepository;
-    private readonly IPaymentRepository _paymentRepository;
-    private readonly IVNPayService _vnpayService;
+//public class CreatePaymentCommandHandler : IRequestHandler<CreatePaymentCommand, Response<VNPayResponseDto>>
+//{
+//    private readonly IBookingRepository _bookingRepository;
+//    private readonly IPaymentRepository _paymentRepository;
+//    private readonly IVNPayService _vnpayService;
 
-    public CreatePaymentCommandHandler(
-        IBookingRepository bookingRepository,
-        IPaymentRepository paymentRepository,
-        IVNPayService vnpayService)
-    {
-        _bookingRepository = bookingRepository;
-        _paymentRepository = paymentRepository;
-        _vnpayService = vnpayService;
-    }
+//    public CreatePaymentCommandHandler(
+//        IBookingRepository bookingRepository,
+//        IPaymentRepository paymentRepository,
+//        IVNPayService vnpayService)
+//    {
+//        _bookingRepository = bookingRepository;
+//        _paymentRepository = paymentRepository;
+//        _vnpayService = vnpayService;
+//    }
 
-    public async Task<Response<VNPayResponseDto>> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
-    {
-        // Kiểm tra booking có tồn tại không
-        var booking = await _bookingRepository.GetBookingByIdAsync(request.BookingId);
-        if (booking == null)
-        {
-            return new Response<VNPayResponseDto>
-            {
-                Succeeded = false,
-                Message = "Booking không tồn tại"
-            };
-        }
+//    public async Task<Response<VNPayResponseDto>> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
+//    {
+//        // Kiểm tra booking có tồn tại không
+//        var booking = await _bookingRepository.GetBookingByIdAsync(request.BookingId);
+//        if (booking == null)
+//        {
+//            return new Response<VNPayResponseDto>
+//            {
+//                Succeeded = false,
+//                Message = "Booking không tồn tại"
+//            };
+//        }
 
-        // SECURITY: Verify booking ownership
-        if (booking.CustomerId != request.UserId)
-        {
-            return new Response<VNPayResponseDto>
-            {
-                Succeeded = false,
-                Message = "Bạn không có quyền thanh toán cho booking này"
-            };
-        }
 
-        // Lưu FinalAmount trước khi làm việc với Payment
-        var finalAmount = booking.FinalAmount;
-        var bookingCode = booking.BookingCode;
+//        // SECURITY: Verify booking ownership
+//        if (booking.CustomerId != request.UserId)
+//        {
+//            return new Response<VNPayResponseDto>
+//            {
+//                Succeeded = false,
+//                Message = "Bạn không có quyền thanh toán cho booking này"
+//            };
+//        }
 
-        // Kiểm tra xem đã có payment chưa
-        var existingPayment = await _paymentRepository.GetByBookingIdAsync(request.BookingId, cancellationToken);
-        if (existingPayment != null)
-        {
-            if (existingPayment.Status == "Success")
-            {
-                return new Response<VNPayResponseDto>
-                {
-                    Succeeded = false,
-                    Message = "Booking đã được thanh toán"
-                };
-            }
+//        // Lưu FinalAmount trước khi làm việc với Payment
+//        var finalAmount = booking.FinalAmount;
+//        var bookingCode = booking.BookingCode;
 
-            // Nếu đã có payment pending, xóa đi để tạo mới
-            if (existingPayment.Status == "Pending")
-            {
-                await _paymentRepository.DeleteAsync(existingPayment, cancellationToken);
-            }
-        }
+//        // Kiểm tra xem đã có payment chưa
+//        var existingPayment = await _paymentRepository.GetByBookingIdAsync(request.BookingId, cancellationToken);
+//        if (existingPayment != null)
+//        {
+//            if (existingPayment.Status == "Success")
+//            {
+//                return new Response<VNPayResponseDto>
+//                {
+//                    Succeeded = false,
+//                    Message = "Booking đã được thanh toán"
+//                };
+//            }
 
-        // Tạo payment record mới
-        var payment = new Payment
-        {
-            BookingId = request.BookingId,
-            Amount = finalAmount,
-            PaymentMethod = "VNPay",
-            Status = "Pending",
-            PaymentDate = DateTimeOffset.UtcNow
-        };
+//            // Nếu đã có payment pending, xóa đi để tạo mới
+//            if (existingPayment.Status == "Pending")
+//            {
+//                await _paymentRepository.DeleteAsync(existingPayment, cancellationToken);
+//            }
+//        }
 
-        var createdPayment = await _paymentRepository.AddAsync(payment, cancellationToken);
+//        // Tạo payment record mới
+//        var payment = new Payment
+//        {
+//            BookingId = request.BookingId,
+//            Amount = finalAmount,
+//            PaymentMethod = "VNPay",
+//            Status = "Pending",
+//            PaymentDate = DateTimeOffset.UtcNow
+//        };
 
-        // Tạo VNPay payment URL
-        var vnpayRequest = new VNPayRequestDto
-        {
-            BookingId = request.BookingId,
-            Amount = finalAmount,
-            OrderInfo = $"Thanh toán booking {bookingCode}",
-            IpAddress = request.IpAddress
-        };
+//        var createdPayment = await _paymentRepository.AddAsync(payment, cancellationToken);
 
-        var paymentUrl = _vnpayService.CreatePaymentUrl(vnpayRequest);
+//        // Tạo VNPay payment URL
+//        var vnpayRequest = new VNPayRequestDto
+//        {
+//            BookingId = request.BookingId,
+//            Amount = finalAmount,
+//            OrderInfo = $"Thanh toán booking {bookingCode}",
+//            IpAddress = request.IpAddress
+//        };
 
-        return new Response<VNPayResponseDto>(new VNPayResponseDto
-        {
-            Success = true,
-            PaymentUrl = paymentUrl,
-            Message = "Tạo link thanh toán thành công"
-        });
-    }
-}
+//        var paymentUrl = _vnpayService.CreatePaymentUrl(vnpayRequest);
+
+//        return new Response<VNPayResponseDto>(new VNPayResponseDto
+//        {
+//            Success = true,
+//            PaymentUrl = paymentUrl,
+//            Message = "Tạo link thanh toán thành công"
+//        });
+//    }
+//}
 

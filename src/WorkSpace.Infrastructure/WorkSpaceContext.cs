@@ -20,7 +20,7 @@ namespace WorkSpace.Infrastructure
         public DbSet<Address> Addresses { get; set; }
         public DbSet<Amenity> Amenities { get; set; }
         public DbSet<BookingStatus> BookingStatuses { get; set; }
-        public DbSet<Payment> Payments { get; set; }
+        public DbSet<PaymentMethod> PaymentMethods { get; set; }
         public DbSet<BookingParticipant> BookingParticipants { get; set; }
         public DbSet<Promotion> Promotions { get; set; }
         public DbSet<PromotionUsage> PromotionUsages { get; set; }
@@ -184,12 +184,11 @@ namespace WorkSpace.Infrastructure
                     .HasIndex(r => r.BookingId)
                     .IsUnique();
 
-                modelBuilder.Entity<Payment>()
-                    .HasOne(p => p.Booking)
-                    .WithOne(b => b.Payment)
-                    .HasForeignKey<Payment>(p => p.BookingId)
-                    .OnDelete(DeleteBehavior.Restrict);
-
+                modelBuilder.Entity<Booking>()
+                    .HasOne(b => b.PaymentMethod)
+                    .WithMany(pm => pm.Bookings)
+                    .HasForeignKey(b => b.PaymentMethodID)
+                    .OnDelete(DeleteBehavior.Restrict); 
 
                 modelBuilder.Entity<PromotionUsage>()
                     .HasOne(pu => pu.Promotion)

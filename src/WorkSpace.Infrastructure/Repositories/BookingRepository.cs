@@ -6,14 +6,13 @@ using WorkSpace.Domain.Entities;
 
 namespace WorkSpace.Infrastructure.Repositories;
 
-public class BookingRepository : GenericRepositoryAsync<Booking>,IBookingRepository
+public class BookingRepository : IBookingRepository
 {
     private readonly WorkSpaceContext _context;
 
-
-    public BookingRepository(WorkSpaceContext dbContext, WorkSpaceContext context) : base(dbContext)
+    public BookingRepository(WorkSpaceContext dbContext)
     {
-        _context = context;
+        _context = dbContext;
     }
 
     private string GenerateBookingCode()
@@ -92,7 +91,7 @@ public class BookingRepository : GenericRepositoryAsync<Booking>,IBookingReposit
 
     public async Task<IEnumerable<Booking>> GetBookingsByUserIdAsync(int userId)
     {
-        return await _context.Bookings
+        return await _context.Bookings.Include(b => b.WorkSpaceRoom)
             .Where(b => b.CustomerId == userId)
             .ToListAsync();
     }
@@ -114,7 +113,7 @@ public class BookingRepository : GenericRepositoryAsync<Booking>,IBookingReposit
 
 
     public Task<Booking?> GetByCodeAsync(string bookingCode, CancellationToken ct)
-        => _context.Bookings.Include(x => x.Payment).FirstOrDefaultAsync(x => x.BookingCode == bookingCode, ct);
+        => _context.Bookings.Include(x => x.LastModifiedById).FirstOrDefaultAsync(x => x.BookingCode == bookingCode, ct);
 
     public async Task<Booking?> GetBookingWithDetailsAsync(int bookingId, CancellationToken ct)
     {
@@ -131,4 +130,17 @@ public class BookingRepository : GenericRepositoryAsync<Booking>,IBookingReposit
     {
         throw new NotImplementedException();
     }
+
+    public async Task<int> UpdatePaymentMethod(int bookingId, int paymentMethodId)
+    {
+        var booking = await _context.Bookings.FindAsync(bookingId);
+        if (booking != null)
+        {
+            booking.PaymentMethodID = paymentMethodId;
+            await _context.SaveChangesAsync();
+            return booking.Id;
+        }
+        return 0;
+    }
+
 }

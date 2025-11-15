@@ -14,10 +14,6 @@ namespace WorkSpace.Application.DTOs.Customer
         [Required, MaxLength(100)]
         public string LastName { get; set; } = default!;
 
-        [Required, MaxLength(255)]
-        [EmailAddress]
-        public string Email { get; set; } = default!;
-
         [MaxLength(20)]
         public string? PhoneNumber { get; set; }
     }

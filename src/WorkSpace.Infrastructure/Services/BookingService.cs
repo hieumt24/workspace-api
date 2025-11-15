@@ -18,15 +18,18 @@ namespace WorkSpace.Infrastructure.Services
     {
         private readonly IBookingRepository _bookingRepository;
         private readonly IGuestRepository _guestRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
         public BookingService(
             IBookingRepository bookingRepository, 
             IGuestRepository guestRepository, 
-            IHttpContextAccessor httpContextAccessor)
+            IHttpContextAccessor httpContextAccessor,
+            IUserRepository userRepository)
         {
             _bookingRepository = bookingRepository;
             _guestRepository = guestRepository;
+            _userRepository = userRepository;
             _httpContextAccessor = httpContextAccessor;
         }
 
@@ -34,19 +37,19 @@ namespace WorkSpace.Infrastructure.Services
         {
             int guestId = await _guestRepository.GetOrCreateGuestAsync(guestInfo);
             int bookingId = await _bookingRepository.CreateBookingGuestAsync(guestId, bookingDto);
-            // gửi mail..
             return bookingId;
         }
 
-        public async Task<int> HandleCustomerBookingAsync(CreateBookingDto bookingDto)
+        public async Task<int> HandleCustomerBookingAsync(CreateBookingDto bookingDto, CustomerInfo customerInfo)
         {
             var currentUser = _httpContextAccessor.HttpContext?.User;
             int customerId = currentUser.GetUserId();
+            await _userRepository.UpdateUserBasicInfoAsync(customerId, customerInfo);
             int bookingId = await _bookingRepository.CreateBookingCustomerAsync(customerId, bookingDto);
-            // gửi mail..
             return bookingId;
-
         }
+
+
 
 
     }

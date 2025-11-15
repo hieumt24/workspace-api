@@ -39,7 +39,6 @@ namespace WorkSpace.Infrastructure.Services
             {
                 FirstName = appUser.FirstName,
                 LastName = appUser.LastName,
-                Email = appUser.Email,
                 PhoneNumber = appUser.PhoneNumber
             };
         }

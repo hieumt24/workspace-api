@@ -2,6 +2,10 @@
 using WorkSpace.Application.Interfaces.Services;
 using WorkSpace.Application.DTOs.Guest;
 using WorkSpace.Application.DTOs.Bookings;
+using WorkSpace.Application.DTOs.Customer;
+using WorkSpace.Application.Interfaces.Repositories;
+using WorkSpace.Application.Extensions;
+
 
 namespace WorkSpace.WebApi.Controllers.v1
 {
@@ -10,10 +14,26 @@ namespace WorkSpace.WebApi.Controllers.v1
     public class BookingController : ControllerBase
     {
         private readonly IBookingService _bookingService;
-        public BookingController(IBookingService bookingService)
+        private readonly IBookingRepository _bookingRepository;
+        public BookingController(IBookingService bookingService, IBookingRepository bookingRepository)
         {
             _bookingService = bookingService;
+            _bookingRepository = bookingRepository;
         }
+
+        [HttpGet("customer")]
+        public async Task<IActionResult> GetBookingById()
+        {
+            var userId= User.GetUserId();
+            var bookings = await _bookingRepository.GetBookingsByUserIdAsync(userId);
+            if (bookings == null)
+            {
+                return NotFound(new { Message = "Booking not found." });
+            }
+            return Ok(bookings);
+        }
+
+
 
         [HttpPost("guest")]
         public async Task<IActionResult> CreateGuestBooking([FromBody] GuestBookingRequestDto request)
@@ -35,8 +55,9 @@ namespace WorkSpace.WebApi.Controllers.v1
             }
         }
 
+
         [HttpPost("customer")]
-        public async Task<IActionResult> CreateCustomerBooking([FromBody] CreateBookingDto request)
+        public async Task<IActionResult> CreateCustomerBooking([FromBody] CustomerBookingRequestDto request)
         {
             if (!ModelState.IsValid)
             {
@@ -44,7 +65,9 @@ namespace WorkSpace.WebApi.Controllers.v1
             }
             try
             {
-                int bookingId = await _bookingService.HandleCustomerBookingAsync(request);
+                var bookingDto = request.BookingDetails;
+                var customerInfo = request.CustomerDetails;
+                int bookingId = await _bookingService.HandleCustomerBookingAsync(bookingDto, customerInfo);
                 return Ok(new { BookingId = bookingId, Message = "Booking created successfully." });
             }
             catch (Exception ex)

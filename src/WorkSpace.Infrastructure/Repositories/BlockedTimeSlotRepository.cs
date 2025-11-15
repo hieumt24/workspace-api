@@ -59,6 +59,24 @@ public class BlockedTimeSlotRepository : GenericRepositoryAsync<BlockedTimeSlot>
         await _context.SaveChangesAsync(cancellationToken);
     }
 
+    public async Task CreateBlockedTimeForBookingAsync(
+    int workSpaceRoomId,
+    int bookingId,
+    DateTime startTime,
+    DateTime endTime)
+    {
+        var blockedSlot = new BlockedTimeSlot
+        {
+            WorkSpaceRoomId = workSpaceRoomId,
+            StartTime = startTime,
+            EndTime = endTime,
+            Reason = $"Blocked for booking ID: {bookingId}",
+            CreatedAt = DateTime.UtcNow
+        };
+        await _context.BlockedTimeSlots.AddAsync(blockedSlot);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task RemoveBlockedTimeSlotForBookingAsync(
         int bookingId, 
         CancellationToken cancellationToken = default)

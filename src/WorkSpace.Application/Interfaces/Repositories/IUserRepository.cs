@@ -11,5 +11,6 @@ namespace WorkSpace.Application.Interfaces.Repositories
     public interface IUserRepository
     {
         Task<AppUser> GetUserByIdAsync(int userId);
+        Task<bool> UpdateUserBasicInfoAsync(int userId, CustomerInfo customerInfo);
     }
 }

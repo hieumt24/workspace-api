@@ -12,6 +12,7 @@ namespace WorkSpace.Application.Interfaces.Services
     public interface IBookingService
     {
         Task<int> HandleGuestBookingAsync(CreateBookingDto bookingDto, GuestInfo guestInfo);
-        Task<int> HandleCustomerBookingAsync(CreateBookingDto bookingDto);
+        Task<int> HandleCustomerBookingAsync(CreateBookingDto bookingDto, CustomerInfo customerInfo);
+
     }
 }

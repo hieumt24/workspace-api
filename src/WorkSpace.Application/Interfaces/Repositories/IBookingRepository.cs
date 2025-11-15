@@ -3,7 +3,7 @@ using WorkSpace.Domain.Entities;
 
 namespace WorkSpace.Application.Interfaces.Repositories;
 
-public interface IBookingRepository : IGenericRepositoryAsync<Booking>
+public interface IBookingRepository 
 {
     Task<IEnumerable<Booking>> GetAllBookingsAsync();
     Task<Booking> GetBookingByIdAsync(int id);
@@ -13,6 +13,7 @@ public interface IBookingRepository : IGenericRepositoryAsync<Booking>
     Task UpdateBookingStatusAsync(int bookingId, int bookingStatusId);
     Task DeleteBookingAsync(int id);
     Task<IEnumerable<Booking>> GetBookingsByUserIdAsync(int userId);
+    Task<int> UpdatePaymentMethod(int bookingId, int paymentMethodId);
 
     Task<bool> HasOverlapAsync(int workspaceId, DateTime startUtc, DateTime endUtc, CancellationToken ct);
     Task<Booking?> GetByCodeAsync(string bookingCode, CancellationToken ct);

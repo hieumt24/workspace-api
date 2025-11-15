@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Text;
+using VNPAY.NET;
 using WorkSpace.Application.Interfaces;
 using WorkSpace.Application.Interfaces.Repositories;
 using WorkSpace.Application.Interfaces.Services;
@@ -22,7 +23,8 @@ public static class ServiceRegistration
 {
     public static void AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        
+        services.AddSignalR();
+
         #region Repositories
         services.AddScoped(typeof(IWorkSpaceRepository), typeof(WorkSpaceRepository));
         services.AddTransient(typeof(IGenericRepositoryAsync<>), typeof(GenericRepositoryAsync<>));
@@ -33,12 +35,11 @@ public static class ServiceRegistration
         services.AddScoped(typeof(IWorkSpaceTypeRepository), typeof(WorkSpaceTypeRepository));
         services.AddScoped(typeof(IBookingRepository), typeof(BookingRepository));
         services.AddScoped(typeof(IGuestRepository), typeof(GuestRepository));
-        services.AddScoped(typeof(IPaymentRepository), typeof(PaymentRepository));
+        services.AddScoped<IVnpay, Vnpay>();
         services.AddScoped(typeof(IBlockedTimeSlotRepository), typeof(BlockedTimeSlotRepository));
         services.AddScoped(typeof(IPostRepository), typeof(PostRepository));
         services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
         services.AddScoped(typeof(IChatMessageRepository), typeof(ChatMessageRepository));
-        
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<WorkSpaceContext>());
         #endregion
@@ -54,8 +55,6 @@ public static class ServiceRegistration
         services.AddScoped<IPromotionService, PromotionService>();
         services.AddScoped<IBookingService, BookingService>();
         services.AddScoped<IUserService, UserService>();
-        services.AddScoped(typeof(IBookingPricingService), typeof(BookingPricingService));
-        services.AddScoped(typeof(IRecommendationService), typeof(RecommendationService));
         services.AddHttpContextAccessor();
         #endregion
 
