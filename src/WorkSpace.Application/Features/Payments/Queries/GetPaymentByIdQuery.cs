@@ -38,7 +38,7 @@ public class GetPaymentByIdQueryHandler : IRequestHandler<GetPaymentByIdQuery, R
         }
 
         // SECURITY: Verify payment ownership via booking
-        var booking = await _bookingRepository.GetByIdAsync(payment.BookingId, cancellationToken);
+        var booking = await _bookingRepository.GetBookingByIdAsync(payment.BookingId);
         if (booking == null || booking.CustomerId != request.UserId)
         {
             return new Response<PaymentResultDto>

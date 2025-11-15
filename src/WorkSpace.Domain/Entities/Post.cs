@@ -13,6 +13,7 @@ public class Post : AuditableBaseEntity
 
     [MaxLength(int.MaxValue)] 
     public string? ContentHtml { get; set; }
+    [MaxLength(1000)]
     public string? ImageData { get; set; }
     public bool IsFeatured { get; set; }
 

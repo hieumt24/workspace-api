@@ -29,6 +29,7 @@ namespace WorkSpace.Application.Interfaces
         DbSet<WorkSpaceRoomImage> WorkSpaceRoomImages { get; }
         DbSet<WorkSpaceRoomAmenity> WorkSpaceRoomAmenities { get; }
         DbSet<WorkSpaceType> WorkSpaceTypes { get; }
+        DbSet<Guest> Guests { get; }
         
         DbSet<ChatThread> ChatThreads { get; }
         

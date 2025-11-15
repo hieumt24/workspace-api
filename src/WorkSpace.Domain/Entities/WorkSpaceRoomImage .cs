@@ -9,7 +9,7 @@ namespace WorkSpace.Domain.Entities
         public int WorkSpaceRoomId { get; set; }
 
         [Required]
-        [Column(TypeName = "nvarchar(max)")]
+        [MaxLength(1000)]
         public required string ImageUrl { get; set; }
 
         [MaxLength(255)]

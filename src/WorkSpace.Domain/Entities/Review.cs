@@ -9,7 +9,7 @@ public class Review : AuditableBaseEntity
     public int UserId { get; set; }
     public int WorkSpaceRoomId { get; set; }
 
-    [Range(1, 5)]
+    [Range(1, 10)]
     public int Rating { get; set; }
 
     [MaxLength(1000)]

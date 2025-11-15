@@ -17,8 +17,8 @@ public class AppUser : IdentityUser<int>
     public DateTime? RefreshTokenExpiryTime { get; set; }
     public DateTime DateCreated { get; set; }
     public DateTime? Dob { get; set; }
-    
-    [MaxLength(500)]
+
+    [MaxLength(1000)]
     public string? Avatar { get; set; }
     public DateTime? LastLoginDate { get; set; }
     

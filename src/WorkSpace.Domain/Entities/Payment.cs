@@ -19,7 +19,7 @@ public class Payment : AuditableBaseEntity
 
     [Required]
     [StringLength(20)]
-    public string Status { get; set; } = "Pending"; 
+    public string Status { get; set; } = "Pending"; // Pending, Completed, Failed
 
     [StringLength(255)]
     public string? TransactionId { get; set; } 

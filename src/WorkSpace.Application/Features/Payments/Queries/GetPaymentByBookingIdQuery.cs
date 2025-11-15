@@ -27,7 +27,7 @@ public class GetPaymentByBookingIdQueryHandler : IRequestHandler<GetPaymentByBoo
     public async Task<Response<PaymentResultDto>> Handle(GetPaymentByBookingIdQuery request, CancellationToken cancellationToken)
     {
         // SECURITY: Verify booking ownership first
-        var booking = await _bookingRepository.GetByIdAsync(request.BookingId, cancellationToken);
+        var booking = await _bookingRepository.GetBookingByIdAsync(request.BookingId);
         if (booking == null)
         {
             return new Response<PaymentResultDto>

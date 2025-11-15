@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkSpace.Application.DTOs.Payment;
 using WorkSpace.Application.Extensions;
@@ -7,24 +7,23 @@ using WorkSpace.Application.Features.Payments.Queries;
 
 namespace WorkSpace.WebApi.Controllers.v1;
 
-[Route("api/v1/[controller]")]
+[Route("api/v1/payment")]
 public class PaymentController : BaseApiController
 {
     /// <summary>
     /// Tạo link thanh toán VNPay cho booking
     /// </summary>
     [HttpPost("create")]
-    [Authorize]
     public async Task<IActionResult> CreatePayment([FromBody] CreatePaymentRequestDto request, CancellationToken cancellationToken)
     {
         var ipAddress = HttpContext.Connection.RemoteIpAddress?.ToString() ?? "127.0.0.1";
         var userId = User.GetUserId();
-        
+
         if (userId == 0)
         {
             return Unauthorized("Invalid user token");
         }
-        
+
         var command = new CreatePaymentCommand
         {
             UserId = userId,
@@ -45,7 +44,7 @@ public class PaymentController : BaseApiController
     {
         // Lấy tất cả query parameters từ request
         var queryParams = HttpContext.Request.Query;
-        
+
         // Log all params for debugging
         Console.WriteLine("=== VNPay Callback Params ===");
         foreach (var param in queryParams)
@@ -53,7 +52,7 @@ public class PaymentController : BaseApiController
             Console.WriteLine($"{param.Key} = {param.Value}");
         }
         Console.WriteLine("============================");
-        
+
         var callback = new VNPayCallbackDto
         {
             vnp_Amount = queryParams["vnp_Amount"].ToString(),
@@ -105,10 +104,10 @@ public class PaymentController : BaseApiController
             return Unauthorized("Invalid user token");
         }
 
-        var query = new GetPaymentByIdQuery 
-        { 
+        var query = new GetPaymentByIdQuery
+        {
             UserId = userId,
-            PaymentId = paymentId 
+            PaymentId = paymentId
         };
         var result = await Mediator.Send(query, cancellationToken);
         return Ok(result);
@@ -127,10 +126,10 @@ public class PaymentController : BaseApiController
             return Unauthorized("Invalid user token");
         }
 
-        var query = new GetPaymentByBookingIdQuery 
-        { 
+        var query = new GetPaymentByBookingIdQuery
+        {
             UserId = userId,
-            BookingId = bookingId 
+            BookingId = bookingId
         };
         var result = await Mediator.Send(query, cancellationToken);
         return Ok(result);

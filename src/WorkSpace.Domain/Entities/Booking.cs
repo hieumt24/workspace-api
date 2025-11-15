@@ -10,7 +10,8 @@ public class Booking : AuditableBaseEntity
     [MaxLength(50)]
     public required string BookingCode { get; set; } 
 
-    public int CustomerId { get; set; }
+    public int? CustomerId { get; set; }
+    public int? GuestId { get; set; }
     public int WorkSpaceRoomId { get; set; }
 
     public DateTime StartTimeUtc { get; set; }
@@ -40,6 +41,7 @@ public class Booking : AuditableBaseEntity
 
     // Navigation properties
     public virtual AppUser? Customer { get; set; }
+    public virtual Guest? Guest { get; set; }
     public virtual WorkSpaceRoom? WorkSpaceRoom { get; set; }
     public virtual BookingStatus? BookingStatus { get; set; }
     public virtual Payment? Payment { get; set; }

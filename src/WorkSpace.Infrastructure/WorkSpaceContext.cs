@@ -40,6 +40,8 @@ namespace WorkSpace.Infrastructure
         public DbSet<ChatThread> ChatThreads { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
 
+        public DbSet<Guest> Guests { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -147,6 +149,11 @@ namespace WorkSpace.Infrastructure
                     .HasOne(b => b.Customer)
                     .WithMany(u => u.Bookings)
                     .HasForeignKey(b => b.CustomerId)
+                    .OnDelete(DeleteBehavior.Restrict);
+                modelBuilder.Entity<Booking>()
+                    .HasOne(b => b.Guest)
+                    .WithMany(u => u.Bookings)
+                    .HasForeignKey(b => b.GuestId)
                     .OnDelete(DeleteBehavior.Restrict);
                 modelBuilder.Entity<Booking>()
                     .HasOne(b => b.BookingStatus)

@@ -75,7 +75,7 @@ public class ProcessPaymentCallbackCommandHandler : IRequestHandler<ProcessPayme
         // Nếu thanh toán thành công, cập nhật booking status
         if (result.Status == "Success")
         {
-            var booking = await _bookingRepository.GetByIdAsync(result.BookingId, cancellationToken);
+            var booking = await _bookingRepository.GetBookingByIdAsync(result.BookingId);
             if (booking != null)
             {
                 // Tìm status "Confirmed" hoặc status phù hợp
@@ -83,7 +83,7 @@ public class ProcessPaymentCallbackCommandHandler : IRequestHandler<ProcessPayme
                 if (confirmedStatus != null)
                 {
                     booking.BookingStatusId = confirmedStatus.Id;
-                    await _bookingRepository.UpdateAsync(booking, cancellationToken);
+                    await _bookingRepository.UpdateBookingAsync(result.BookingId, booking);
                 }
             }
         }

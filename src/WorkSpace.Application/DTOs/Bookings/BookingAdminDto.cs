@@ -5,7 +5,7 @@ public class BookingAdminDto
 {
     public int Id { get; set; }
     public string BookingCode { get; set; } = default!;
-    public int CustomerId { get; set; }
+    public int? CustomerId { get; set; }
     public string? CustomerName { get; set; }
     public string? CustomerEmail { get; set; }
     public int WorkSpaceRoomId { get; set; }

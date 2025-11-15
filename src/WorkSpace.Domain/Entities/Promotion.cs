@@ -21,6 +21,7 @@ public class Promotion : AuditableBaseEntity
 
     public int UsageLimit { get; set; } = 0; 
     public int UsedCount { get; set; } = 0;
+    public double MinimumAmount { get; set; } = 0;
 
     public bool IsActive { get; set; } = true;
     

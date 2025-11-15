@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WorkSpace.Infrastructure;
 
@@ -11,9 +12,11 @@ using WorkSpace.Infrastructure;
 namespace WorkSpace.Infrastructure.Migrations
 {
     [DbContext(typeof(WorkSpaceContext))]
-    partial class WorkSpaceContextModelSnapshot : ModelSnapshot
+    [Migration("20251111050153_UpdateDB11-11")]
+    partial class UpdateDB1111
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -428,7 +431,7 @@ namespace WorkSpace.Infrastructure.Migrations
                         .HasMaxLength(3)
                         .HasColumnType("nvarchar(3)");
 
-                    b.Property<int?>("CustomerId")
+                    b.Property<int>("CustomerId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("EndTimeUtc")
@@ -436,9 +439,6 @@ namespace WorkSpace.Infrastructure.Migrations
 
                     b.Property<decimal>("FinalAmount")
                         .HasColumnType("decimal(18,2)");
-
-                    b.Property<int?>("GuestId")
-                        .HasColumnType("int");
 
                     b.Property<bool>("IsReviewed")
                         .HasColumnType("bit");
@@ -479,8 +479,6 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.HasIndex("BookingStatusId");
 
                     b.HasIndex("CustomerId");
-
-                    b.HasIndex("GuestId");
 
                     b.HasIndex("WorkSpaceRoomId");
 
@@ -557,135 +555,6 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BookingStatuses");
-                });
-
-<<<<<<< HEAD
-            modelBuilder.Entity("WorkSpace.Domain.Entities.Guest", b =>
-=======
-            modelBuilder.Entity("WorkSpace.Domain.Entities.ChatMessage", b =>
->>>>>>> d6aa4e2dc494dc5bf039465a788a4eb765d73209
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-<<<<<<< HEAD
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Guests");
-=======
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(5000)
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTimeOffset>("CreateUtc")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("IsRead")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("LastModifiedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset?>("LastModifiedUtc")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<DateTimeOffset?>("ReadAtUtc")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int>("SenderId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ThreadId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SenderId");
-
-                    b.HasIndex("ThreadId");
-
-                    b.ToTable("ChatMessages");
-                });
-
-            modelBuilder.Entity("WorkSpace.Domain.Entities.ChatThread", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("BookingId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset>("CreateUtc")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("HasUnreadMessages")
-                        .HasColumnType("bit");
-
-                    b.Property<int?>("HostUserId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("LastMessagePreview")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<DateTimeOffset?>("LastMessageUtc")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<int?>("LastModifiedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTimeOffset?>("LastModifiedUtc")
-                        .HasColumnType("datetimeoffset");
-
-                    b.Property<string>("Title")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BookingId");
-
-                    b.HasIndex("CustomerId");
-
-                    b.HasIndex("HostUserId");
-
-                    b.ToTable("ChatThreads");
->>>>>>> d6aa4e2dc494dc5bf039465a788a4eb765d73209
                 });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.HostProfile", b =>
@@ -1494,12 +1363,8 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.HasOne("WorkSpace.Domain.Entities.AppUser", "Customer")
                         .WithMany("Bookings")
                         .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("WorkSpace.Domain.Entities.Guest", "Guest")
-                        .WithMany("Bookings")
-                        .HasForeignKey("GuestId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
                     b.HasOne("WorkSpace.Domain.Entities.WorkSpaceRoom", "WorkSpaceRoom")
                         .WithMany("Bookings")
@@ -1510,8 +1375,6 @@ namespace WorkSpace.Infrastructure.Migrations
                     b.Navigation("BookingStatus");
 
                     b.Navigation("Customer");
-
-                    b.Navigation("Guest");
 
                     b.Navigation("WorkSpaceRoom");
                 });
@@ -1525,49 +1388,6 @@ namespace WorkSpace.Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Booking");
-                });
-
-            modelBuilder.Entity("WorkSpace.Domain.Entities.ChatMessage", b =>
-                {
-                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "Sender")
-                        .WithMany("ChatMessages")
-                        .HasForeignKey("SenderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WorkSpace.Domain.Entities.ChatThread", "Thread")
-                        .WithMany("Messages")
-                        .HasForeignKey("ThreadId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Sender");
-
-                    b.Navigation("Thread");
-                });
-
-            modelBuilder.Entity("WorkSpace.Domain.Entities.ChatThread", b =>
-                {
-                    b.HasOne("WorkSpace.Domain.Entities.Booking", "Booking")
-                        .WithMany("ChatThreads")
-                        .HasForeignKey("BookingId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "Customer")
-                        .WithMany("CustomerChatThreads")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "HostUser")
-                        .WithMany("HostChatThreads")
-                        .HasForeignKey("HostUserId")
-                        .OnDelete(DeleteBehavior.NoAction);
-
-                    b.Navigation("Booking");
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("HostUser");
                 });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.HostProfile", b =>
@@ -1814,12 +1634,6 @@ namespace WorkSpace.Infrastructure.Migrations
                 {
                     b.Navigation("Bookings");
 
-                    b.Navigation("ChatMessages");
-
-                    b.Navigation("CustomerChatThreads");
-
-                    b.Navigation("HostChatThreads");
-
                     b.Navigation("HostProfile");
 
                     b.Navigation("Posts");
@@ -1835,8 +1649,6 @@ namespace WorkSpace.Infrastructure.Migrations
                 {
                     b.Navigation("BookingParticipants");
 
-                    b.Navigation("ChatThreads");
-
                     b.Navigation("Payment");
 
                     b.Navigation("PromotionUsages");
@@ -1847,17 +1659,6 @@ namespace WorkSpace.Infrastructure.Migrations
             modelBuilder.Entity("WorkSpace.Domain.Entities.BookingStatus", b =>
                 {
                     b.Navigation("Bookings");
-                });
-
-<<<<<<< HEAD
-            modelBuilder.Entity("WorkSpace.Domain.Entities.Guest", b =>
-                {
-                    b.Navigation("Bookings");
-=======
-            modelBuilder.Entity("WorkSpace.Domain.Entities.ChatThread", b =>
-                {
-                    b.Navigation("Messages");
->>>>>>> d6aa4e2dc494dc5bf039465a788a4eb765d73209
                 });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.HostProfile", b =>

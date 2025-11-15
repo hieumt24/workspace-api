@@ -32,9 +32,11 @@ public static class ServiceRegistration
         services.AddScoped(typeof(IBookingStatusRepository), typeof(BookingStatusRepository));
         services.AddScoped(typeof(IWorkSpaceTypeRepository), typeof(WorkSpaceTypeRepository));
         services.AddScoped(typeof(IBookingRepository), typeof(BookingRepository));
+        services.AddScoped(typeof(IGuestRepository), typeof(GuestRepository));
         services.AddScoped(typeof(IPaymentRepository), typeof(PaymentRepository));
         services.AddScoped(typeof(IBlockedTimeSlotRepository), typeof(BlockedTimeSlotRepository));
         services.AddScoped(typeof(IPostRepository), typeof(PostRepository));
+        services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
         services.AddScoped(typeof(IChatMessageRepository), typeof(ChatMessageRepository));
 
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<WorkSpaceContext>());
@@ -46,10 +48,12 @@ public static class ServiceRegistration
         services.AddScoped<IEmailService, EmailService>();
         services.AddScoped<IDateTimeService, DateTimeService>();
         services.AddScoped<IAvailabilityService, AvailabilityService>();
-        services.AddScoped<IBookingPricingService, BookingPricingService>();
         services.AddScoped<ISearchService, SearchService>();
         services.AddScoped<IVNPayService, VNPayService>();
         services.AddScoped<IPromotionService, PromotionService>();
+        services.AddScoped<IBookingService, BookingService>();
+        services.AddScoped<IUserService, UserService>();
+        services.AddHttpContextAccessor();
         #endregion
 
         #region Identity

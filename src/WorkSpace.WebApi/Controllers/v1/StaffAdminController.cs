@@ -4,8 +4,6 @@ using WorkSpace.Application.DTOs.Bookings;
 using WorkSpace.Application.DTOs.Support;
 using WorkSpace.Application.Enums;
 using WorkSpace.Application.Extensions;
-using WorkSpace.Application.Features.Bookings.Commands;
-using WorkSpace.Application.Features.Bookings.Queries; 
 using WorkSpace.Application.Features.Reviews.Commands;
 using WorkSpace.Application.Features.Reviews.Queries;
 using WorkSpace.Application.Features.SupportTickets.Commands;
@@ -51,14 +49,14 @@ public class StaffAdminController : BaseApiController
     }
 
 
-    [HttpGet("bookings")]
-    public async Task<IActionResult> GetAllBookings(
-        [FromQuery] GetAllBookingsQuery query, 
-        CancellationToken cancellationToken)
-    {
-        var result = await Mediator.Send(query, cancellationToken);
-        return Ok(result); 
-    }
+    //[HttpGet("bookings")]
+    //public async Task<IActionResult> GetAllBookings(
+    //    [FromQuery] GetAllBookingsQuery query, 
+    //    CancellationToken cancellationToken)
+    //{
+    //    var result = await Mediator.Send(query, cancellationToken);
+    //    return Ok(result); 
+    //}
 
 
     [HttpGet("workspaces/pending")]
@@ -103,69 +101,69 @@ public class StaffAdminController : BaseApiController
         
         return Ok(result);
     }
-    [HttpPost("bookings/{bookingId}/cancel")]
-    public async Task<IActionResult> StaffCancelBooking(
-        [FromRoute] int bookingId,
-        [FromBody] StaffCancelBookingRequestDto request,
-        CancellationToken cancellationToken)
-    {
-        var staffUserId = User.GetUserId();
-        if (staffUserId == 0) return Unauthorized();
+    //[HttpPost("bookings/{bookingId}/cancel")]
+    //public async Task<IActionResult> StaffCancelBooking(
+    //    [FromRoute] int bookingId,
+    //    [FromBody] StaffCancelBookingRequestDto request,
+    //    CancellationToken cancellationToken)
+    //{
+    //    var staffUserId = User.GetUserId();
+    //    if (staffUserId == 0) return Unauthorized();
 
-        var command = new StaffCancelBookingCommand
-        {
-            BookingId = bookingId,
-            Reason = request.Reason,
-            StaffUserId = staffUserId
-        };
+    //    var command = new StaffCancelBookingCommand
+    //    {
+    //        BookingId = bookingId,
+    //        Reason = request.Reason,
+    //        StaffUserId = staffUserId
+    //    };
 
-        var result = await Mediator.Send(command, cancellationToken);
-        return Ok(result);
-    }
+    //    var result = await Mediator.Send(command, cancellationToken);
+    //    return Ok(result);
+    //}
 
 
-    [HttpPut("bookings/{bookingId}/reschedule")]
-    public async Task<IActionResult> StaffRescheduleBooking(
-        [FromRoute] int bookingId,
-        [FromBody] StaffRescheduleBookingRequestDto request,
-        CancellationToken cancellationToken)
-    {
-        var staffUserId = User.GetUserId();
-        if (staffUserId == 0) return Unauthorized();
+    //[HttpPut("bookings/{bookingId}/reschedule")]
+    //public async Task<IActionResult> StaffRescheduleBooking(
+    //    [FromRoute] int bookingId,
+    //    [FromBody] StaffRescheduleBookingRequestDto request,
+    //    CancellationToken cancellationToken)
+    //{
+    //    var staffUserId = User.GetUserId();
+    //    if (staffUserId == 0) return Unauthorized();
 
-        var command = new StaffRescheduleBookingCommand
-        {
-            BookingId = bookingId,
-            NewStartTimeUtc = request.NewStartTimeUtc,
-            NewEndTimeUtc = request.NewEndTimeUtc,
-            StaffUserId = staffUserId
-        };
+    //    var command = new StaffRescheduleBookingCommand
+    //    {
+    //        BookingId = bookingId,
+    //        NewStartTimeUtc = request.NewStartTimeUtc,
+    //        NewEndTimeUtc = request.NewEndTimeUtc,
+    //        StaffUserId = staffUserId
+    //    };
 
-        var result = await Mediator.Send(command, cancellationToken);
-        return Ok(result);
-    }
+    //    var result = await Mediator.Send(command, cancellationToken);
+    //    return Ok(result);
+    //}
 
-    [HttpPost("bookings/{bookingId}/confirm-payment")]
-    public async Task<IActionResult> StaffConfirmPayment(
-        [FromRoute] int bookingId,
-        [FromBody] StaffConfirmPaymentRequestDto request,
-        CancellationToken cancellationToken)
-    {
-        var staffUserId = User.GetUserId();
-        if (staffUserId == 0) return Unauthorized();
+    //[HttpPost("bookings/{bookingId}/confirm-payment")]
+    //public async Task<IActionResult> StaffConfirmPayment(
+    //    [FromRoute] int bookingId,
+    //    [FromBody] StaffConfirmPaymentRequestDto request,
+    //    CancellationToken cancellationToken)
+    //{
+    //    var staffUserId = User.GetUserId();
+    //    if (staffUserId == 0) return Unauthorized();
 
-        var command = new StaffConfirmPaymentCommand
-        {
-            BookingId = bookingId,
-            PaymentMethod = request.PaymentMethod,
-            TransactionId = request.TransactionId,
-            Amount = request.Amount,
-            StaffUserId = staffUserId
-        };
+    //    var command = new StaffConfirmPaymentCommand
+    //    {
+    //        BookingId = bookingId,
+    //        PaymentMethod = request.PaymentMethod,
+    //        TransactionId = request.TransactionId,
+    //        Amount = request.Amount,
+    //        StaffUserId = staffUserId
+    //    };
 
-        var result = await Mediator.Send(command, cancellationToken);
-        return Ok(result);
-    }
+    //    var result = await Mediator.Send(command, cancellationToken);
+    //    return Ok(result);
+    //}
 
     [HttpGet("support-tickets")]
     public async Task<IActionResult> GetSupportTickets(

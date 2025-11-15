@@ -33,7 +33,7 @@ public class CreatePaymentCommandHandler : IRequestHandler<CreatePaymentCommand,
     public async Task<Response<VNPayResponseDto>> Handle(CreatePaymentCommand request, CancellationToken cancellationToken)
     {
         // Kiểm tra booking có tồn tại không
-        var booking = await _bookingRepository.GetByIdAsync(request.BookingId, cancellationToken);
+        var booking = await _bookingRepository.GetBookingByIdAsync(request.BookingId);
         if (booking == null)
         {
             return new Response<VNPayResponseDto>

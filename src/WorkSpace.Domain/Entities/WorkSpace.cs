@@ -28,7 +28,7 @@ namespace WorkSpace.Domain.Entities
         // Navigation properties
         public virtual Address? Address { get; set; }
         public virtual HostProfile? Host { get; set; }
-        
+        public virtual List<WorkSpaceImage> WorkSpaceImages { get; set; } = new();
         public virtual WorkSpaceType? WorkSpaceType { get; set; }
         public virtual List<WorkSpaceRoom> WorkSpaceRooms { get; set; } = new();
         public virtual List<WorkSpaceFavorite> WorkSpaceFavorites { get; set; } = new();

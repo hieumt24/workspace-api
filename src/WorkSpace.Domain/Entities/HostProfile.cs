@@ -18,10 +18,14 @@ public class HostProfile : AuditableBaseEntity
     [MaxLength(20)]
     public string? ContactPhone { get; set; }
 
-    [Column(TypeName = "nvarchar(max)")]
-    public string? LogoUrl { get; set; }
+    [MaxLength(1000)]
+    public string? Avatar { get; set; }
+
+    [MaxLength(1000)]
+    public string? CoverPhoto { get; set; }
     public string? WebsiteUrl { get; set; }
-    
+    public string? LogoUrl { get; set; }
+
 
     public bool IsVerified { get; set; } = false;
 
