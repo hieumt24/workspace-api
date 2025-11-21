@@ -23,1860 +23,1964 @@ namespace WorkSpace.Infrastructure.Migrations
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("ClaimType")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("ClaimValue")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<int>("RoleId")
-                    .HasColumnType("int");
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("RoleId");
+                    b.HasIndex("RoleId");
 
-                b.ToTable("AppRoleClaims", (string)null);
-            });
+                    b.ToTable("AppRoleClaims", (string)null);
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("ClaimType")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ClaimType")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("ClaimValue")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ClaimValue")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<int>("UserId")
-                    .HasColumnType("int");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("UserId");
+                    b.HasIndex("UserId");
 
-                b.ToTable("AppUserClaims", (string)null);
-            });
+                    b.ToTable("AppUserClaims", (string)null);
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
-            {
-                b.Property<int>("UserId")
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                b.Property<string>("LoginProvider")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("ProviderDisplayName")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ProviderDisplayName")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("ProviderKey")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ProviderKey")
+                        .HasColumnType("nvarchar(max)");
 
-                b.HasKey("UserId");
+                    b.HasKey("UserId");
 
-                b.ToTable("AppUserLogins", (string)null);
-            });
+                    b.ToTable("AppUserLogins", (string)null);
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
-            {
-                b.Property<int>("RoleId")
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("RoleId")
+                        .HasColumnType("int");
 
-                b.Property<int>("UserId")
-                    .HasColumnType("int");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                b.HasKey("RoleId", "UserId");
+                    b.HasKey("RoleId", "UserId");
 
-                b.HasIndex("UserId");
+                    b.HasIndex("UserId");
 
-                b.ToTable("AppUserRoles", (string)null);
-            });
+                    b.ToTable("AppUserRoles", (string)null);
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
-            {
-                b.Property<int>("UserId")
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                b.Property<string>("LoginProvider")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("LoginProvider")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("Name")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("Value")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Value")
+                        .HasColumnType("nvarchar(max)");
 
-                b.HasKey("UserId");
+                    b.HasKey("UserId");
 
-                b.ToTable("AppUserTokens", (string)null);
-            });
+                    b.ToTable("AppUserTokens", (string)null);
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.Address", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("Country")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<double>("Latitude")
-                    .HasColumnType("float");
+                    b.Property<double>("Latitude")
+                        .HasColumnType("float");
 
-                b.Property<double>("Longitude")
-                    .HasColumnType("float");
+                    b.Property<double>("Longitude")
+                        .HasColumnType("float");
 
-                b.Property<string>("PostalCode")
-                    .HasMaxLength(20)
-                    .HasColumnType("nvarchar(20)");
+                    b.Property<string>("PostalCode")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
-                b.Property<string>("State")
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("State")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<string>("Street")
-                    .IsRequired()
-                    .HasMaxLength(255)
-                    .HasColumnType("nvarchar(255)");
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                b.Property<string>("Ward")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("Ward")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.ToTable("Addresses");
-            });
+                    b.ToTable("Addresses");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.Amenity", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<string>("Description")
-                    .HasMaxLength(255)
-                    .HasColumnType("nvarchar(255)");
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                b.Property<string>("IconClass")
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<string>("IconClass")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<string>("Name")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.ToTable("Amenities");
-            });
+                    b.ToTable("Amenities");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.AppRole", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("ConcurrencyStamp")
-                    .IsConcurrencyToken()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("DisplayName")
-                    .IsRequired()
-                    .HasMaxLength(200)
-                    .HasColumnType("nvarchar(200)");
+                    b.Property<string>("DisplayName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
-                b.Property<string>("Name")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    b.Property<string>("Name")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                b.Property<string>("NormalizedName")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    b.Property<string>("NormalizedName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("NormalizedName")
-                    .IsUnique()
-                    .HasDatabaseName("RoleNameIndex")
-                    .HasFilter("[NormalizedName] IS NOT NULL");
+                    b.HasIndex("NormalizedName")
+                        .IsUnique()
+                        .HasDatabaseName("RoleNameIndex")
+                        .HasFilter("[NormalizedName] IS NOT NULL");
 
-                b.ToTable("Roles", (string)null);
-            });
+                    b.ToTable("Roles", (string)null);
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.AppUser", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<int>("AccessFailedCount")
-                    .HasColumnType("int");
+                    b.Property<int>("AccessFailedCount")
+                        .HasColumnType("int");
 
-                b.Property<string>("Avatar")
-                    .HasMaxLength(1000)
-                    .HasColumnType("nvarchar(1000)");
+                    b.Property<string>("Avatar")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
-                b.Property<string>("ConcurrencyStamp")
-                    .IsConcurrencyToken()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ConcurrencyStamp")
+                        .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<DateTime>("DateCreated")
-                    .HasColumnType("datetime2");
+                    b.Property<DateTime>("DateCreated")
+                        .HasColumnType("datetime2");
 
-                b.Property<DateTime?>("Dob")
-                    .HasColumnType("datetime2");
+                    b.Property<DateTime?>("Dob")
+                        .HasColumnType("datetime2");
 
-                b.Property<string>("Email")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    b.Property<string>("Email")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                b.Property<bool>("EmailConfirmed")
-                    .HasColumnType("bit");
+                    b.Property<bool>("EmailConfirmed")
+                        .HasColumnType("bit");
 
-                b.Property<string>("FirstName")
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                b.Property<DateTime?>("LastLoginDate")
-                    .HasColumnType("datetime2");
+                    b.Property<DateTime?>("LastLoginDate")
+                        .HasColumnType("datetime2");
 
-                b.Property<string>("LastName")
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("LastName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<bool>("LockoutEnabled")
-                    .HasColumnType("bit");
+                    b.Property<bool>("LockoutEnabled")
+                        .HasColumnType("bit");
 
-                b.Property<DateTimeOffset?>("LockoutEnd")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LockoutEnd")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<string>("NormalizedEmail")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    b.Property<string>("NormalizedEmail")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                b.Property<string>("NormalizedUserName")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    b.Property<string>("NormalizedUserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                b.Property<string>("PasswordHash")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("PhoneNumber")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("PhoneNumber")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<bool>("PhoneNumberConfirmed")
-                    .HasColumnType("bit");
+                    b.Property<bool>("PhoneNumberConfirmed")
+                        .HasColumnType("bit");
 
-                b.Property<string>("RefreshToken")
-                    .HasMaxLength(150)
-                    .HasColumnType("nvarchar(150)");
+                    b.Property<string>("RefreshToken")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
 
-                b.Property<DateTime?>("RefreshTokenExpiryTime")
-                    .HasColumnType("datetime2");
+                    b.Property<DateTime?>("RefreshTokenExpiryTime")
+                        .HasColumnType("datetime2");
 
-                b.Property<string>("SecurityStamp")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("SecurityStamp")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<bool>("TwoFactorEnabled")
-                    .HasColumnType("bit");
+                    b.Property<bool>("TwoFactorEnabled")
+                        .HasColumnType("bit");
 
-                b.Property<string>("UserName")
-                    .HasMaxLength(256)
-                    .HasColumnType("nvarchar(256)");
+                    b.Property<string>("UserName")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("NormalizedEmail")
-                    .HasDatabaseName("EmailIndex");
+                    b.HasIndex("NormalizedEmail")
+                        .HasDatabaseName("EmailIndex");
 
-                b.HasIndex("NormalizedUserName")
-                    .IsUnique()
-                    .HasDatabaseName("UserNameIndex")
-                    .HasFilter("[NormalizedUserName] IS NOT NULL");
+                    b.HasIndex("NormalizedUserName")
+                        .IsUnique()
+                        .HasDatabaseName("UserNameIndex")
+                        .HasFilter("[NormalizedUserName] IS NOT NULL");
 
-                b.ToTable("Users", (string)null);
-            });
+                    b.ToTable("Users", (string)null);
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.BlockedTimeSlot", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<DateTime>("CreatedAt")
-                    .HasColumnType("datetime2");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTime>("EndTime")
-                    .HasColumnType("datetime2");
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime2");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<string>("Reason")
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)");
+                    b.Property<string>("Reason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                b.Property<DateTime>("StartTime")
-                    .HasColumnType("datetime2");
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime2");
 
-                b.Property<int>("WorkSpaceRoomId")
-                    .HasColumnType("int");
+                    b.Property<int>("WorkSpaceRoomId")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("WorkSpaceRoomId");
+                    b.HasIndex("WorkSpaceRoomId");
 
-                b.ToTable("BlockedTimeSlots");
-            });
+                    b.ToTable("BlockedTimeSlots");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.Booking", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("BookingCode")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<string>("BookingCode")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.Property<int>("BookingStatusId")
-                    .HasColumnType("int");
+                    b.Property<int>("BookingStatusId")
+                        .HasColumnType("int");
 
-                b.Property<string>("CancellationReason")
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)");
+                    b.Property<string>("CancellationReason")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                b.Property<DateTime?>("CheckedInAt")
-                    .HasColumnType("datetime2");
+                    b.Property<DateTime?>("CheckedInAt")
+                        .HasColumnType("datetime2");
 
-                b.Property<DateTime?>("CheckedOutAt")
-                    .HasColumnType("datetime2");
+                    b.Property<DateTime?>("CheckedOutAt")
+                        .HasColumnType("datetime2");
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<string>("Currency")
-                    .HasMaxLength(3)
-                    .HasColumnType("nvarchar(3)");
+                    b.Property<string>("Currency")
+                        .HasMaxLength(3)
+                        .HasColumnType("nvarchar(3)");
 
-                b.Property<int?>("CustomerId")
-                    .HasColumnType("int");
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
 
-                b.Property<DateTime>("EndTimeUtc")
-                    .HasColumnType("datetime2");
+                    b.Property<DateTime>("EndTimeUtc")
+                        .HasColumnType("datetime2");
 
-                b.Property<decimal>("FinalAmount")
-                    .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("FinalAmount")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<int?>("GuestId")
-                    .HasColumnType("int");
+                    b.Property<int?>("GuestId")
+                        .HasColumnType("int");
 
-                b.Property<bool>("IsReviewed")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsReviewed")
+                        .HasColumnType("bit");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int>("NumberOfParticipants")
-                    .HasColumnType("int");
+                    b.Property<int>("NumberOfParticipants")
+                        .HasColumnType("int");
 
-                b.Property<int?>("PaymentMethodID")
-                    .HasColumnType("int");
+                    b.Property<int?>("PaymentMethodID")
+                        .HasColumnType("int");
 
-                b.Property<decimal>("ServiceFee")
-                    .HasColumnType("decimal(18,2)");
+                    b.Property<string>("PaymentTransactionId")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                b.Property<string>("SpecialRequests")
-                    .HasMaxLength(1000)
-                    .HasColumnType("nvarchar(1000)");
+                    b.Property<decimal>("ServiceFee")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<DateTime>("StartTimeUtc")
-                    .HasColumnType("datetime2");
+                    b.Property<string>("SpecialRequests")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
-                b.Property<decimal>("TaxAmount")
-                    .HasColumnType("decimal(18,2)");
+                    b.Property<DateTime>("StartTimeUtc")
+                        .HasColumnType("datetime2");
 
-                b.Property<decimal>("TotalPrice")
-                    .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("TaxAmount")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<int>("WorkSpaceRoomId")
-                    .HasColumnType("int");
+                    b.Property<decimal>("TotalPrice")
+                        .HasColumnType("decimal(18,2)");
 
-                b.HasKey("Id");
+                    b.Property<int>("WorkSpaceRoomId")
+                        .HasColumnType("int");
 
-                b.HasIndex("BookingCode")
-                    .IsUnique();
+                    b.HasKey("Id");
 
-                b.HasIndex("BookingStatusId");
+                    b.HasIndex("BookingCode")
+                        .IsUnique();
 
-                b.HasIndex("CustomerId");
+                    b.HasIndex("BookingStatusId");
 
-                b.HasIndex("GuestId");
+                    b.HasIndex("CustomerId");
 
-                b.HasIndex("PaymentMethodID");
+                    b.HasIndex("GuestId");
 
-                b.HasIndex("WorkSpaceRoomId");
+                    b.HasIndex("PaymentMethodID");
 
-                b.ToTable("Bookings");
-            });
+                    b.HasIndex("WorkSpaceRoomId");
+
+                    b.ToTable("Bookings");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.BookingParticipant", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<int>("BookingId")
-                    .HasColumnType("int");
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<string>("Email")
-                    .HasMaxLength(255)
-                    .HasColumnType("nvarchar(255)");
+                    b.Property<string>("Email")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                b.Property<string>("FullName")
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("FullName")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("BookingId");
+                    b.HasIndex("BookingId");
 
-                b.ToTable("BookingParticipants");
-            });
+                    b.ToTable("BookingParticipants");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.BookingStatus", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<string>("Description")
-                    .HasMaxLength(255)
-                    .HasColumnType("nvarchar(255)");
+                    b.Property<string>("Description")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<string>("Name")
-                    .IsRequired()
-                    .HasMaxLength(50)
-                    .HasColumnType("nvarchar(50)");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.ToTable("BookingStatuses");
-            });
+                    b.ToTable("BookingStatuses");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.ChatMessage", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("Content")
-                    .IsRequired()
-                    .HasMaxLength(5000)
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(5000)
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<bool>("IsRead")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<DateTimeOffset?>("ReadAtUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("ReadAtUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int>("SenderId")
-                    .HasColumnType("int");
+                    b.Property<int>("SenderId")
+                        .HasColumnType("int");
 
-                b.Property<int>("ThreadId")
-                    .HasColumnType("int");
+                    b.Property<int>("ThreadId")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("SenderId");
+                    b.HasIndex("SenderId");
 
-                b.HasIndex("ThreadId");
+                    b.HasIndex("ThreadId");
 
-                b.ToTable("ChatMessages");
-            });
+                    b.ToTable("ChatMessages");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.ChatThread", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<int?>("BookingId")
-                    .HasColumnType("int");
+                    b.Property<int?>("BookingId")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<int?>("CustomerId")
-                    .HasColumnType("int");
+                    b.Property<int?>("CustomerId")
+                        .HasColumnType("int");
 
-                b.Property<bool>("HasUnreadMessages")
-                    .HasColumnType("bit");
+                    b.Property<bool>("HasUnreadMessages")
+                        .HasColumnType("bit");
 
-                b.Property<int?>("HostUserId")
-                    .HasColumnType("int");
+                    b.Property<int?>("HostUserId")
+                        .HasColumnType("int");
 
-                b.Property<string>("LastMessagePreview")
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)");
+                    b.Property<string>("LastMessagePreview")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                b.Property<DateTimeOffset?>("LastMessageUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastMessageUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<string>("Title")
-                    .HasMaxLength(255)
-                    .HasColumnType("nvarchar(255)");
+                    b.Property<string>("Title")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("BookingId");
+                    b.HasIndex("BookingId");
 
-                b.HasIndex("CustomerId");
+                    b.HasIndex("CustomerId");
 
-                b.HasIndex("HostUserId");
+                    b.HasIndex("HostUserId");
 
-                b.ToTable("ChatThreads");
-            });
+                    b.ToTable("ChatThreads");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.Guest", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("Email")
-                    .IsRequired()
-                    .HasMaxLength(255)
-                    .HasColumnType("nvarchar(255)");
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                b.Property<string>("FirstName")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<string>("LastName")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<string>("PhoneNumber")
-                    .HasMaxLength(20)
-                    .HasColumnType("nvarchar(20)");
+                    b.Property<string>("PhoneNumber")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.ToTable("Guests");
-            });
+                    b.ToTable("Guests");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.HostProfile", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("Avatar")
-                    .HasMaxLength(1000)
-                    .HasColumnType("nvarchar(1000)");
+                    b.Property<string>("Avatar")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
-                b.Property<string>("CompanyName")
-                    .HasMaxLength(255)
-                    .HasColumnType("nvarchar(255)");
+                    b.Property<string>("CompanyName")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                b.Property<string>("ContactPhone")
-                    .HasMaxLength(20)
-                    .HasColumnType("nvarchar(20)");
+                    b.Property<string>("ContactPhone")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
 
-                b.Property<string>("CoverPhoto")
-                    .HasMaxLength(1000)
-                    .HasColumnType("nvarchar(1000)");
+                    b.Property<string>("CoverPhoto")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<string>("Description")
-                    .HasMaxLength(1000)
-                    .HasColumnType("nvarchar(1000)");
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
-                b.Property<bool>("IsVerified")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<string>("LogoUrl")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("LogoUrl")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<int>("UserId")
-                    .HasColumnType("int");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                b.Property<string>("WebsiteUrl")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("WebsiteUrl")
+                        .HasColumnType("nvarchar(max)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("UserId")
-                    .IsUnique();
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
-                b.ToTable("HostProfiles");
-            });
+                    b.ToTable("HostProfiles");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.PaymentMethod", b =>
-            {
-                b.Property<int>("PaymentMethodID")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("PaymentMethodID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentMethodID"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PaymentMethodID"));
 
-                b.Property<decimal>("PaymentCost")
-                    .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("PaymentCost")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<string>("PaymentMethodName")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("PaymentMethodName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                b.HasKey("PaymentMethodID");
+                    b.HasKey("PaymentMethodID");
 
-                b.ToTable("PaymentMethods");
-            });
+                    b.ToTable("PaymentMethods");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.Post", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("ContentHtml")
-                    .HasMaxLength(2147483647)
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ContentHtml")
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<string>("ContentMarkdown")
-                    .HasMaxLength(2147483647)
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("ContentMarkdown")
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<string>("ImageData")
-                    .HasMaxLength(1000)
-                    .HasColumnType("nvarchar(1000)");
+                    b.Property<string>("ImageData")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
-                b.Property<bool>("IsFeatured")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsFeatured")
+                        .HasColumnType("bit");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<string>("Title")
-                    .HasMaxLength(200)
-                    .HasColumnType("nvarchar(200)");
+                    b.Property<string>("Title")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
 
-                b.Property<int>("UserId")
-                    .HasColumnType("int");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("UserId");
+                    b.HasIndex("UserId");
 
-                b.ToTable("Posts");
-            });
+                    b.ToTable("Posts");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.Promotion", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("Code")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<string>("Description")
-                    .IsRequired()
-                    .HasMaxLength(255)
-                    .HasColumnType("nvarchar(255)");
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                b.Property<string>("DiscountType")
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("DiscountType")
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<decimal>("DiscountValue")
-                    .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("DiscountValue")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<DateTime>("EndDate")
-                    .HasColumnType("datetime2");
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<double>("MinimumAmount")
-                    .HasColumnType("float");
+                    b.Property<double>("MinimumAmount")
+                        .HasColumnType("float");
 
-                b.Property<DateTime>("StartDate")
-                    .HasColumnType("datetime2");
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
 
-                b.Property<int>("UsageLimit")
-                    .HasColumnType("int");
+                    b.Property<int>("UsageLimit")
+                        .HasColumnType("int");
 
-                b.Property<int>("UsedCount")
-                    .HasColumnType("int");
+                    b.Property<int>("UsedCount")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.ToTable("Promotions");
-            });
+                    b.ToTable("Promotions");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.PromotionUsage", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<int>("BookingId")
-                    .HasColumnType("int");
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<decimal>("DiscountAmount")
-                    .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("DiscountAmount")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int>("PromotionId")
-                    .HasColumnType("int");
+                    b.Property<int>("PromotionId")
+                        .HasColumnType("int");
 
-                b.Property<DateTime>("UsedAt")
-                    .HasColumnType("datetime2");
+                    b.Property<DateTime>("UsedAt")
+                        .HasColumnType("datetime2");
 
-                b.Property<int>("UserId")
-                    .HasColumnType("int");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("BookingId");
+                    b.HasIndex("BookingId");
 
-                b.HasIndex("PromotionId");
+                    b.HasIndex("PromotionId");
 
-                b.HasIndex("UserId");
+                    b.HasIndex("UserId");
 
-                b.ToTable("PromotionUsages");
-            });
+                    b.ToTable("PromotionUsages");
+                });
+
+            modelBuilder.Entity("WorkSpace.Domain.Entities.RefundRequest", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("BasePrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("CalculatedRefundAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
+
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<decimal>("NonRefundableFee")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTimeOffset?>("OwnerConfirmationTimeUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int?>("OwnerId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("OwnerNotes")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTimeOffset?>("ProcessedTimeUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<decimal>("RefundPercentage")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("RefundTransactionId")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTimeOffset>("RequestTimeUtc")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<int>("RequestingStaffId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StaffNotes")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("SystemCut")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BookingId")
+                        .IsUnique();
+
+                    b.HasIndex("RequestingStaffId");
+
+                    b.ToTable("RefundRequests");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.Review", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<int>("BookingId")
-                    .HasColumnType("int");
+                    b.Property<int>("BookingId")
+                        .HasColumnType("int");
 
-                b.Property<string>("Comment")
-                    .HasMaxLength(1000)
-                    .HasColumnType("nvarchar(1000)");
+                    b.Property<string>("Comment")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<bool>("IsPublic")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsPublic")
+                        .HasColumnType("bit");
 
-                b.Property<bool>("IsVerified")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int>("Rating")
-                    .HasColumnType("int");
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
 
-                b.Property<int>("UserId")
-                    .HasColumnType("int");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                b.Property<int>("WorkSpaceRoomId")
-                    .HasColumnType("int");
+                    b.Property<int>("WorkSpaceRoomId")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("BookingId")
-                    .IsUnique();
+                    b.HasIndex("BookingId")
+                        .IsUnique();
 
-                b.HasIndex("UserId");
+                    b.HasIndex("UserId");
 
-                b.HasIndex("WorkSpaceRoomId");
+                    b.HasIndex("WorkSpaceRoomId");
 
-                b.ToTable("Reviews");
-            });
+                    b.ToTable("Reviews");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.SupportTicket", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<int?>("AssignedToStaffId")
-                    .HasColumnType("int");
+                    b.Property<int?>("AssignedToStaffId")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<string>("Message")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<int>("Status")
-                    .HasColumnType("int");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
-                b.Property<string>("Subject")
-                    .IsRequired()
-                    .HasMaxLength(255)
-                    .HasColumnType("nvarchar(255)");
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                b.Property<int>("SubmittedByUserId")
-                    .HasColumnType("int");
+                    b.Property<int>("SubmittedByUserId")
+                        .HasColumnType("int");
 
-                b.Property<int>("TicketType")
-                    .HasColumnType("int");
+                    b.Property<int>("TicketType")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("AssignedToStaffId");
+                    b.HasIndex("AssignedToStaffId");
 
-                b.HasIndex("SubmittedByUserId");
+                    b.HasIndex("SubmittedByUserId");
 
-                b.ToTable("SupportTickets");
-            });
+                    b.ToTable("SupportTickets");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.SupportTicketReply", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<string>("Message")
-                    .IsRequired()
-                    .HasColumnType("nvarchar(max)");
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                b.Property<int>("RepliedByUserId")
-                    .HasColumnType("int");
+                    b.Property<int>("RepliedByUserId")
+                        .HasColumnType("int");
 
-                b.Property<int>("TicketId")
-                    .HasColumnType("int");
+                    b.Property<int>("TicketId")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("RepliedByUserId");
+                    b.HasIndex("RepliedByUserId");
 
-                b.HasIndex("TicketId");
+                    b.HasIndex("TicketId");
 
-                b.ToTable("SupportTicketReplies");
-            });
+                    b.ToTable("SupportTicketReplies");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.WorkSpace", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<int>("AddressId")
-                    .HasColumnType("int");
+                    b.Property<int>("AddressId")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<string>("Description")
-                    .HasMaxLength(1000)
-                    .HasColumnType("nvarchar(1000)");
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
-                b.Property<int>("HostId")
-                    .HasColumnType("int");
+                    b.Property<int>("HostId")
+                        .HasColumnType("int");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                b.Property<bool>("IsVerified")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<string>("Title")
-                    .IsRequired()
-                    .HasMaxLength(255)
-                    .HasColumnType("nvarchar(255)");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                b.Property<int?>("WorkSpaceTypeId")
-                    .IsRequired()
-                    .HasColumnType("int");
+                    b.Property<int?>("WorkSpaceTypeId")
+                        .IsRequired()
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("AddressId");
+                    b.HasIndex("AddressId");
 
-                b.HasIndex("HostId");
+                    b.HasIndex("HostId");
 
-                b.HasIndex("WorkSpaceTypeId");
+                    b.HasIndex("WorkSpaceTypeId");
 
-                b.ToTable("Workspaces");
-            });
+                    b.ToTable("Workspaces");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.WorkSpaceFavorite", b =>
-            {
-                b.Property<int>("WorkspaceId")
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("WorkspaceId")
+                        .HasColumnType("int");
 
-                b.Property<int>("UserId")
-                    .HasColumnType("int");
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<int>("Id")
-                    .HasColumnType("int");
+                    b.Property<int>("Id")
+                        .HasColumnType("int");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.HasKey("WorkspaceId", "UserId");
+                    b.HasKey("WorkspaceId", "UserId");
 
-                b.HasIndex("UserId");
+                    b.HasIndex("UserId");
 
-                b.ToTable("WorkSpaceFavorites");
-            });
+                    b.ToTable("WorkSpaceFavorites");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.WorkSpaceImage", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("Caption")
-                    .HasMaxLength(255)
-                    .HasColumnType("nvarchar(255)");
+                    b.Property<string>("Caption")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<string>("ImageUrl")
-                    .IsRequired()
-                    .HasMaxLength(1000)
-                    .HasColumnType("nvarchar(1000)");
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int>("WorkSpaceId")
-                    .HasColumnType("int");
+                    b.Property<int>("WorkSpaceId")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("WorkSpaceId");
+                    b.HasIndex("WorkSpaceId");
 
-                b.ToTable("WorkSpaceImage");
-            });
+                    b.ToTable("WorkSpaceImage");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.WorkSpaceRoom", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<double>("Area")
-                    .HasColumnType("float");
+                    b.Property<double>("Area")
+                        .HasColumnType("float");
 
-                b.Property<int>("Capacity")
-                    .HasColumnType("int");
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<string>("Description")
-                    .HasMaxLength(1000)
-                    .HasColumnType("nvarchar(1000)");
+                    b.Property<string>("Description")
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
-                b.Property<bool>("IsActive")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
 
-                b.Property<bool>("IsVerified")
-                    .HasColumnType("bit");
+                    b.Property<bool>("IsVerified")
+                        .HasColumnType("bit");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<decimal>("PricePerDay")
-                    .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("PricePerDay")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<decimal>("PricePerHour")
-                    .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("PricePerHour")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<decimal>("PricePerMonth")
-                    .HasColumnType("decimal(18,2)");
+                    b.Property<decimal>("PricePerMonth")
+                        .HasColumnType("decimal(18,2)");
 
-                b.Property<string>("Title")
-                    .IsRequired()
-                    .HasMaxLength(255)
-                    .HasColumnType("nvarchar(255)");
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                b.Property<int>("WorkSpaceId")
-                    .HasColumnType("int");
+                    b.Property<int>("WorkSpaceId")
+                        .HasColumnType("int");
 
-                b.Property<int>("WorkSpaceRoomTypeId")
-                    .HasColumnType("int");
+                    b.Property<int>("WorkSpaceRoomTypeId")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("WorkSpaceId");
+                    b.HasIndex("WorkSpaceId");
 
-                b.HasIndex("WorkSpaceRoomTypeId");
+                    b.HasIndex("WorkSpaceRoomTypeId");
 
-                b.ToTable("WorkSpaceRooms");
-            });
+                    b.ToTable("WorkSpaceRooms");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.WorkSpaceRoomImage", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<string>("Caption")
-                    .HasMaxLength(255)
-                    .HasColumnType("nvarchar(255)");
+                    b.Property<string>("Caption")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<string>("ImageUrl")
-                    .IsRequired()
-                    .HasMaxLength(1000)
-                    .HasColumnType("nvarchar(1000)");
+                    b.Property<string>("ImageUrl")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int>("WorkSpaceRoomId")
-                    .HasColumnType("int");
+                    b.Property<int>("WorkSpaceRoomId")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("WorkSpaceRoomId");
+                    b.HasIndex("WorkSpaceRoomId");
 
-                b.ToTable("WorkSpaceRoomImages");
-            });
+                    b.ToTable("WorkSpaceRoomImages");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.WorkSpaceRoomType", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<string>("Description")
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)");
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<string>("Name")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.ToTable("WorkSpaceRoomTypes");
-            });
+                    b.ToTable("WorkSpaceRoomTypes");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.WorkSpaceType", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<DateTimeOffset>("CreateUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset>("CreateUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<int?>("CreatedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("CreatedById")
+                        .HasColumnType("int");
 
-                b.Property<string>("Description")
-                    .HasMaxLength(500)
-                    .HasColumnType("nvarchar(500)");
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
 
-                b.Property<int?>("LastModifiedById")
-                    .HasColumnType("int");
+                    b.Property<int?>("LastModifiedById")
+                        .HasColumnType("int");
 
-                b.Property<DateTimeOffset?>("LastModifiedUtc")
-                    .HasColumnType("datetimeoffset");
+                    b.Property<DateTimeOffset?>("LastModifiedUtc")
+                        .HasColumnType("datetimeoffset");
 
-                b.Property<string>("Name")
-                    .IsRequired()
-                    .HasMaxLength(100)
-                    .HasColumnType("nvarchar(100)");
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.ToTable("WorkSpaceTypes");
-            });
+                    b.ToTable("WorkSpaceTypes");
+                });
 
             modelBuilder.Entity("WorkSpaceRoomAmenity", b =>
-            {
-                b.Property<int>("Id")
-                    .ValueGeneratedOnAdd()
-                    .HasColumnType("int");
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                b.Property<int>("AmenityId")
-                    .HasColumnType("int");
+                    b.Property<int>("AmenityId")
+                        .HasColumnType("int");
 
-                b.Property<int>("WorkSpaceRoomId")
-                    .HasColumnType("int");
+                    b.Property<int>("WorkSpaceRoomId")
+                        .HasColumnType("int");
 
-                b.HasKey("Id");
+                    b.HasKey("Id");
 
-                b.HasIndex("AmenityId");
+                    b.HasIndex("AmenityId");
 
-                b.HasIndex("WorkSpaceRoomId", "AmenityId")
-                    .IsUnique();
+                    b.HasIndex("WorkSpaceRoomId", "AmenityId")
+                        .IsUnique();
 
-                b.ToTable("WorkSpaceRoomAmenities");
-            });
+                    b.ToTable("WorkSpaceRoomAmenities");
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.AppRole", null)
-                    .WithMany()
-                    .HasForeignKey("RoleId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.AppRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<int>", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.AppUser", null)
-                    .WithMany()
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<int>", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.AppUser", null)
-                    .WithMany()
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.AppRole", null)
-                    .WithMany()
-                    .HasForeignKey("RoleId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.AppRole", null)
+                        .WithMany()
+                        .HasForeignKey("RoleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.HasOne("WorkSpace.Domain.Entities.AppUser", null)
-                    .WithMany()
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<int>", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.AppUser", null)
-                    .WithMany()
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
-            });
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.BlockedTimeSlot", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.WorkSpaceRoom", "WorkSpaceRoom")
-                    .WithMany("BlockedTimeSlots")
-                    .HasForeignKey("WorkSpaceRoomId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.WorkSpaceRoom", "WorkSpaceRoom")
+                        .WithMany("BlockedTimeSlots")
+                        .HasForeignKey("WorkSpaceRoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.Navigation("WorkSpaceRoom");
-            });
+                    b.Navigation("WorkSpaceRoom");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.Booking", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.BookingStatus", "BookingStatus")
-                    .WithMany("Bookings")
-                    .HasForeignKey("BookingStatusId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.BookingStatus", "BookingStatus")
+                        .WithMany("Bookings")
+                        .HasForeignKey("BookingStatusId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.HasOne("WorkSpace.Domain.Entities.AppUser", "Customer")
-                    .WithMany("Bookings")
-                    .HasForeignKey("CustomerId")
-                    .OnDelete(DeleteBehavior.Restrict);
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "Customer")
+                        .WithMany("Bookings")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                b.HasOne("WorkSpace.Domain.Entities.Guest", "Guest")
-                    .WithMany("Bookings")
-                    .HasForeignKey("GuestId")
-                    .OnDelete(DeleteBehavior.Restrict);
+                    b.HasOne("WorkSpace.Domain.Entities.Guest", "Guest")
+                        .WithMany("Bookings")
+                        .HasForeignKey("GuestId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                b.HasOne("WorkSpace.Domain.Entities.PaymentMethod", "PaymentMethod")
-                    .WithMany("Bookings")
-                    .HasForeignKey("PaymentMethodID")
-                    .OnDelete(DeleteBehavior.Restrict);
+                    b.HasOne("WorkSpace.Domain.Entities.PaymentMethod", "PaymentMethod")
+                        .WithMany("Bookings")
+                        .HasForeignKey("PaymentMethodID")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                b.HasOne("WorkSpace.Domain.Entities.WorkSpaceRoom", "WorkSpaceRoom")
-                    .WithMany("Bookings")
-                    .HasForeignKey("WorkSpaceRoomId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                    b.HasOne("WorkSpace.Domain.Entities.WorkSpaceRoom", "WorkSpaceRoom")
+                        .WithMany("Bookings")
+                        .HasForeignKey("WorkSpaceRoomId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.Navigation("BookingStatus");
+                    b.Navigation("BookingStatus");
 
-                b.Navigation("Customer");
+                    b.Navigation("Customer");
 
-                b.Navigation("Guest");
+                    b.Navigation("Guest");
 
-                b.Navigation("PaymentMethod");
+                    b.Navigation("PaymentMethod");
 
-                b.Navigation("WorkSpaceRoom");
-            });
+                    b.Navigation("WorkSpaceRoom");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.BookingParticipant", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.Booking", "Booking")
-                    .WithMany("BookingParticipants")
-                    .HasForeignKey("BookingId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.Booking", "Booking")
+                        .WithMany("BookingParticipants")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.Navigation("Booking");
-            });
+                    b.Navigation("Booking");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.ChatMessage", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.AppUser", "Sender")
-                    .WithMany("ChatMessages")
-                    .HasForeignKey("SenderId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "Sender")
+                        .WithMany("ChatMessages")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.HasOne("WorkSpace.Domain.Entities.ChatThread", "Thread")
-                    .WithMany("Messages")
-                    .HasForeignKey("ThreadId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.HasOne("WorkSpace.Domain.Entities.ChatThread", "Thread")
+                        .WithMany("Messages")
+                        .HasForeignKey("ThreadId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.Navigation("Sender");
+                    b.Navigation("Sender");
 
-                b.Navigation("Thread");
-            });
+                    b.Navigation("Thread");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.ChatThread", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.Booking", "Booking")
-                    .WithMany("ChatThreads")
-                    .HasForeignKey("BookingId")
-                    .OnDelete(DeleteBehavior.NoAction);
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.Booking", "Booking")
+                        .WithMany("ChatThreads")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                b.HasOne("WorkSpace.Domain.Entities.AppUser", "Customer")
-                    .WithMany("CustomerChatThreads")
-                    .HasForeignKey("CustomerId")
-                    .OnDelete(DeleteBehavior.NoAction);
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "Customer")
+                        .WithMany("CustomerChatThreads")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                b.HasOne("WorkSpace.Domain.Entities.AppUser", "HostUser")
-                    .WithMany("HostChatThreads")
-                    .HasForeignKey("HostUserId")
-                    .OnDelete(DeleteBehavior.NoAction);
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "HostUser")
+                        .WithMany("HostChatThreads")
+                        .HasForeignKey("HostUserId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
-                b.Navigation("Booking");
+                    b.Navigation("Booking");
 
-                b.Navigation("Customer");
+                    b.Navigation("Customer");
 
-                b.Navigation("HostUser");
-            });
+                    b.Navigation("HostUser");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.HostProfile", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.AppUser", "User")
-                    .WithOne("HostProfile")
-                    .HasForeignKey("WorkSpace.Domain.Entities.HostProfile", "UserId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "User")
+                        .WithOne("HostProfile")
+                        .HasForeignKey("WorkSpace.Domain.Entities.HostProfile", "UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.Navigation("User");
-            });
+                    b.Navigation("User");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.Post", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.AppUser", "User")
-                    .WithMany("Posts")
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "User")
+                        .WithMany("Posts")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.Navigation("User");
-            });
+                    b.Navigation("User");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.PromotionUsage", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.Booking", "Booking")
-                    .WithMany("PromotionUsages")
-                    .HasForeignKey("BookingId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.Booking", "Booking")
+                        .WithMany("PromotionUsages")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.HasOne("WorkSpace.Domain.Entities.Promotion", "Promotion")
-                    .WithMany("PromotionUsages")
-                    .HasForeignKey("PromotionId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                    b.HasOne("WorkSpace.Domain.Entities.Promotion", "Promotion")
+                        .WithMany("PromotionUsages")
+                        .HasForeignKey("PromotionId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.HasOne("WorkSpace.Domain.Entities.AppUser", "User")
-                    .WithMany("PromotionUsages")
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "User")
+                        .WithMany("PromotionUsages")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.Navigation("Booking");
+                    b.Navigation("Booking");
 
-                b.Navigation("Promotion");
+                    b.Navigation("Promotion");
 
-                b.Navigation("User");
-            });
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("WorkSpace.Domain.Entities.RefundRequest", b =>
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.Booking", "Booking")
+                        .WithOne("RefundRequest")
+                        .HasForeignKey("WorkSpace.Domain.Entities.RefundRequest", "BookingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "RequestingStaff")
+                        .WithMany()
+                        .HasForeignKey("RequestingStaffId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Booking");
+
+                    b.Navigation("RequestingStaff");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.Review", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.Booking", "Booking")
-                    .WithMany("Reviews")
-                    .HasForeignKey("BookingId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.Booking", "Booking")
+                        .WithMany("Reviews")
+                        .HasForeignKey("BookingId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.HasOne("WorkSpace.Domain.Entities.AppUser", "User")
-                    .WithMany("Reviews")
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "User")
+                        .WithMany("Reviews")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.HasOne("WorkSpace.Domain.Entities.WorkSpaceRoom", "WorkSpaceRoom")
-                    .WithMany("Reviews")
-                    .HasForeignKey("WorkSpaceRoomId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                    b.HasOne("WorkSpace.Domain.Entities.WorkSpaceRoom", "WorkSpaceRoom")
+                        .WithMany("Reviews")
+                        .HasForeignKey("WorkSpaceRoomId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.Navigation("Booking");
+                    b.Navigation("Booking");
 
-                b.Navigation("User");
+                    b.Navigation("User");
 
-                b.Navigation("WorkSpaceRoom");
-            });
+                    b.Navigation("WorkSpaceRoom");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.SupportTicket", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.AppUser", "AssignedToStaff")
-                    .WithMany()
-                    .HasForeignKey("AssignedToStaffId")
-                    .OnDelete(DeleteBehavior.Restrict);
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "AssignedToStaff")
+                        .WithMany()
+                        .HasForeignKey("AssignedToStaffId")
+                        .OnDelete(DeleteBehavior.Restrict);
 
-                b.HasOne("WorkSpace.Domain.Entities.AppUser", "SubmittedByUser")
-                    .WithMany()
-                    .HasForeignKey("SubmittedByUserId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "SubmittedByUser")
+                        .WithMany()
+                        .HasForeignKey("SubmittedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.Navigation("AssignedToStaff");
+                    b.Navigation("AssignedToStaff");
 
-                b.Navigation("SubmittedByUser");
-            });
+                    b.Navigation("SubmittedByUser");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.SupportTicketReply", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.AppUser", "RepliedByUser")
-                    .WithMany()
-                    .HasForeignKey("RepliedByUserId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "RepliedByUser")
+                        .WithMany()
+                        .HasForeignKey("RepliedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.HasOne("WorkSpace.Domain.Entities.SupportTicket", "Ticket")
-                    .WithMany("Replies")
-                    .HasForeignKey("TicketId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.HasOne("WorkSpace.Domain.Entities.SupportTicket", "Ticket")
+                        .WithMany("Replies")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.Navigation("RepliedByUser");
+                    b.Navigation("RepliedByUser");
 
-                b.Navigation("Ticket");
-            });
+                    b.Navigation("Ticket");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.WorkSpace", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.Address", "Address")
-                    .WithMany("Workspaces")
-                    .HasForeignKey("AddressId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.Address", "Address")
+                        .WithMany("Workspaces")
+                        .HasForeignKey("AddressId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.HasOne("WorkSpace.Domain.Entities.HostProfile", "Host")
-                    .WithMany("Workspaces")
-                    .HasForeignKey("HostId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                    b.HasOne("WorkSpace.Domain.Entities.HostProfile", "Host")
+                        .WithMany("Workspaces")
+                        .HasForeignKey("HostId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.HasOne("WorkSpace.Domain.Entities.WorkSpaceType", "WorkSpaceType")
-                    .WithMany("Workspaces")
-                    .HasForeignKey("WorkSpaceTypeId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                    b.HasOne("WorkSpace.Domain.Entities.WorkSpaceType", "WorkSpaceType")
+                        .WithMany("Workspaces")
+                        .HasForeignKey("WorkSpaceTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.Navigation("Address");
+                    b.Navigation("Address");
 
-                b.Navigation("Host");
+                    b.Navigation("Host");
 
-                b.Navigation("WorkSpaceType");
-            });
+                    b.Navigation("WorkSpaceType");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.WorkSpaceFavorite", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.AppUser", "User")
-                    .WithMany("WorkSpaceFavorites")
-                    .HasForeignKey("UserId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.AppUser", "User")
+                        .WithMany("WorkSpaceFavorites")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.HasOne("WorkSpace.Domain.Entities.WorkSpace", "Workspace")
-                    .WithMany("WorkSpaceFavorites")
-                    .HasForeignKey("WorkspaceId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.HasOne("WorkSpace.Domain.Entities.WorkSpace", "Workspace")
+                        .WithMany("WorkSpaceFavorites")
+                        .HasForeignKey("WorkspaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.Navigation("User");
+                    b.Navigation("User");
 
-                b.Navigation("Workspace");
-            });
+                    b.Navigation("Workspace");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.WorkSpaceImage", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.WorkSpace", "WorkSpace")
-                    .WithMany("WorkSpaceImages")
-                    .HasForeignKey("WorkSpaceId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.WorkSpace", "WorkSpace")
+                        .WithMany("WorkSpaceImages")
+                        .HasForeignKey("WorkSpaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.Navigation("WorkSpace");
-            });
+                    b.Navigation("WorkSpace");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.WorkSpaceRoom", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.WorkSpace", "WorkSpace")
-                    .WithMany("WorkSpaceRooms")
-                    .HasForeignKey("WorkSpaceId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.WorkSpace", "WorkSpace")
+                        .WithMany("WorkSpaceRooms")
+                        .HasForeignKey("WorkSpaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.HasOne("WorkSpace.Domain.Entities.WorkSpaceRoomType", "WorkSpaceRoomType")
-                    .WithMany("WorkSpaceRooms")
-                    .HasForeignKey("WorkSpaceRoomTypeId")
-                    .OnDelete(DeleteBehavior.Restrict)
-                    .IsRequired();
+                    b.HasOne("WorkSpace.Domain.Entities.WorkSpaceRoomType", "WorkSpaceRoomType")
+                        .WithMany("WorkSpaceRooms")
+                        .HasForeignKey("WorkSpaceRoomTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
 
-                b.Navigation("WorkSpace");
+                    b.Navigation("WorkSpace");
 
-                b.Navigation("WorkSpaceRoomType");
-            });
+                    b.Navigation("WorkSpaceRoomType");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.WorkSpaceRoomImage", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.WorkSpaceRoom", "WorkSpaceRoom")
-                    .WithMany("WorkSpaceRoomImages")
-                    .HasForeignKey("WorkSpaceRoomId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.WorkSpaceRoom", "WorkSpaceRoom")
+                        .WithMany("WorkSpaceRoomImages")
+                        .HasForeignKey("WorkSpaceRoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.Navigation("WorkSpaceRoom");
-            });
+                    b.Navigation("WorkSpaceRoom");
+                });
 
             modelBuilder.Entity("WorkSpaceRoomAmenity", b =>
-            {
-                b.HasOne("WorkSpace.Domain.Entities.Amenity", "Amenity")
-                    .WithMany("WorkspaceAmenities")
-                    .HasForeignKey("AmenityId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                {
+                    b.HasOne("WorkSpace.Domain.Entities.Amenity", "Amenity")
+                        .WithMany("WorkspaceAmenities")
+                        .HasForeignKey("AmenityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.HasOne("WorkSpace.Domain.Entities.WorkSpaceRoom", "WorkSpaceRoom")
-                    .WithMany("WorkSpaceRoomAmenities")
-                    .HasForeignKey("WorkSpaceRoomId")
-                    .OnDelete(DeleteBehavior.Cascade)
-                    .IsRequired();
+                    b.HasOne("WorkSpace.Domain.Entities.WorkSpaceRoom", "WorkSpaceRoom")
+                        .WithMany("WorkSpaceRoomAmenities")
+                        .HasForeignKey("WorkSpaceRoomId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                b.Navigation("Amenity");
+                    b.Navigation("Amenity");
 
-                b.Navigation("WorkSpaceRoom");
-            });
+                    b.Navigation("WorkSpaceRoom");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.Address", b =>
-            {
-                b.Navigation("Workspaces");
-            });
+                {
+                    b.Navigation("Workspaces");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.Amenity", b =>
-            {
-                b.Navigation("WorkspaceAmenities");
-            });
+                {
+                    b.Navigation("WorkspaceAmenities");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.AppUser", b =>
-            {
-                b.Navigation("Bookings");
+                {
+                    b.Navigation("Bookings");
 
-                b.Navigation("ChatMessages");
+                    b.Navigation("ChatMessages");
 
-                b.Navigation("CustomerChatThreads");
+                    b.Navigation("CustomerChatThreads");
 
-                b.Navigation("HostChatThreads");
+                    b.Navigation("HostChatThreads");
 
-                b.Navigation("HostProfile");
+                    b.Navigation("HostProfile");
 
-                b.Navigation("Posts");
+                    b.Navigation("Posts");
 
-                b.Navigation("PromotionUsages");
+                    b.Navigation("PromotionUsages");
 
-                b.Navigation("Reviews");
+                    b.Navigation("Reviews");
 
-                b.Navigation("WorkSpaceFavorites");
-            });
+                    b.Navigation("WorkSpaceFavorites");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.Booking", b =>
-            {
-                b.Navigation("BookingParticipants");
+                {
+                    b.Navigation("BookingParticipants");
 
-                b.Navigation("ChatThreads");
+                    b.Navigation("ChatThreads");
 
-                b.Navigation("PromotionUsages");
+                    b.Navigation("PromotionUsages");
 
-                b.Navigation("Reviews");
-            });
+                    b.Navigation("RefundRequest");
+
+                    b.Navigation("Reviews");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.BookingStatus", b =>
-            {
-                b.Navigation("Bookings");
-            });
+                {
+                    b.Navigation("Bookings");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.ChatThread", b =>
-            {
-                b.Navigation("Messages");
-            });
+                {
+                    b.Navigation("Messages");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.Guest", b =>
-            {
-                b.Navigation("Bookings");
-            });
+                {
+                    b.Navigation("Bookings");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.HostProfile", b =>
-            {
-                b.Navigation("Workspaces");
-            });
+                {
+                    b.Navigation("Workspaces");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.PaymentMethod", b =>
-            {
-                b.Navigation("Bookings");
-            });
+                {
+                    b.Navigation("Bookings");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.Promotion", b =>
-            {
-                b.Navigation("PromotionUsages");
-            });
+                {
+                    b.Navigation("PromotionUsages");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.SupportTicket", b =>
-            {
-                b.Navigation("Replies");
-            });
+                {
+                    b.Navigation("Replies");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.WorkSpace", b =>
-            {
-                b.Navigation("WorkSpaceFavorites");
+                {
+                    b.Navigation("WorkSpaceFavorites");
 
-                b.Navigation("WorkSpaceImages");
+                    b.Navigation("WorkSpaceImages");
 
-                b.Navigation("WorkSpaceRooms");
-            });
+                    b.Navigation("WorkSpaceRooms");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.WorkSpaceRoom", b =>
-            {
-                b.Navigation("BlockedTimeSlots");
+                {
+                    b.Navigation("BlockedTimeSlots");
 
-                b.Navigation("Bookings");
+                    b.Navigation("Bookings");
 
-                b.Navigation("Reviews");
+                    b.Navigation("Reviews");
 
-                b.Navigation("WorkSpaceRoomAmenities");
+                    b.Navigation("WorkSpaceRoomAmenities");
 
-                b.Navigation("WorkSpaceRoomImages");
-            });
+                    b.Navigation("WorkSpaceRoomImages");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.WorkSpaceRoomType", b =>
-            {
-                b.Navigation("WorkSpaceRooms");
-            });
+                {
+                    b.Navigation("WorkSpaceRooms");
+                });
 
             modelBuilder.Entity("WorkSpace.Domain.Entities.WorkSpaceType", b =>
-            {
-                b.Navigation("Workspaces");
-            });
+                {
+                    b.Navigation("Workspaces");
+                });
 #pragma warning restore 612, 618
         }
     }

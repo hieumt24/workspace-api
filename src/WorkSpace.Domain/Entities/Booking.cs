@@ -24,8 +24,11 @@ public class Booking : AuditableBaseEntity
 
     public decimal TotalPrice { get; set; }
     public decimal TaxAmount { get; set; }
-    public decimal ServiceFee { get; set; }
+    public decimal ServiceFee { get; set; }//
     public decimal FinalAmount { get; set; }
+    [MaxLength(255)]
+    public string? PaymentTransactionId { get; set; }
+    public virtual RefundRequest? RefundRequest { get; set; }
 
     [MaxLength(3)]
     public string? Currency { get; set; } = "VND";

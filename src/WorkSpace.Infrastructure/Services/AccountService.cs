@@ -298,8 +298,7 @@ public class AccountService : IAccountService
         {
             var account = await _userManager.FindByEmailAsync(model.Email);
 
-            // always return ok response to prevent email enumeration
-            if (account == null) return;
+            if (account == null) throw new ApiException($"No Accounts Registered with {model.Email}.");
 
             var code = await _userManager.GeneratePasswordResetTokenAsync(account);
             var route = "api/account/reset-password/";
@@ -317,6 +316,7 @@ public class AccountService : IAccountService
         {
             var account = await _userManager.FindByEmailAsync(model.Email);
             if (account == null) throw new ApiException($"No Accounts Registered with {model.Email}.");
+            
             var result = await _userManager.ResetPasswordAsync(account, model.Token, model.Password);
             if(result.Succeeded)
             {
@@ -324,7 +324,23 @@ public class AccountService : IAccountService
             }
             else
             {
-                throw new ApiException($"Error occured while reseting the password.");
+                // Parse specific errors
+                var errors = string.Join(", ", result.Errors.Select(e => e.Description));
+                
+                // Check for token errors
+                if (result.Errors.Any(e => e.Code.Contains("InvalidToken") || e.Description.Contains("Invalid token")))
+                {
+                    throw new ApiException($"Invalid or expired reset token.");
+                }
+                
+                // Check for password errors
+                if (result.Errors.Any(e => e.Code.Contains("Password")))
+                {
+                    throw new ApiException($"Password validation failed: {errors}");
+                }
+                
+                // Generic error with details
+                throw new ApiException($"Error occurred while resetting the password: {errors}");
             }
         }
 

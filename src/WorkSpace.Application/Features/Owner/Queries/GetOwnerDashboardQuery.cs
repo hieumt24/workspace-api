@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using WorkSpace.Application.Interfaces.Repositories;
 using WorkSpace.Domain.Entities;
 using WorkSpace.Application.Exceptions;
+using System.Text.Json.Serialization;
 
 namespace WorkSpace.Application.Features.Owner.Queries
 {
@@ -19,6 +20,7 @@ namespace WorkSpace.Application.Features.Owner.Queries
 
     public class GetOwnerDashboardQuery : IRequest<Response<DashboardStatsDto>>
     {
+        [JsonIgnore]
         public int OwnerUserId { get; set; }
         public DateTime? StartDate { get; set; }
         public DateTime? EndDate { get; set; }

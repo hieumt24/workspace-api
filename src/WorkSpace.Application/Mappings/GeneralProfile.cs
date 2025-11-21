@@ -1,15 +1,16 @@
 ﻿using AutoMapper;
 using System.Linq;
 using WorkSpace.Application.DTOs.Amenities;
+using WorkSpace.Application.DTOs.Bookings;
 using WorkSpace.Application.DTOs.BookingStatus;
 using WorkSpace.Application.DTOs.Promotions;
+using WorkSpace.Application.DTOs.Refund;
+using WorkSpace.Application.DTOs.Reviews; 
 using WorkSpace.Application.DTOs.Users;
 using WorkSpace.Application.DTOs.WorkSpaces;
 using WorkSpace.Application.DTOs.WorkSpaceTypes;
 using WorkSpace.Application.Features.HostProfile.Commands.CreateHostProfile;
 using WorkSpace.Domain.Entities;
-using WorkSpace.Application.DTOs.Reviews; 
-using WorkSpace.Application.DTOs.Bookings;
 
 namespace WorkSpace.Application.Mappings
 {
@@ -96,6 +97,10 @@ namespace WorkSpace.Application.Mappings
                 .ForMember(dest => dest.CustomerEmail, opt => opt.MapFrom(src => src.Customer != null ? src.Customer.Email : null))
                 .ForMember(dest => dest.WorkSpaceRoomTitle, opt => opt.MapFrom(src => src.WorkSpaceRoom != null ? src.WorkSpaceRoom.Title : null))
                 .ForMember(dest => dest.BookingStatusName, opt => opt.MapFrom(src => src.BookingStatus != null ? src.BookingStatus.Name : null));
+
+            CreateMap<RefundRequest, RefundRequestDto>()
+                .ForMember(d => d.BookingCode, o => o.MapFrom(s => s.Booking.BookingCode))
+                .ForMember(d => d.RequestingStaffName, o => o.MapFrom(s => s.RequestingStaff.GetFullName()));
 
 
         }

@@ -2,20 +2,19 @@
 using WorkSpace.Application.Wrappers;
 using WorkSpace.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using WorkSpace.Application.DTOs.Reviews; 
+using WorkSpace.Application.DTOs.Reviews;
 using WorkSpace.Application.Interfaces.Repositories;
 
 namespace WorkSpace.Application.Features.Owner.Queries
 {
-    public class GetOwnerReviewsQuery : IRequest<PagedResponse<IEnumerable<ReviewModerationDto>>>
+ 
+    public class GetOwnerReviewsQuery : IRequest<Response<IEnumerable<ReviewModerationDto>>>
     {
         public int OwnerUserId { get; set; }
-        public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; } = 20;
         public int? WorkSpaceIdFilter { get; set; }
     }
 
-    public class GetOwnerReviewsQueryHandler : IRequestHandler<GetOwnerReviewsQuery, PagedResponse<IEnumerable<ReviewModerationDto>>>
+    public class GetOwnerReviewsQueryHandler : IRequestHandler<GetOwnerReviewsQuery, Response<IEnumerable<ReviewModerationDto>>>
     {
         private readonly IApplicationDbContext _context;
         private readonly IHostProfileAsyncRepository _hostRepo;
@@ -26,13 +25,12 @@ namespace WorkSpace.Application.Features.Owner.Queries
             _hostRepo = hostRepo;
         }
 
-        public async Task<PagedResponse<IEnumerable<ReviewModerationDto>>> Handle(GetOwnerReviewsQuery request, CancellationToken cancellationToken)
+        public async Task<Response<IEnumerable<ReviewModerationDto>>> Handle(GetOwnerReviewsQuery request, CancellationToken cancellationToken)
         {
             var hostProfile = await _hostRepo.GetHostProfileByUserId(request.OwnerUserId, cancellationToken);
             if (hostProfile == null)
             {
-                return new PagedResponse<IEnumerable<ReviewModerationDto>>(new List<ReviewModerationDto>(), request.PageNumber, request.PageSize)
-                { Succeeded = false, Message = "Owner profile not found." };
+                return new Response<IEnumerable<ReviewModerationDto>>("Owner profile not found.") { Succeeded = false };
             }
 
             var query = _context.Reviews
@@ -45,11 +43,9 @@ namespace WorkSpace.Application.Features.Owner.Queries
                 query = query.Where(r => r.WorkSpaceRoom.WorkSpaceId == request.WorkSpaceIdFilter.Value);
             }
 
-            var totalRecords = await query.CountAsync(cancellationToken);
+
             var reviews = await query
                 .OrderByDescending(r => r.CreateUtc)
-                .Skip((request.PageNumber - 1) * request.PageSize)
-                .Take(request.PageSize)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
@@ -68,7 +64,8 @@ namespace WorkSpace.Application.Features.Owner.Queries
                 CreateUtc = r.CreateUtc
             }).ToList();
 
-            return new PagedResponse<IEnumerable<ReviewModerationDto>>(dtos, request.PageNumber, request.PageSize, totalRecords);
+      
+            return new Response<IEnumerable<ReviewModerationDto>>(dtos);
         }
     }
 }

@@ -39,6 +39,7 @@ namespace WorkSpace.Infrastructure
         
         public DbSet<ChatThread> ChatThreads { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
+        public DbSet<RefundRequest> RefundRequests { get; set; }
 
         public DbSet<Guest> Guests { get; set; }
 
@@ -258,8 +259,22 @@ namespace WorkSpace.Infrastructure
                     .WithMany(b => b.ChatThreads)
                     .HasForeignKey(ct => ct.BookingId)
                     .OnDelete(DeleteBehavior.NoAction);
+                modelBuilder.Entity<Booking>()
+                    .HasOne(b => b.RefundRequest)
+                    .WithOne(r => r.Booking)
+                    .HasForeignKey<RefundRequest>(r => r.BookingId)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                modelBuilder.Entity<RefundRequest>(entity =>
+                {
+                    entity.HasOne(r => r.RequestingStaff)
+                        .WithMany() 
+                        .HasForeignKey(r => r.RequestingStaffId)
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
 
                 #endregion
+
 
                 #region Identity Tables Configuration
 

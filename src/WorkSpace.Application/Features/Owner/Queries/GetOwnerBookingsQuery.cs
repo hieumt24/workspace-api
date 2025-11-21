@@ -2,21 +2,23 @@
 using WorkSpace.Application.Wrappers;
 using WorkSpace.Application.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using WorkSpace.Application.DTOs.Bookings; 
+using WorkSpace.Application.DTOs.Bookings;
 using WorkSpace.Application.Interfaces.Repositories;
+using System.Text.Json.Serialization;
 
 namespace WorkSpace.Application.Features.Owner.Queries
 {
-    public class GetOwnerBookingsQuery : IRequest<PagedResponse<IEnumerable<BookingAdminDto>>>
+ 
+    public class GetOwnerBookingsQuery : IRequest<Response<IEnumerable<BookingAdminDto>>>
     {
+        [JsonIgnore]
         public int OwnerUserId { get; set; }
-        public int PageNumber { get; set; } = 1;
-        public int PageSize { get; set; } = 20;
+
         public int? StatusIdFilter { get; set; }
         public int? WorkSpaceIdFilter { get; set; }
     }
 
-    public class GetOwnerBookingsQueryHandler : IRequestHandler<GetOwnerBookingsQuery, PagedResponse<IEnumerable<BookingAdminDto>>>
+    public class GetOwnerBookingsQueryHandler : IRequestHandler<GetOwnerBookingsQuery, Response<IEnumerable<BookingAdminDto>>>
     {
         private readonly IApplicationDbContext _context;
         private readonly IHostProfileAsyncRepository _hostRepo;
@@ -27,13 +29,12 @@ namespace WorkSpace.Application.Features.Owner.Queries
             _hostRepo = hostRepo;
         }
 
-        public async Task<PagedResponse<IEnumerable<BookingAdminDto>>> Handle(GetOwnerBookingsQuery request, CancellationToken cancellationToken)
+        public async Task<Response<IEnumerable<BookingAdminDto>>> Handle(GetOwnerBookingsQuery request, CancellationToken cancellationToken)
         {
             var hostProfile = await _hostRepo.GetHostProfileByUserId(request.OwnerUserId, cancellationToken);
             if (hostProfile == null)
             {
-                return new PagedResponse<IEnumerable<BookingAdminDto>>(new List<BookingAdminDto>(), request.PageNumber, request.PageSize)
-                { Succeeded = false, Message = "Owner profile not found." };
+                return new Response<IEnumerable<BookingAdminDto>>("Owner profile not found.") { Succeeded = false };
             }
 
             var query = _context.Bookings
@@ -51,11 +52,8 @@ namespace WorkSpace.Application.Features.Owner.Queries
                 query = query.Where(b => b.WorkSpaceRoom.WorkSpaceId == request.WorkSpaceIdFilter.Value);
             }
 
-            var totalRecords = await query.CountAsync(cancellationToken);
             var bookings = await query
                 .OrderByDescending(b => b.CreateUtc)
-                .Skip((request.PageNumber - 1) * request.PageSize)
-                .Take(request.PageSize)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
@@ -70,11 +68,12 @@ namespace WorkSpace.Application.Features.Owner.Queries
                 StartTimeUtc = b.StartTimeUtc,
                 EndTimeUtc = b.EndTimeUtc,
                 FinalAmount = b.FinalAmount,
+                BookingStatusId = b.BookingStatusId,     
                 BookingStatusName = b.BookingStatus?.Name,
                 CreateUtc = b.CreateUtc
             }).ToList();
 
-            return new PagedResponse<IEnumerable<BookingAdminDto>>(dtos, request.PageNumber, request.PageSize, totalRecords);
+            return new Response<IEnumerable<BookingAdminDto>>(dtos);
         }
     }
 }

@@ -1,9 +1,11 @@
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using WorkSpace.Application.DTOs.Payment;
 using WorkSpace.Application.Interfaces.Services;
 using WorkSpace.Domain.ConfigOptions;
 using WorkSpace.Infrastructure.Helpers;
+using WorkSpace.Application.DTOs.Payment;
 
 namespace WorkSpace.Infrastructure.Services;
 
@@ -11,11 +13,13 @@ public class VNPayService : IVNPayService
 {
     private readonly VNPaySettings _settings;
     private readonly string _applicationUrl;
+    private readonly ILogger<VNPayService> _logger;
 
-    public VNPayService(IOptions<VNPaySettings> settings, IConfiguration configuration)
+    public VNPayService(IOptions<VNPaySettings> settings, IConfiguration configuration, ILogger<VNPayService> logger)
     {
         _settings = settings.Value;
         _applicationUrl = configuration["ApplicationUrl"] ?? "https://localhost:7000";
+        _logger = logger;
     }
 
     public string CreatePaymentUrl(VNPayRequestDto request)
@@ -129,6 +133,39 @@ public class VNPayService : IVNPayService
 
         return result;
     }
+    public async Task<PaymentGatewayRefundResponse> ExecuteRefundAsync(
+        string originalTransactionId,
+        decimal refundAmount,
+        string ipAddress,
+        int staffUserId,
+        string orderInfo)
+    {
+        _logger.LogInformation($"[MOCK REFUND] Initiating refund for TxnID: {originalTransactionId}");
+        _logger.LogInformation($"[MOCK REFUND] Amount: {refundAmount} VND");
+        _logger.LogInformation($"[MOCK REFUND] IP: {ipAddress}, Staff: {staffUserId}, Info: {orderInfo}");
+
+        // Đây là nơi bạn sẽ gọi API VNPAY refund thực sự.
+        // Vì chúng ta không có API key/secret và logic, chúng ta sẽ giả lập thành công.
+
+        await Task.Delay(500); // Giả lập độ trễ mạng
+
+        // Giả lập kết quả thành công
+        return new PaymentGatewayRefundResponse
+        {
+            Success = true,
+            RefundTransactionId = $"VNP_REFUND_{Guid.NewGuid().ToString("N")[..10].ToUpper()}",
+            Message = "Giao dịch hoàn tiền (MOCK) thành công."
+        };
+
+        /* // Giả lập kết quả thất bại
+        return new PaymentGatewayRefundResponse
+        {
+            Success = false,
+            RefundTransactionId = null,
+            Message = "Lỗi từ VNPAY: Giao dịch gốc không tồn tại."
+        };
+        */
+    }
 
     private DateTimeOffset ParseVNPayDate(string vnpayDate)
     {
@@ -161,6 +198,8 @@ public class VNPayService : IVNPayService
             "79" => "Giao dịch không thành công do: KH nhập sai mật khẩu thanh toán quá số lần quy định.",
             _ => "Giao dịch thất bại"
         };
+
+
     }
 }
 

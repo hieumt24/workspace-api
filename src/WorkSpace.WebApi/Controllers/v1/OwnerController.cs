@@ -1,10 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using WorkSpace.Application.DTOs.Owner;
 using WorkSpace.Application.Enums;
 using WorkSpace.Application.Extensions;
 using WorkSpace.Application.Features.Owner.Commands;
 using WorkSpace.Application.Features.Owner.Queries;
-using WorkSpace.Application.DTOs.Owner;
+using WorkSpace.Application.Features.Refunds.Commands;
 
 namespace WorkSpace.WebApi.Controllers.v1
 {
@@ -20,7 +21,23 @@ namespace WorkSpace.WebApi.Controllers.v1
         {
             var userId = User.GetUserId();
             var query = new GetOwnerWorkspacesQuery { OwnerUserId = userId };
-            return Ok(await Mediator.Send(query, ct));
+
+            var result = await Mediator.Send(query, ct);
+            return Ok(result.Data);
+        }
+
+        [HttpPut("workspaces/{id}")]
+        public async Task<IActionResult> UpdateWorkSpace(int id, [FromBody] UpdateWorkSpaceDto dto, CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+            var command = new UpdateWorkSpaceCommand
+            {
+                WorkSpaceId = id,
+                Dto = dto,
+                OwnerUserId = userId
+            };
+
+            return Ok(await Mediator.Send(command, ct));
         }
 
         [HttpPost("workspaces")]
@@ -39,7 +56,7 @@ namespace WorkSpace.WebApi.Controllers.v1
         public async Task<IActionResult> CreateWorkSpaceRoom(int workspaceId, [FromBody] CreateWorkSpaceRoomDto dto, CancellationToken ct)
         {
             var userId = User.GetUserId();
-            var command = new CreateWorkSpaceRoomCommand 
+            var command = new CreateWorkSpaceRoomCommand
             {
                 WorkspaceId = workspaceId,
                 Dto = dto,
@@ -48,7 +65,7 @@ namespace WorkSpace.WebApi.Controllers.v1
             return Ok(await Mediator.Send(command, ct));
         }
 
-  
+
         [HttpPut("rooms/{roomId}")]
         public async Task<IActionResult> UpdateWorkSpaceRoom(int roomId, [FromBody] UpdateWorkSpaceRoomDto dto, CancellationToken ct)
         {
@@ -92,12 +109,22 @@ namespace WorkSpace.WebApi.Controllers.v1
 
         #region Booking Management
 
-
         [HttpGet("bookings")]
-        public async Task<IActionResult> GetMyBookings([FromQuery] GetOwnerBookingsQuery query, CancellationToken ct)
+        public async Task<IActionResult> GetMyBookings(
+            [FromQuery] int? statusIdFilter,
+            [FromQuery] int? workSpaceIdFilter,
+            CancellationToken ct)
         {
-            query.OwnerUserId = User.GetUserId();
-            return Ok(await Mediator.Send(query, ct));
+            var query = new GetOwnerBookingsQuery
+            {
+                OwnerUserId = User.GetUserId(),
+                StatusIdFilter = statusIdFilter,
+                WorkSpaceIdFilter = workSpaceIdFilter
+            };
+
+            var result = await Mediator.Send(query, ct);
+
+            return Ok(result.Data);
         }
 
         [HttpPut("bookings/{bookingId}/confirm")]
@@ -113,7 +140,7 @@ namespace WorkSpace.WebApi.Controllers.v1
             return Ok(await Mediator.Send(command, ct));
         }
 
- 
+
         [HttpPut("bookings/{bookingId}/cancel")]
         public async Task<IActionResult> CancelBooking(int bookingId, [FromBody] CancelBookingDto dto, CancellationToken ct)
         {
@@ -128,26 +155,78 @@ namespace WorkSpace.WebApi.Controllers.v1
             return Ok(await Mediator.Send(command, ct));
         }
 
+        [HttpPost("refund-requests/{refundRequestId}/approve")]
+        public async Task<IActionResult> ApproveOrRejectRefund(
+            [FromRoute] int refundRequestId,
+            [FromBody] ApproveRefundCommand command,
+            CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+
+            command.RefundRequestId = refundRequestId;
+            command.OwnerUserId = userId;
+
+            return Ok(await Mediator.Send(command, ct));
+        }
         #endregion
 
         #region Performance & Reviews
 
 
-        [HttpGet("reviews")]
-        public async Task<IActionResult> GetMyReviews([FromQuery] GetOwnerReviewsQuery query, CancellationToken ct)
+        [HttpGet("workspaces/{workspaceId}/reviews")]
+        public async Task<IActionResult> GetReviewsByWorkspace(
+            int workspaceId,
+            CancellationToken ct = default)
         {
-            query.OwnerUserId = User.GetUserId();
-            return Ok(await Mediator.Send(query, ct));
+            var userId = User.GetUserId();
+
+            var query = new GetOwnerReviewsQuery
+            {
+                OwnerUserId = userId,
+                WorkSpaceIdFilter = workspaceId
+            };
+
+            var result = await Mediator.Send(query, ct);
+
+            return Ok(result.Data);
         }
 
-
         [HttpGet("stats")]
-        public async Task<IActionResult> GetMyStats([FromQuery] GetOwnerDashboardQuery query, CancellationToken ct)
+        public async Task<IActionResult> GetMyStats(
+            [FromQuery] DateTime? startDate,
+            [FromQuery] DateTime? endDate,
+            CancellationToken ct)
         {
-            query.OwnerUserId = User.GetUserId();
-            return Ok(await Mediator.Send(query, ct));
+            var query = new GetOwnerDashboardQuery
+            {
+                OwnerUserId = User.GetUserId(),
+                StartDate = startDate,
+                EndDate = endDate
+            };
+
+            var result = await Mediator.Send(query, ct);
+
+            return Ok(result.Data);
         }
 
         #endregion
+
+        [HttpGet("workspaces/{workspaceId}/rooms")]
+        public async Task<IActionResult> GetRoomsInWorkspace(
+            int workspaceId,
+            CancellationToken ct = default)
+        {
+            var userId = User.GetUserId();
+
+            var query = new WorkSpace.Application.Features.Owner.Queries.GetOwnerWorkspaceRoomsQuery
+            {
+                OwnerUserId = userId,
+                WorkspaceId = workspaceId
+            };
+
+            var result = await Mediator.Send(query, ct);
+
+            return Ok(result);
+        }
     }
 }

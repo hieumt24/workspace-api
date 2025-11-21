@@ -33,6 +33,17 @@ namespace WorkSpace.WebApi.Controllers.v1
             return Ok(bookings);
         }
 
+        [HttpGet("booking-code")]
+        public async Task<IActionResult> GetBookingByBookingCode([FromQuery] string bookingCode)
+        {
+            var booking = await _bookingRepository.GetBookingByBookingCodeAsync(bookingCode);
+            if (booking == null)
+            {
+                return NotFound(new { Message = "Booking not found." });
+            }
+            return Ok(booking);
+        }
+
 
 
         [HttpPost("guest")]

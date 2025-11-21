@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkSpace.Application.DTOs.Bookings;
+using WorkSpace.Application.DTOs.Refund;
 using WorkSpace.Application.DTOs.Support;
 using WorkSpace.Application.Enums;
 using WorkSpace.Application.Extensions;
+using WorkSpace.Application.Features.Refunds.Commands;
 using WorkSpace.Application.Features.Reviews.Commands;
 using WorkSpace.Application.Features.Reviews.Queries;
 using WorkSpace.Application.Features.SupportTickets.Commands;
@@ -164,6 +166,46 @@ public class StaffAdminController : BaseApiController
     //    var result = await Mediator.Send(command, cancellationToken);
     //    return Ok(result);
     //}
+    [HttpPost("bookings/{bookingId}/refund/request")]
+    public async Task<IActionResult> RequestRefund(
+        [FromRoute] int bookingId,
+        [FromBody] CreateRefundRequestDto dto,
+        CancellationToken cancellationToken)
+    {
+        var staffUserId = User.GetUserId();
+        if (staffUserId == 0) return Unauthorized(new Response<string>("Invalid user token"));
+
+        var command = new RequestRefundCommand
+        {
+            BookingId = bookingId,
+            StaffUserId = staffUserId,
+            Notes = dto.Notes
+        };
+
+        var result = await Mediator.Send(command, cancellationToken);
+        return Ok(result);
+    }
+
+    [HttpPost("refund-requests/{refundRequestId}/process")]
+    public async Task<IActionResult> ProcessRefund(
+        [FromRoute] int refundRequestId,
+        CancellationToken cancellationToken)
+    {
+        var staffUserId = User.GetUserId();
+        if (staffUserId == 0) return Unauthorized(new Response<string>("Invalid user token"));
+
+        var ipAddress = HttpContext.Connection.RemoteIpAddress?.MapToIPv4().ToString() ?? "127.0.0.1";
+
+        var command = new ProcessRefundCommand
+        {
+            RefundRequestId = refundRequestId,
+            StaffUserId = staffUserId,
+            IpAddress = ipAddress
+        };
+
+        var result = await Mediator.Send(command, cancellationToken);
+        return Ok(result);
+    }
 
     [HttpGet("support-tickets")]
     public async Task<IActionResult> GetSupportTickets(

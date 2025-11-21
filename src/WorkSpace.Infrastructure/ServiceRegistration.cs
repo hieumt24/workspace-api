@@ -56,6 +56,8 @@ public static class ServiceRegistration
         services.AddScoped<IBookingService, BookingService>();
         services.AddScoped<IUserService, UserService>();
         services.AddHttpContextAccessor();
+        services.AddScoped(typeof(IRecommendationService), typeof(RecommendationService));
+        services.AddScoped(typeof(IAIChatbotService), typeof(AIChatbotService));
         #endregion
 
         #region Identity
@@ -73,8 +75,7 @@ public static class ServiceRegistration
         #endregion
         
         #region Authentication
-        // PHẢI config lại DefaultScheme vì AddIdentity sẽ override về Cookie
-        // Đặt JWT Bearer làm default để API endpoints yêu cầu JWT token
+
         services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -85,8 +86,8 @@ public static class ServiceRegistration
                 {
                     o.RequireHttpsMetadata = false;
                     o.SaveToken = false;
-                    // Map claims từ JWT sang ClaimsIdentity
-                    o.MapInboundClaims = false; // Giữ nguyên claim names từ JWT
+
+                    o.MapInboundClaims = false; 
                     o.TokenValidationParameters = new TokenValidationParameters
                     {
                         ValidateIssuerSigningKey = true,

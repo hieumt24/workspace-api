@@ -4,6 +4,7 @@
     {
         Request,    
         Complaint, 
-        Feedback    
+        Feedback,
+        RefundRequest
     }
 }

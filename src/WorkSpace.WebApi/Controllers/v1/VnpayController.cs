@@ -43,7 +43,7 @@ namespace WorkSpace.WebApi.Controllers.v1
         }
 
         [HttpGet("create-payment-url")]
-        public async Task<ActionResult<string>> CreatePaymentUrl(int bookingId)
+        public async Task<ActionResult<object>> CreatePaymentUrl(int bookingId)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace WorkSpace.WebApi.Controllers.v1
                 {
                     PaymentId = DateTime.Now.Ticks,
                     Money = (double)booking.FinalAmount,
-                    Description = $"Booking-{bookingId}",   
+                    Description = $"Booking-{bookingId}",
                     IpAddress = ipAddress,
                     BankCode = BankCode.ANY,
                     CreatedDate = DateTime.Now,
@@ -67,7 +67,11 @@ namespace WorkSpace.WebApi.Controllers.v1
 
                 var paymentUrl = _vnpay.GetPaymentUrl(request);
 
-                return Created(paymentUrl, paymentUrl);
+                var response = new
+                {
+                    url = paymentUrl
+                };
+                return Created(paymentUrl, response);
             }
             catch (Exception ex)
             {
@@ -82,44 +86,69 @@ namespace WorkSpace.WebApi.Controllers.v1
 
             try
             {
+                // 1. Get payment result from VNPay
                 var result = _vnpay.GetPaymentResult(query);
 
-                if (!result.IsSuccess)
-                    return RedirectWithError("Giao dịch VNPAY thất bại: " + (result.TransactionStatus?.Description ?? result.Description));
-
-                var orderInfo = query["vnp_OrderInfo"];
-                if (string.IsNullOrEmpty(orderInfo))
-                    return RedirectWithError("Không có thông tin đơn hàng từ VNPAY");
-
+                // 2. Extract order info (Description) to find Booking ID
+                var orderInfo = result.Description ?? string.Empty;
                 int bookingId = ExtractBookingIdFromOrderInfo(orderInfo);
+
                 if (bookingId == 0)
                     return RedirectWithError("Booking ID trong thông tin đơn hàng không hợp lệ");
+
+                // 3. Retrieve Booking from Database
                 var booking = await _bookingRepository.GetBookingByIdAsync(bookingId);
                 if (booking == null)
                     return RedirectWithError("Booking không tồn tại");
 
+                // 4. Process based on success or failure
                 if (result.IsSuccess)
                 {
-                    await _bookingRepository.UpdateBookingStatusAsync(bookingId, 9);
-                    await _bookingRepository.UpdatePaymentMethod(bookingId, 2);
-                    await _blockedTimeSlotRepository.CreateBlockedTimeForBookingAsync(booking.WorkSpaceRoomId, bookingId, booking.StartTimeUtc, booking.EndTimeUtc);
-                    await _hubContext.Clients.Group("Staff")
-                        .SendAsync("New Booking", $"Booking #{bookingId} has been paid successfully");
+                    // Status 9 = Confirmed/Paid (example)
+                    if (booking.BookingStatusId != 9)
+                    {
+                        var confirmedStatusId = 9;
+                        var vnpayMethodId = 2; // Assuming ID 2 is VNPay
+
+                        booking.BookingStatusId = confirmedStatusId;
+                        booking.PaymentMethodID = vnpayMethodId;
+                        booking.PaymentTransactionId = query["vnp_TransactionNo"];
+
+                        await _bookingRepository.UpdateBookingAsync(booking.Id, booking);
+
+                        await _blockedTimeSlotRepository.CreateBlockedTimeForBookingAsync(
+                            booking.WorkSpaceRoomId,
+                            bookingId,
+                            booking.StartTimeUtc,
+                            booking.EndTimeUtc);
+
+                        await _hubContext.Clients.Group("Staff")
+                            .SendAsync("New Booking", $"Booking #{bookingId} has been paid successfully");
+                    }
                 }
                 else
                 {
-                    await _bookingRepository.UpdateBookingStatusAsync(bookingId, 10);
+                    // Status 10 = PaymentFailed/Cancelled (example)
+                    if (booking.BookingStatusId != 10 && booking.BookingStatusId != 9)
+                    {
+                        booking.BookingStatusId = 10;
+                        await _bookingRepository.UpdateBookingAsync(booking.Id, booking);
+                    }
+
+                    // Optional: Redirect with error if strictly required, 
+                    // or proceed to result page with failed status
                 }
 
-                //string redirectUrl = $"{_configuration["Vnpay:ClientReturnUrl"]}/payment-result?status={(result.IsSuccess ? "success" : "failed")}&bookingId={bookingId}";
-                string redirectUrl = $"{_configuration["Vnpay:ClientReturnUrl"]}/payment-result?status={(result.IsSuccess ? "success" : "failed")}";
-
+                // 5. Construct Redirect URL
+                string clientReturnUrl = _configuration["Vnpay:ClientReturnUrl"] ?? "http://localhost:3000";
+                string status = result.IsSuccess ? "success" : "failed";
+                string redirectUrl = $"{clientReturnUrl}/payment-result?status={status}&bookingCode={booking.BookingCode}";
 
                 return Redirect(redirectUrl);
             }
             catch (Exception ex)
             {
-                return Redirect($"{_configuration["Vnpay:ClientReturnUrl"]}?status=error&message={ex.Message}");
+                return Redirect($"{_configuration["Vnpay:ClientReturnUrl"]}?status=error&message={Uri.EscapeDataString(ex.Message)}");
             }
         }
 
@@ -147,6 +176,8 @@ namespace WorkSpace.WebApi.Controllers.v1
 
         private int ExtractBookingIdFromOrderInfo(string orderInfo)
         {
+            if (string.IsNullOrEmpty(orderInfo)) return 0;
+
             var match = Regex.Match(orderInfo, @"-(\d+)");
             if (match.Success && int.TryParse(match.Groups[1].Value, out int bookingId))
             {
@@ -157,7 +188,8 @@ namespace WorkSpace.WebApi.Controllers.v1
 
         private IActionResult RedirectWithError(string message)
         {
-            var url = $"http://localhost:3000/payment/failed?message={Uri.EscapeDataString(message)}";
+            var clientReturnUrl = _configuration["Vnpay:ClientReturnUrl"] ?? "http://localhost:3000";
+            var url = $"{clientReturnUrl}/payment/failed?message={Uri.EscapeDataString(message)}";
             return RedirectPermanent(url);
         }
     }
