@@ -217,7 +217,7 @@ public class AccountService : IAccountService
 
             for (int i = 0; i < roles.Count; i++)
             {
-            roleClaims.Add(new Claim(ClaimTypes.Role, roles[i]));
+            roleClaims.Add(new Claim("role", roles[i]));
         }
 
             string ipAddress = IpHelper.GetIpAddress();

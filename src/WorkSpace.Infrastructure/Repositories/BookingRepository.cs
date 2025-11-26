@@ -89,10 +89,14 @@ public class BookingRepository : IBookingRepository
         return await _context.Bookings.FindAsync(id);
     }
 
+
+
     public async Task<IEnumerable<Booking>> GetBookingsByUserIdAsync(int userId)
     {
-        return await _context.Bookings.Include(b => b.WorkSpaceRoom)
+        return await _context.Bookings
+            .Include(b => b.WorkSpaceRoom)
             .Where(b => b.CustomerId == userId)
+            .OrderByDescending(b => b.CreateUtc) 
             .ToListAsync();
     }
 

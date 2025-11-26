@@ -142,7 +142,7 @@ namespace WorkSpace.WebApi.Controllers.v1
                 // 5. Construct Redirect URL
                 string clientReturnUrl = _configuration["Vnpay:ClientReturnUrl"] ?? "http://localhost:3000";
                 string status = result.IsSuccess ? "success" : "failed";
-                string redirectUrl = $"{clientReturnUrl}/payment-result?status={status}&bookingCode={booking.BookingCode}";
+                string redirectUrl = $"{clientReturnUrl}/payment-result/success?&bookingCode={booking.BookingCode}";
 
                 return Redirect(redirectUrl);
             }

@@ -6,6 +6,6 @@ namespace WorkSpace.Application.DTOs.Owner
     {
         [Required]
         [MaxLength(500)]
-        public string Reason { get; set; }
+        public string? Reason { get; set; }
     }
 }

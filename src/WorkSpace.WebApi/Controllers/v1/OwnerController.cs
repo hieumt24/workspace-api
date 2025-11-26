@@ -127,6 +127,22 @@ namespace WorkSpace.WebApi.Controllers.v1
             return Ok(result.Data);
         }
 
+
+        [HttpGet("bookings/completed")]
+        public async Task<IActionResult> GetCompletedBookings(CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+            if (userId == 0) return Unauthorized();
+
+            var query = new GetOwnerCompletedBookingsQuery
+            {
+                OwnerUserId = userId
+            };
+
+            var result = await Mediator.Send(query, ct);
+            return Ok(result);
+        }
+
         [HttpPut("bookings/{bookingId}/confirm")]
         public async Task<IActionResult> ConfirmBooking(int bookingId, CancellationToken ct)
         {
@@ -151,6 +167,32 @@ namespace WorkSpace.WebApi.Controllers.v1
                 Action = BookingAction.Cancel,
                 OwnerUserId = userId,
                 Reason = dto.Reason
+            };
+            return Ok(await Mediator.Send(command, ct));
+        }
+
+        [HttpPut("bookings/{bookingId}/check-in")]
+        public async Task<IActionResult> CheckInBooking(int bookingId, CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+            var command = new ManageBookingCommand
+            {
+                BookingId = bookingId,
+                Action = BookingAction.CheckIn,
+                OwnerUserId = userId
+            };
+            return Ok(await Mediator.Send(command, ct));
+        }
+
+        [HttpPut("bookings/{bookingId}/check-out")]
+        public async Task<IActionResult> CheckOutBooking(int bookingId, CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+            var command = new ManageBookingCommand
+            {
+                BookingId = bookingId,
+                Action = BookingAction.CheckOut,
+                OwnerUserId = userId
             };
             return Ok(await Mediator.Send(command, ct));
         }
@@ -226,6 +268,23 @@ namespace WorkSpace.WebApi.Controllers.v1
 
             var result = await Mediator.Send(query, ct);
 
+            return Ok(result);
+        }
+
+        [HttpPost("register")]
+        [Authorize] 
+        public async Task<IActionResult> RegisterAsOwner([FromBody] RegisterOwnerDto dto, CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+            if (userId == 0) return Unauthorized();
+
+            var command = new RegisterOwnerCommand
+            {
+                UserId = userId,
+                Dto = dto
+            };
+
+            var result = await Mediator.Send(command, ct);
             return Ok(result);
         }
     }

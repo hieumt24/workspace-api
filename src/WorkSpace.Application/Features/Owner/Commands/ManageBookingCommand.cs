@@ -4,13 +4,14 @@ using WorkSpace.Application.Exceptions;
 using WorkSpace.Application.Interfaces;
 using WorkSpace.Application.Interfaces.Repositories;
 using WorkSpace.Application.Wrappers;
+using WorkSpace.Application.Interfaces.Services;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace WorkSpace.Application.Features.Owner.Commands
 {
-    public enum BookingAction { Confirm, Cancel, Reject }
+    public enum BookingAction { Confirm, Cancel, Reject, CheckIn, CheckOut }
 
     public class ManageBookingCommand : IRequest<Response<bool>>
     {
@@ -26,25 +27,25 @@ namespace WorkSpace.Application.Features.Owner.Commands
         private readonly IHostProfileAsyncRepository _hostRepo;
         private readonly IBookingStatusRepository _statusRepo;
         private readonly IBlockedTimeSlotRepository _blockedTimeSlotRepo;
+        private readonly IDateTimeService _dateTimeService;
 
         public ManageBookingCommandHandler(
             IApplicationDbContext context,
             IHostProfileAsyncRepository hostRepo,
             IBookingStatusRepository statusRepo,
-            IBlockedTimeSlotRepository blockedTimeSlotRepo)
+            IBlockedTimeSlotRepository blockedTimeSlotRepo,
+            IDateTimeService dateTimeService)
         {
             _context = context;
             _hostRepo = hostRepo;
             _statusRepo = statusRepo;
             _blockedTimeSlotRepo = blockedTimeSlotRepo;
+            _dateTimeService = dateTimeService;
         }
 
         public async Task<Response<bool>> Handle(ManageBookingCommand request, CancellationToken cancellationToken)
         {
-
             var hostProfile = await _hostRepo.GetHostProfileByUserId(request.OwnerUserId, cancellationToken);
-
-
             var booking = await _context.Bookings
                 .Include(b => b.WorkSpaceRoom.WorkSpace)
                 .FirstOrDefaultAsync(b => b.Id == request.BookingId, cancellationToken);
@@ -54,73 +55,74 @@ namespace WorkSpace.Application.Features.Owner.Commands
                 throw new ApiException("Booking not found or permission denied.");
             }
 
-            string newStatusName;
+            int newStatusId = 0;
+            var now = _dateTimeService.NowUtc;
+
             switch (request.Action)
             {
                 case BookingAction.Confirm:
-                    newStatusName = "Confirmed";
-
+                    newStatusId = 4; 
 
                     bool isBlocked = await _blockedTimeSlotRepo.IsTimeSlotBlockedAsync(
-                        booking.WorkSpaceRoomId,
-                        booking.StartTimeUtc,
-                        booking.EndTimeUtc,
-                        cancellationToken);
+                        booking.WorkSpaceRoomId, booking.StartTimeUtc, booking.EndTimeUtc, cancellationToken);
 
-                    if (isBlocked)
-                    {
-                        return new Response<bool>("Không thể duyệt: Khung giờ này đã bị khóa hoặc có booking khác.");
-                    }
+                    if (isBlocked) return new Response<bool>("Khung giờ này đã bị khóa.");
 
-           
                     await _blockedTimeSlotRepo.CreateBlockedTimeSlotForBookingAsync(
-                        booking.WorkSpaceRoomId,
-                        booking.Id,
-                        booking.StartTimeUtc,
-                        booking.EndTimeUtc,
-                        cancellationToken);
- 
+                        booking.WorkSpaceRoomId, booking.Id, booking.StartTimeUtc, booking.EndTimeUtc, cancellationToken);
                     break;
 
                 case BookingAction.Cancel:
-                    newStatusName = "Cancelled";
-                    if (string.IsNullOrWhiteSpace(request.Reason))
-                        return new Response<bool>("A reason is required to cancel a booking.");
-
-                    booking.CancellationReason = $"Cancelled by Owner: {request.Reason}";
-
-    
+                    newStatusId = 7; 
+                    booking.CancellationReason = string.IsNullOrWhiteSpace(request.Reason)
+                        ? "Cancelled by Owner" : $"Cancelled by Owner: {request.Reason}";
+             
                     await _blockedTimeSlotRepo.RemoveBlockedTimeSlotForBookingAsync(booking.Id, cancellationToken);
                     break;
 
                 case BookingAction.Reject:
-                    newStatusName = "Cancelled"; 
-                    if (string.IsNullOrWhiteSpace(request.Reason))
-                        return new Response<bool>("A reason is required to reject a booking.");
+                    newStatusId = 7; 
+                    booking.CancellationReason = string.IsNullOrWhiteSpace(request.Reason)
+                       ? "Rejected by Owner" : $"Rejected by Owner: {request.Reason}";
+               
+                    await _blockedTimeSlotRepo.RemoveBlockedTimeSlotForBookingAsync(booking.Id, cancellationToken);
+                    break;
 
-                    booking.CancellationReason = $"Rejected by Owner: {request.Reason}";
+                case BookingAction.CheckIn:
+                
+                    if (booking.BookingStatusId != 4)
+                    {
+                        throw new ApiException("Chỉ có thể Check-In các đơn có trạng thái Confirmed (4).");
+                    }
+                    newStatusId = 5; 
+                    booking.CheckedInAt = now;
+                    break;
+
+                case BookingAction.CheckOut:
+    
+                    if (booking.BookingStatusId != 5)
+                    {
+                        throw new ApiException("Chỉ có thể Check-Out các đơn có trạng thái CheckedIn (5).");
+                    }
+                    newStatusId = 6;
+                    booking.CheckedOutAt = now;
 
        
-                    await _blockedTimeSlotRepo.RemoveBlockedTimeSlotForBookingAsync(booking.Id, cancellationToken);
                     break;
 
                 default:
                     throw new ApiException("Invalid action.");
             }
 
-
-            var newStatus = await _statusRepo.GetByNameAsync(newStatusName, cancellationToken);
-            if (newStatus == null)
-            {
-                throw new ApiException($"Booking status '{newStatusName}' not found in database.");
-            }
-
-            booking.BookingStatusId = newStatus.Id;
-            booking.LastModifiedUtc = DateTime.UtcNow;
+            booking.BookingStatusId = newStatusId;
+            booking.LastModifiedUtc = now;
             booking.LastModifiedById = request.OwnerUserId;
 
             await _context.SaveChangesAsync(cancellationToken);
-            return new Response<bool>(true, $"Booking {request.Action} successfully.");
+
+  
+            string actionName = request.Action.ToString();
+            return new Response<bool>(true, $"Booking {actionName} successfully (New Status ID: {newStatusId}).");
         }
     }
 }
