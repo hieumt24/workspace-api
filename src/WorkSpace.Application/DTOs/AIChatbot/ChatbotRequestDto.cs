@@ -2,6 +2,7 @@
 
 public class ChatbotRequestDto
 {
+    public int? ConversationId { get; set; }
     public int UserId { get; set; }
     public string Message { get; set; } = string.Empty;
     public List<ChatbotMessageDto> ConversationHistory { get; set; } = new();

@@ -40,7 +40,9 @@ public static class ServiceRegistration
         services.AddScoped(typeof(IPostRepository), typeof(PostRepository));
         services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
         services.AddScoped(typeof(IChatMessageRepository), typeof(ChatMessageRepository));
-
+        services.AddScoped(typeof(IChatbotConversationRepository), typeof(ChatbotConversationRepository));
+        services.AddScoped(typeof(IGuestChatSessionRepository), typeof(GuestChatSessionRepository));
+        
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<WorkSpaceContext>());
         #endregion
 
@@ -58,6 +60,7 @@ public static class ServiceRegistration
         services.AddHttpContextAccessor();
         services.AddScoped(typeof(IRecommendationService), typeof(RecommendationService));
         services.AddScoped(typeof(IAIChatbotService), typeof(AIChatbotService));
+        services.AddScoped(typeof(IAIChatbotService), typeof(AIChatbotServiceImproved));
         #endregion
 
         #region Identity

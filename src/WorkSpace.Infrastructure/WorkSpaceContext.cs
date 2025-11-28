@@ -40,8 +40,16 @@ namespace WorkSpace.Infrastructure
         public DbSet<ChatThread> ChatThreads { get; set; }
         public DbSet<ChatMessage> ChatMessages { get; set; }
         public DbSet<RefundRequest> RefundRequests { get; set; }
+        
+        public DbSet<ChatbotConversation> ChatbotConversations { get; set; }
+        
+        public DbSet<ChatbotConversationMessage> ChatbotConversationMessages { get; set; }
 
         public DbSet<Guest> Guests { get; set; }
+        
+        public DbSet<GuestChatSession> GuestChatSessions { get; set; }
+        
+        public DbSet<GuestChatMessage> GuestChatMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -271,6 +279,84 @@ namespace WorkSpace.Infrastructure
                         .WithMany() 
                         .HasForeignKey(r => r.RequestingStaffId)
                         .OnDelete(DeleteBehavior.Restrict);
+                });
+                
+                
+                modelBuilder.Entity<GuestChatSession>(entity =>
+                {
+                    entity.ToTable("GuestChatSessions");
+                    
+                    entity.HasKey(e => e.Id);
+                    
+                    entity.HasIndex(e => e.SessionId)
+                        .IsUnique()
+                        .HasDatabaseName("IX_GuestChatSessions_SessionId");
+                    
+                    entity.HasIndex(e => e.IsActive)
+                        .HasDatabaseName("IX_GuestChatSessions_IsActive");
+                    
+                    entity.HasIndex(e => e.AssignedStaffId)
+                        .HasDatabaseName("IX_GuestChatSessions_AssignedStaffId");
+                    
+                    entity.HasOne(e => e.AssignedStaff)
+                        .WithMany() 
+                        .HasForeignKey(e => e.AssignedStaffId)
+                        .OnDelete(DeleteBehavior.SetNull); 
+                    
+                    // Properties configuration
+                    entity.Property(e => e.SessionId)
+                        .IsRequired()
+                        .HasMaxLength(100);
+                    
+                    entity.Property(e => e.GuestName)
+                        .IsRequired()
+                        .HasMaxLength(100);
+                    
+                    entity.Property(e => e.GuestEmail)
+                        .HasMaxLength(255);
+                    
+                    entity.Property(e => e.IsActive)
+                        .HasDefaultValue(true);
+                });
+                
+               
+                modelBuilder.Entity<GuestChatMessage>(entity =>
+                {
+                    entity.ToTable("GuestChatMessages");
+                    
+                    entity.HasKey(e => e.Id);
+                    
+            
+                    entity.HasIndex(e => e.GuestChatSessionId)
+                        .HasDatabaseName("IX_GuestChatMessages_SessionId");
+                    
+                
+                    entity.HasIndex(e => e.CreateUtc)
+                        .HasDatabaseName("IX_GuestChatMessages_CreateUtc");
+                    
+                 
+                    entity.HasOne(e => e.GuestChatSession)
+                        .WithMany(s => s.Messages)
+                        .HasForeignKey(e => e.GuestChatSessionId)
+                        .OnDelete(DeleteBehavior.Cascade); 
+                    
+               
+                    entity.HasOne(e => e.Staff)
+                        .WithMany()
+                        .HasForeignKey(e => e.StaffId)
+                        .OnDelete(DeleteBehavior.SetNull); 
+                    
+              
+                    entity.Property(e => e.Content)
+                        .IsRequired()
+                        .HasMaxLength(5000);
+                    
+                    entity.Property(e => e.SenderName)
+                        .IsRequired()
+                        .HasMaxLength(100);
+                    
+                    entity.Property(e => e.IsStaff)
+                        .HasDefaultValue(false);
                 });
 
                 #endregion

@@ -35,6 +35,9 @@ namespace WorkSpace.Application.Interfaces
         
         DbSet<ChatMessage> ChatMessages { get; }
         DbSet<RefundRequest> RefundRequests { get; }
+        
+        DbSet<GuestChatSession> GuestChatSessions { get; }
+        DbSet<GuestChatMessage> GuestChatMessages { get; }
 
         Task<int> SaveChangesAsync(CancellationToken cancellationToken);
         DbSet<TEntity> Set<TEntity>() where TEntity : class;

@@ -5,6 +5,10 @@ using WorkSpace.Application.DTOs.Refund;
 using WorkSpace.Application.DTOs.Support;
 using WorkSpace.Application.Enums;
 using WorkSpace.Application.Extensions;
+using WorkSpace.Application.Features.GuestChat.Commands.CloseGuestSession;
+using WorkSpace.Application.Features.GuestChat.Commands.StaffReplyToGuest;
+using WorkSpace.Application.Features.GuestChat.Queries.GetActiveGuestSessions;
+using WorkSpace.Application.Features.GuestChat.Queries.GetGuestChatMessages;
 using WorkSpace.Application.Features.Refunds.Commands;
 using WorkSpace.Application.Features.Reviews.Commands;
 using WorkSpace.Application.Features.Reviews.Queries;
@@ -256,4 +260,72 @@ public class StaffAdminController : BaseApiController
         var result = await Mediator.Send(command, cancellationToken);
         return Ok(result);
     }
+    
+    [HttpGet("guest-chats")]
+    public async Task<IActionResult> GetActiveGuestChatSessions(
+        [FromQuery] int? staffId = null,
+        CancellationToken cancellationToken = default)
+    {
+        var query = new GetActiveGuestSessionsQuery
+        {
+            StaffId = staffId
+        };
+    
+        var result = await Mediator.Send(query, cancellationToken);
+        return Ok(result);
+    }
+    
+    [HttpGet("guest-chats/{sessionId}/messages")]
+    public async Task<IActionResult> GetGuestChatMessages(
+        [FromRoute] string sessionId,
+        CancellationToken cancellationToken)
+    {
+        var query = new GetGuestChatMessagesQuery
+        {
+            SessionId = sessionId
+        };
+    
+        var result = await Mediator.Send(query, cancellationToken);
+        return Ok(result);
+    }
+    
+    [HttpPost("guest-chats/{sessionId}/reply")]
+    public async Task<IActionResult> ReplyToGuestChat(
+        [FromRoute] string sessionId,
+        [FromBody] string message,
+        CancellationToken cancellationToken)
+    {
+        var staffUserId = User.GetUserId();
+        if (staffUserId == 0) return Unauthorized(new Response<string>("Invalid user token"));
+
+        var command = new StaffReplyToGuestCommand
+        {
+            SessionId = sessionId,
+            Message = message,
+            StaffUserId = staffUserId
+        };
+    
+        var result = await Mediator.Send(command, cancellationToken);
+        return Ok(result);
+    }
+    
+
+    [HttpPut("guest-chats/{sessionId}/close")]
+    public async Task<IActionResult> CloseGuestChatSession(
+        [FromRoute] string sessionId,
+        CancellationToken cancellationToken)
+    {
+        var staffUserId = User.GetUserId();
+        if (staffUserId == 0) return Unauthorized(new Response<string>("Invalid user token"));
+
+        var command = new CloseGuestChatSessionCommand
+        {
+            SessionId = sessionId,
+            StaffUserId = staffUserId
+        };
+    
+        var result = await Mediator.Send(command, cancellationToken);
+        return Ok(result);
+    }
+    
 }

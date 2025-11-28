@@ -2,9 +2,11 @@
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using WorkSpace.Application.DTOs.Chat;
+using WorkSpace.Application.Features.Chat.Commands.MarkMessagesAsRead;
 using WorkSpace.Application.Features.Chat.Commands.SendChatMessage;
 using WorkSpace.Application.Features.Chat.Commands.StartChatThread;
 using WorkSpace.Application.Features.Chat.Queries.GetChatMessages;
+using WorkSpace.Application.Features.Chat.Queries.GetCustomerChatThreads;
 using WorkSpace.Application.Wrappers;
 
 namespace WorkSpace.WebApi.Controllers.v1;
@@ -58,6 +60,40 @@ public class ChatController : BaseApiController
         {
             SenderId = dto.SenderId,
             RequestDto = dto.RequestDto
+        };
+
+        var result = await Mediator.Send(command, cancellationToken);
+        return Ok(result);
+    }
+    [HttpGet("threads/my-chats")]
+    public async Task<ActionResult<Response<IEnumerable<ChatThreadDto>>>> GetMyChats(
+        CancellationToken cancellationToken)
+    {
+        var userId = GetCurrentUserId();
+    
+        var query = new GetCustomerChatThreadsQuery
+        {
+            CustomerId = userId
+        };
+    
+        var result = await Mediator.Send(query, cancellationToken);
+        return Ok(result);
+    }
+    
+    /// <summary>
+    /// Mark messages as read in a thread
+    /// </summary>
+    [HttpPut("threads/{threadId:int}/mark-read")]
+    public async Task<ActionResult<Response<bool>>> MarkAsRead(
+        [FromRoute] int threadId,
+        CancellationToken cancellationToken)
+    {
+        var userId = GetCurrentUserId();
+
+        var command = new MarkMessagesAsReadCommand
+        {
+            ThreadId = threadId,
+            UserId = userId
         };
 
         var result = await Mediator.Send(command, cancellationToken);
