@@ -7,20 +7,18 @@ namespace WorkSpace.Application.Extensions
 {
     public static class ClaimExtensions
     {
-        // Lấy user id
         public static int GetUserId(this ClaimsPrincipal user)
         {
             if (user == null)
                 return 0;
 
-            // Try to find "uid" claim (case-insensitive)
             var idClaim = user.Claims.FirstOrDefault(c => 
                 c.Type.Equals("uid", StringComparison.OrdinalIgnoreCase));
             
             if (idClaim != null && int.TryParse(idClaim.Value, out int userId))
                 return userId;
 
-            // Fallback: try other common claim types
+     
             idClaim = user.Claims.FirstOrDefault(c =>
                 c.Type.Equals("sub", StringComparison.OrdinalIgnoreCase) ||
                 c.Type == ClaimTypes.NameIdentifier);
@@ -34,7 +32,7 @@ namespace WorkSpace.Application.Extensions
 
 
 
-        // Lấy user name 
+   
         public static string GetUserName(this ClaimsPrincipal user)
         {
             if (user == null) return null;
@@ -49,7 +47,7 @@ namespace WorkSpace.Application.Extensions
             )?.Value;
         }
 
-        // Lấy email
+
         public static string GetUserEmail(this ClaimsPrincipal user)
         {
             if (user == null) return null;
@@ -61,7 +59,7 @@ namespace WorkSpace.Application.Extensions
             )?.Value;
         }
 
-        // Lấy roles
+
         public static string[] GetRoles(this ClaimsPrincipal user)
         {
             if (user == null) return Array.Empty<string>();
@@ -86,7 +84,7 @@ namespace WorkSpace.Application.Extensions
                              .ToArray();
         }
 
-        // Lấy expiration (exp) 
+
         public static DateTimeOffset? GetExpiration(this ClaimsPrincipal user)
         {
             if (user == null) return null;

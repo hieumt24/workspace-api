@@ -32,7 +32,7 @@ public class GetCustomerChatThreadsQueryHandler : IRequestHandler<GetCustomerCha
 
         foreach (var thread in threads)
         {
-            // Count unread messages
+            
             var unreadCount = await _context.ChatMessages
                 .Where(m => m.ThreadId == thread.Id && 
                             m.SenderId != request.CustomerId && 

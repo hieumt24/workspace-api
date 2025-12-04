@@ -25,7 +25,7 @@ namespace WorkSpace.Domain.Entities
         public bool IsActive { get; set; } = true;
         public bool IsVerified { get; set; } = false;
 
-        // Navigation properties
+
         public virtual Address? Address { get; set; }
         public virtual HostProfile? Host { get; set; }
         public virtual List<WorkSpaceImage> WorkSpaceImages { get; set; } = new();

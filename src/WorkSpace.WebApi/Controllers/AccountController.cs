@@ -15,14 +15,14 @@ namespace WorkSpace.WebApi.Controllers
             _accountService = accountService;
         }
         [HttpPost("login")]
-        // API Request URL: POST /api/accounts/login
+    
         public async Task<IActionResult> AuthenticateAsync(AuthenticationRequest request)
         {
             var result = await _accountService.AuthenticateAsync(request, GenerateIPAddress());
             return Ok(result.Data);
         }
         [HttpPost("register")]
-        // API Request URL: POST /api/accounts/register
+       
         public async Task<IActionResult> RegisterAsync(RegisterRequest request)
         {
             var origin = GetOrigin();
@@ -30,14 +30,14 @@ namespace WorkSpace.WebApi.Controllers
             return Ok(result.Data);
         }
         [HttpGet("confirm-email")]
-        // API Request URL: GET /api/accounts/confirm-email
+    
         public async Task<IActionResult> ConfirmEmailAsync([FromQuery] string userId, [FromQuery] string code)
         {
             var result = await _accountService.ConfirmEmailAsync(userId, code);
             return Ok(result.Data);
         }
         [HttpPost("forgot-password")]
-        // API Request URL: POST /api/accounts/forgot-password
+     
         public async Task<IActionResult> ForgotPassword(ForgotPasswordRequest model)
         {
             var origin = GetOrigin();
@@ -45,7 +45,7 @@ namespace WorkSpace.WebApi.Controllers
             return Ok();
         }
         [HttpPost("reset-password")]
-        // API Request URL: POST /api/accounts/reset-password
+    
         public async Task<IActionResult> ResetPassword(ResetPasswordRequest model)
         {
             var result = await _accountService.ResetPassword(model);
@@ -74,7 +74,7 @@ namespace WorkSpace.WebApi.Controllers
         }
         
         [HttpPost("google-login")]
-        // API Request URL: POST /api/accounts/google-login
+
         public async Task<IActionResult> GoogleLogin(GoogleLoginRequest request)
         {
             var result = await _accountService.GoogleLoginAsync(request, GenerateIPAddress());

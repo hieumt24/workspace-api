@@ -17,9 +17,7 @@ public class AIChatbotController : ControllerBase
         _aiChatbotService = aiChatbotService;
     }
 
-    /// <summary>
-    /// Gửi tin nhắn cho AI chatbot để tìm workspace
-    /// </summary>
+
     [HttpPost("chat")]
     public async Task<IActionResult> Chat(
         [FromBody] ChatbotRequestDto request,
@@ -29,15 +27,13 @@ public class AIChatbotController : ControllerBase
         if (userId == 0)
             return Unauthorized("Invalid user token");
 
-        request.UserId = userId; // Override for security
+        request.UserId = userId; 
 
         var response = await _aiChatbotService.ProcessUserMessageAsync(request, cancellationToken);
         return Ok(response);
     }
 
-    /// <summary>
-    /// Test endpoint - extract intent from user message
-    /// </summary>
+
     [HttpPost("extract-intent")]
     public async Task<IActionResult> ExtractIntent(
         [FromBody] string message,

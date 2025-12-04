@@ -1,30 +1,32 @@
 using Microsoft.AspNetCore.Mvc;
-using WorkSpace.Application.Features.WorkSpaceTypes.Queries;
-using WorkSpace.Application.Interfaces.Repositories;
+using WorkSpace.Application.Features.WorkSpace.Queries;
+using WorkSpace.Application.Features.WorkSpaceTypes.Queries; 
 
 namespace WorkSpace.WebApi.Controllers.v1;
 
 [Route("api/v1/workspacetypes")]
 [ApiController]
-public class WorkSpaceTypesController : ControllerBase
+
+public class WorkSpaceTypesController : BaseApiController
 {
-    private IWorkSpaceTypeRepository _workSpaceTypeRepository;
-    public WorkSpaceTypesController(IWorkSpaceTypeRepository workSpaceTypeRepository)
-    {
-        _workSpaceTypeRepository = workSpaceTypeRepository;
-    }
+
+
     [HttpGet]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        var workspceTypes = await _workSpaceTypeRepository.GetAllWorkSpaceType();
-        return Ok(workspceTypes);
+       
+        var result = await Mediator.Send(new GetAllWorkSpaceTypesQuery(), cancellationToken);
+        return Ok(result);
     }
 
     [HttpGet("{id}/workspaces")]
-    public async Task<IActionResult> GetWorkSpacesByTypeId([FromRoute] int id)
+    public async Task<IActionResult> GetWorkSpacesByTypeId(
+        [FromRoute] int id,
+        CancellationToken cancellationToken)
     {
-        var workspaces = await _workSpaceTypeRepository.GetWorkSpacesByTypeId(id);
+        
+        var workspaces = await Mediator.Send(new GetWorkSpacesByTypeIdQuery(id), cancellationToken);
+
         return Ok(workspaces);
     }
 }
-

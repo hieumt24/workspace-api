@@ -6,6 +6,11 @@ using WorkSpace.Application.Extensions;
 using WorkSpace.Application.Features.Owner.Commands;
 using WorkSpace.Application.Features.Owner.Queries;
 using WorkSpace.Application.Features.Refunds.Commands;
+using WorkSpace.Application.Features.CustomerChat.Commands.CloseCustomerSession;
+using WorkSpace.Application.Features.CustomerChat.Commands.OwnerReplyToCustomer;
+using WorkSpace.Application.Features.CustomerChat.Queries.GetActiveCustomerSessions;
+using WorkSpace.Application.Features.CustomerChat.Queries.GetCustomerChatMessages;
+using WorkSpace.Application.Wrappers;
 
 namespace WorkSpace.WebApi.Controllers.v1
 {
@@ -20,7 +25,25 @@ namespace WorkSpace.WebApi.Controllers.v1
         public async Task<IActionResult> GetMyWorkspaces(CancellationToken ct)
         {
             var userId = User.GetUserId();
-            var query = new GetOwnerWorkspacesQuery { OwnerUserId = userId };
+            var query = new GetOwnerWorkspacesQuery
+            {
+                OwnerUserId = userId,
+                IsVerified = true 
+            };
+
+            var result = await Mediator.Send(query, ct);
+            return Ok(result.Data);
+        }
+
+        [HttpGet("workspaces/pending")]
+        public async Task<IActionResult> GetMyPendingWorkspaces(CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+            var query = new GetOwnerWorkspacesQuery
+            {
+                OwnerUserId = userId,
+                IsVerified = false 
+            };
 
             var result = await Mediator.Send(query, ct);
             return Ok(result.Data);
@@ -38,6 +61,20 @@ namespace WorkSpace.WebApi.Controllers.v1
             };
 
             return Ok(await Mediator.Send(command, ct));
+        }
+
+        [HttpGet("workspaces/{id}/detail")]
+        public async Task<IActionResult> GetWorkSpaceDetail(int id, CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+            var query = new WorkSpace.Application.Features.Owner.Queries.GetOwnerWorkSpaceDetailQuery
+            {
+                WorkSpaceId = id,
+                OwnerUserId = userId
+            };
+
+            var result = await Mediator.Send(query, ct);
+            return Ok(result.Data);
         }
 
         [HttpPost("workspaces")]
@@ -126,8 +163,6 @@ namespace WorkSpace.WebApi.Controllers.v1
 
             return Ok(result.Data);
         }
-
-
         [HttpGet("bookings/completed")]
         public async Task<IActionResult> GetCompletedBookings(CancellationToken ct)
         {
@@ -140,6 +175,25 @@ namespace WorkSpace.WebApi.Controllers.v1
             };
 
             var result = await Mediator.Send(query, ct);
+
+        
+            return Ok(result.Data);
+        }
+
+        [HttpGet("bookings/pending")]
+        public async Task<IActionResult> GetPendingBookings(CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+            if (userId == 0) return Unauthorized();
+
+            var query = new GetOwnerPendingBookingsQuery
+            {
+                OwnerUserId = userId
+            };
+
+   
+            var result = await Mediator.Send(query, ct);
+
             return Ok(result);
         }
 
@@ -196,6 +250,21 @@ namespace WorkSpace.WebApi.Controllers.v1
             };
             return Ok(await Mediator.Send(command, ct));
         }
+
+
+        [HttpPut("bookings/{bookingId}/complete")]
+        public async Task<IActionResult> CompleteBooking(int bookingId, CancellationToken ct)
+        {
+            var userId = User.GetUserId();
+            var command = new ManageBookingCommand
+            {
+                BookingId = bookingId,
+                Action = BookingAction.Complete,
+                OwnerUserId = userId
+            };
+            return Ok(await Mediator.Send(command, ct));
+        }
+ 
 
         [HttpPost("refund-requests/{refundRequestId}/approve")]
         public async Task<IActionResult> ApproveOrRejectRefund(
@@ -287,5 +356,75 @@ namespace WorkSpace.WebApi.Controllers.v1
             var result = await Mediator.Send(command, ct);
             return Ok(result);
         }
+
+        #region Customer Chat Management
+
+        [HttpGet("customer-chats")]
+        public async Task<IActionResult> GetActiveCustomerChatSessions(
+            [FromQuery] int? ownerId = null,
+            CancellationToken cancellationToken = default)
+        {
+            var query = new GetActiveCustomerSessionsQuery
+            {
+                OwnerId = ownerId
+            };
+        
+            var result = await Mediator.Send(query, cancellationToken);
+            return Ok(result);
+        }
+        
+        [HttpGet("customer-chats/{sessionId}/messages")]
+        public async Task<IActionResult> GetCustomerChatMessages(
+            [FromRoute] string sessionId,
+            CancellationToken cancellationToken)
+        {
+            var query = new GetCustomerChatMessagesQuery
+            {
+                SessionId = sessionId
+            };
+        
+            var result = await Mediator.Send(query, cancellationToken);
+            return Ok(result);
+        }
+        
+        [HttpPost("customer-chats/{sessionId}/reply")]
+        public async Task<IActionResult> ReplyToCustomerChat(
+            [FromRoute] string sessionId,
+            [FromBody] string message,
+            CancellationToken cancellationToken)
+        {
+            var ownerUserId = User.GetUserId();
+            if (ownerUserId == 0) return Unauthorized(new Response<string>("Invalid user token"));
+
+            var command = new OwnerReplyToCustomerCommand
+            {
+                SessionId = sessionId,
+                Message = message,
+                OwnerUserId = ownerUserId
+            };
+        
+            var result = await Mediator.Send(command, cancellationToken);
+            return Ok(result);
+        }
+        
+        [HttpPut("customer-chats/{sessionId}/close")]
+        public async Task<IActionResult> CloseCustomerChatSession(
+            [FromRoute] string sessionId,
+            CancellationToken cancellationToken)
+        {
+            var ownerUserId = User.GetUserId();
+            if (ownerUserId == 0) return Unauthorized(new Response<string>("Invalid user token"));
+
+            var command = new CloseCustomerChatSessionCommand
+            {
+                SessionId = sessionId,
+                OwnerUserId = ownerUserId
+            };
+        
+            var result = await Mediator.Send(command, cancellationToken);
+            return Ok(result);
+        }
+
+        #endregion
     }
 }

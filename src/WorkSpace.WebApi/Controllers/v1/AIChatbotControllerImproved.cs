@@ -22,14 +22,7 @@ public class AIChatbotControllerImproved : ControllerBase
         _conversationRepository = conversationRepository;
     }
     
-    /// <summary>
-    /// Gửi tin nhắn cho AI chatbot để tìm workspace
-    /// </summary>
-    /// <remarks>
-    /// ConversationId là optional:
-    /// - Nếu không có: Sẽ sử dụng hoặc tạo conversation active
-    /// - Nếu có: Sẽ tiếp tục conversation đó
-    /// </remarks>
+
     [HttpPost("chat")]
     [ProducesResponseType(typeof(ChatbotResponseDto), 200)]
     [ProducesResponseType(401)]
@@ -42,7 +35,7 @@ public class AIChatbotControllerImproved : ControllerBase
         if (userId == 0)
             return Unauthorized(new { message = "Invalid user token" });
 
-        request.UserId = userId; // Override for security
+        request.UserId = userId;
 
         var response = await _aiChatbotService.ProcessUserMessageAsync(request, cancellationToken);
         
@@ -54,9 +47,6 @@ public class AIChatbotControllerImproved : ControllerBase
         return Ok(response);
     }
 
-    /// <summary>
-    /// Lấy danh sách các cuộc hội thoại của user
-    /// </summary>
     [HttpGet("conversations")]
     [ProducesResponseType(typeof(List<ChatbotConversationDto>), 200)]
     public async Task<IActionResult> GetConversations(
@@ -91,9 +81,7 @@ public class AIChatbotControllerImproved : ControllerBase
         });
     }
 
-    /// <summary>
-    /// Lấy chi tiết một cuộc hội thoại với tất cả messages
-    /// </summary>
+    
     [HttpGet("conversations/{conversationId}")]
     [ProducesResponseType(typeof(ChatbotConversationDetailDto), 200)]
     [ProducesResponseType(404)]
@@ -127,9 +115,6 @@ public class AIChatbotControllerImproved : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Bắt đầu cuộc hội thoại mới (archive conversation hiện tại)
-    /// </summary>
     [HttpPost("conversations/new")]
     [ProducesResponseType(typeof(ChatbotConversationDto), 200)]
     public async Task<IActionResult> StartNewConversation(
@@ -156,9 +141,7 @@ public class AIChatbotControllerImproved : ControllerBase
         return Ok(result);
     }
 
-    /// <summary>
-    /// Xóa một cuộc hội thoại
-    /// </summary>
+
     [HttpDelete("conversations/{conversationId}")]
     [ProducesResponseType(204)]
     [ProducesResponseType(404)]
@@ -183,9 +166,7 @@ public class AIChatbotControllerImproved : ControllerBase
         return NoContent();
     }
 
-    /// <summary>
-    /// Test endpoint - extract intent from user message
-    /// </summary>
+
     [HttpPost("extract-intent")]
     [ProducesResponseType(typeof(ExtractedIntentDto), 200)]
     public async Task<IActionResult> ExtractIntent(

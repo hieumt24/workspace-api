@@ -55,7 +55,7 @@ public class StartChatThreadCommandHandler : IRequestHandler<StartChatThreadComm
             throw new ApiException("Bạn không có quyền bắt đầu cuộc trò chuyện cho đặt chỗ này.");
         }
         
-        // Kiểm tra xem cuộc trò chuyện đã tồn tại chưa
+    
 
         var existingThread = await _context.ChatThreads.FirstOrDefaultAsync(
             t => t.BookingId == booking.Id

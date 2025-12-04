@@ -8,7 +8,7 @@ namespace WorkSpace.WebApi.Controllers.v1
     [Route("api/v1/workspacerooms")]
     public class WorkSpaceRoomsController : BaseApiController
     {
-        /// Get workspace room detail by ID
+     
         [HttpGet("{id}/detail")] 
         public async Task<IActionResult> GetRoomDetailById(
             [FromRoute] int id,
@@ -52,7 +52,7 @@ namespace WorkSpace.WebApi.Controllers.v1
                 return BadRequest(new { message = "Start time cannot be in the past." });
             }
 
-            // Build full request with filters from query params
+          
             var fullRequest = new CheckAvailableRoomsRequestInternal
             {
                 StartTime = request.StartTime,

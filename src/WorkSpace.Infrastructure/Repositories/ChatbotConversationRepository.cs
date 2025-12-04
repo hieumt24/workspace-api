@@ -103,7 +103,6 @@ public class ChatbotConversationRepository : IChatbotConversationRepository
         int userId,
         CancellationToken cancellationToken = default)
     {
-        // Deactivate current active conversation
         var currentActive = await _context.ChatbotConversations
             .Where(c => c.UserId == userId && c.IsActive)
             .ToListAsync(cancellationToken);
@@ -113,7 +112,7 @@ public class ChatbotConversationRepository : IChatbotConversationRepository
             conv.IsActive = false;
         }
 
-        // Create new conversation
+
         var newConversation = new ChatbotConversation
         {
             UserId = userId,

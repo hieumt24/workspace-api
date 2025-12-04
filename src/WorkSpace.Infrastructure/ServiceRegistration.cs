@@ -41,7 +41,7 @@ public static class ServiceRegistration
         services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
         services.AddScoped(typeof(IChatMessageRepository), typeof(ChatMessageRepository));
         services.AddScoped(typeof(IChatbotConversationRepository), typeof(ChatbotConversationRepository));
-        services.AddScoped(typeof(IGuestChatSessionRepository), typeof(GuestChatSessionRepository));
+        services.AddScoped(typeof(ICustomerChatSessionRepository), typeof(CustomerChatSessionRepository));
         
         services.AddScoped<IApplicationDbContext>(provider => provider.GetRequiredService<WorkSpaceContext>());
         #endregion

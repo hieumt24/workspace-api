@@ -10,7 +10,7 @@ using WorkSpace.Application.Wrappers;
 
 namespace WorkSpace.Application.Features.SupportTickets.Queries
 {
-    public class GetSupportTicketsQueryHandler : IRequestHandler<GetSupportTicketsQuery, PagedResponse<IEnumerable<SupportTicketListDto>>>
+    public class GetSupportTicketsQueryHandler : IRequestHandler<GetSupportTicketsQuery, IEnumerable<SupportTicketListDto>>
     {
         private readonly IApplicationDbContext _context;
 
@@ -19,12 +19,13 @@ namespace WorkSpace.Application.Features.SupportTickets.Queries
             _context = context;
         }
 
-        public async Task<PagedResponse<IEnumerable<SupportTicketListDto>>> Handle(GetSupportTicketsQuery request, CancellationToken cancellationToken)
+        public async Task<IEnumerable<SupportTicketListDto>> Handle(GetSupportTicketsQuery request, CancellationToken cancellationToken)
         {
             var query = _context.SupportTickets
-                .Include(t => t.SubmittedByUser) 
-                .Include(t => t.AssignedToStaff) 
-                .AsNoTracking();
+                .Include(t => t.SubmittedByUser)
+                .Include(t => t.AssignedToStaff)
+                .AsNoTracking()
+                .AsQueryable(); 
 
 
             if (request.StatusFilter.HasValue)
@@ -32,17 +33,10 @@ namespace WorkSpace.Application.Features.SupportTickets.Queries
                 query = query.Where(t => t.Status == request.StatusFilter.Value);
             }
 
-     
-            var totalRecords = await query.CountAsync(cancellationToken);
-
-   
             var tickets = await query
-                .OrderByDescending(t => t.CreateUtc) 
-                .Skip((request.PageNumber - 1) * request.PageSize)
-                .Take(request.PageSize)
+                .OrderByDescending(t => t.CreateUtc)
                 .ToListAsync(cancellationToken);
 
-   
             var dtoList = tickets.Select(t => new SupportTicketListDto
             {
                 Id = t.Id,
@@ -56,8 +50,7 @@ namespace WorkSpace.Application.Features.SupportTickets.Queries
                 AssignedToStaffName = t.AssignedToStaff?.GetFullName() ?? t.AssignedToStaff?.UserName
             }).ToList();
 
- 
-            return new PagedResponse<IEnumerable<SupportTicketListDto>>(dtoList, request.PageNumber, request.PageSize, totalRecords);
+            return dtoList;
         }
     }
 }

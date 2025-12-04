@@ -18,10 +18,6 @@ public interface IPromotionService
             int userId, 
             decimal totalAmount, 
             CancellationToken cancellationToken = default);
-
-    /// <summary>
-    /// Records promotion usage for a booking
-    /// </summary>
     Task RecordPromotionUsageAsync(int promotionId, int bookingId, int userId, decimal discountAmount, CancellationToken cancellationToken = default);
 }
 

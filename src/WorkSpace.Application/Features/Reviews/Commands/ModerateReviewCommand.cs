@@ -1,49 +1,72 @@
-﻿// src/WorkSpace.Application/Features/Reviews/Commands/ModerateReviewCommand.cs
-using MediatR;
-using Microsoft.EntityFrameworkCore; 
-using WorkSpace.Application.Exceptions; 
-using WorkSpace.Application.Interfaces.Repositories; 
+﻿using MediatR;
+using WorkSpace.Application.Exceptions;
+using WorkSpace.Application.Interfaces.Repositories;
 using WorkSpace.Application.Wrappers;
-using WorkSpace.Domain.Entities; 
+using WorkSpace.Domain.Entities;
+
 namespace WorkSpace.Application.Features.Reviews.Commands;
 
-public class ModerateReviewCommand : IRequest<Response<int>>
-{
-    public int ReviewId { get; set; }
-    public bool IsVerified { get; set; }
-    public bool IsPublic { get; set; }
-}
+public record ApproveReviewCommand(int ReviewId) : IRequest<Response<int>>;
 
-public class ModerateReviewCommandHandler : IRequestHandler<ModerateReviewCommand, Response<int>>
+
+public record HideReviewCommand(int ReviewId) : IRequest<Response<int>>;
+
+public record ShowReviewCommand(int ReviewId) : IRequest<Response<int>>;
+
+
+public class ReviewModerationHandler :
+    IRequestHandler<ApproveReviewCommand, Response<int>>,
+    IRequestHandler<HideReviewCommand, Response<int>>,
+    IRequestHandler<ShowReviewCommand, Response<int>>
 {
     private readonly IGenericRepositoryAsync<Review> _reviewRepository;
 
-    public ModerateReviewCommandHandler(IGenericRepositoryAsync<Review> reviewRepository)
+    public ReviewModerationHandler(IGenericRepositoryAsync<Review> reviewRepository)
     {
         _reviewRepository = reviewRepository;
     }
 
-    public async Task<Response<int>> Handle(ModerateReviewCommand request, CancellationToken cancellationToken)
-    {
-        var review = await _reviewRepository.GetByIdAsync(request.ReviewId, cancellationToken);
 
+    public async Task<Response<int>> Handle(ApproveReviewCommand request, CancellationToken cancellationToken)
+    {
+        var review = await GetReviewById(request.ReviewId, cancellationToken);
+
+        review.IsVerified = true;
+  
+
+        await _reviewRepository.UpdateAsync(review, cancellationToken);
+        return new Response<int>(review.Id, "Đã duyệt đánh giá thành công.");
+    }
+
+
+    public async Task<Response<int>> Handle(HideReviewCommand request, CancellationToken cancellationToken)
+    {
+        var review = await GetReviewById(request.ReviewId, cancellationToken);
+
+        review.IsPublic = false;
+
+        await _reviewRepository.UpdateAsync(review, cancellationToken);
+        return new Response<int>(review.Id, "Đã ẩn đánh giá thành công.");
+    }
+
+
+    public async Task<Response<int>> Handle(ShowReviewCommand request, CancellationToken cancellationToken)
+    {
+        var review = await GetReviewById(request.ReviewId, cancellationToken);
+
+        review.IsPublic = true;
+
+        await _reviewRepository.UpdateAsync(review, cancellationToken);
+        return new Response<int>(review.Id, "Đã bỏ ẩn (hiển thị) đánh giá thành công.");
+    }
+
+    private async Task<Review> GetReviewById(int id, CancellationToken ct)
+    {
+        var review = await _reviewRepository.GetByIdAsync(id, ct);
         if (review == null)
         {
-            throw new ApiException($"Review with ID {request.ReviewId} not found.");
+            throw new ApiException($"Không tìm thấy đánh giá với ID {id}.");
         }
-
-        review.IsVerified = request.IsVerified;
-        review.IsPublic = request.IsPublic;
-
-        try
-        {
-            await _reviewRepository.UpdateAsync(review, cancellationToken);
-            return new Response<int>(review.Id, "Review status updated successfully.");
-        }
-        catch (DbUpdateException ex)
-        {
-
-            throw new ApiException($"Failed to update review status. Error: {ex.InnerException?.Message ?? ex.Message}");
-        }
+        return review;
     }
 }

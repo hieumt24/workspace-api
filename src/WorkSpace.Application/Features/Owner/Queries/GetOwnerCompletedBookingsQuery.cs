@@ -1,6 +1,10 @@
-﻿using MediatR;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json.Serialization;
+using System.Threading;
+using System.Threading.Tasks;
 using WorkSpace.Application.DTOs.Bookings;
 using WorkSpace.Application.Exceptions;
 using WorkSpace.Application.Interfaces;
@@ -36,12 +40,11 @@ namespace WorkSpace.Application.Features.Owner.Queries
                 .Include(b => b.WorkSpaceRoom.WorkSpace)
                 .Include(b => b.BookingStatus)
                 .Where(b => b.WorkSpaceRoom.WorkSpace.HostId == hostProfile.Id)
-                .Where(b => b.BookingStatus.Name == "Completed") 
-                .OrderByDescending(b => b.CreateUtc) 
+                .Where(b => b.BookingStatus.Name == "Completed")
+                .OrderByDescending(b => b.CreateUtc)
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 
-         
             var dtos = bookings.Select(b => new BookingAdminDto
             {
                 Id = b.Id,
@@ -61,9 +64,18 @@ namespace WorkSpace.Application.Features.Owner.Queries
                 CheckedInAt = b.CheckedInAt,
                 CheckedOutAt = b.CheckedOutAt,
                 IsReviewed = b.IsReviewed
-            }).ToList();
+            });
 
-            return new Response<IEnumerable<BookingAdminDto>>(dtos);
+
+            return new Response<IEnumerable<BookingAdminDto>>
+            {
+                Succeeded = true,
+                Data = dtos.ToList(),
+                Message = "Completed bookings retrieved successfully."
+            };
+
+            return new Response<IEnumerable<BookingAdminDto>>(dtos.ToList());
+
         }
     }
 }

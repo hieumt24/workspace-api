@@ -35,7 +35,6 @@ public class UpdateBookingStatusCommandHandler : IRequestHandler<UpdateBookingSt
             return new Response<int>($"Booking status with id {request.Id} not found.");
         }
 
-        // Check if new name already exists (excluding current record)
         var isUnique = await _repository.IsNameUniqueAsync(request.Name, request.Id, cancellationToken);
         if (!isUnique)
         {

@@ -24,7 +24,7 @@ public class Booking : AuditableBaseEntity
 
     public decimal TotalPrice { get; set; }
     public decimal TaxAmount { get; set; }
-    public decimal ServiceFee { get; set; }//
+    public decimal ServiceFee { get; set; }
     public decimal FinalAmount { get; set; }
     [MaxLength(255)]
     public string? PaymentTransactionId { get; set; }
@@ -43,7 +43,7 @@ public class Booking : AuditableBaseEntity
     public bool IsReviewed { get; set; } = false;
     public int? PaymentMethodID { get; set; }
 
-    // Navigation properties
+   
     public virtual AppUser? Customer { get; set; }
     public virtual Guest? Guest { get; set; }
     public virtual WorkSpaceRoom? WorkSpaceRoom { get; set; }

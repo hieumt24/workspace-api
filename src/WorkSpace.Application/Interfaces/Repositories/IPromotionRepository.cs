@@ -5,6 +5,7 @@ namespace WorkSpace.Application.Interfaces.Repositories
     public interface IPromotionRepository : IGenericRepositoryAsync<Promotion>
     {
         Task<IReadOnlyList<Promotion>> GetActivePromotionsAsync(CancellationToken cancellationToken = default);
+        Task<Promotion> GetPromotionByCodeAsync(string code);
     }
 }
 

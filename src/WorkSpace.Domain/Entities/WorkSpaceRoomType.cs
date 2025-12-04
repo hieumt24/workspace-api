@@ -13,7 +13,7 @@ namespace WorkSpace.Domain.Entities
         [MaxLength(500)]
         public string? Description { get; set; }
 
-        // Navigation properties
+
         public virtual List<WorkSpaceRoom> WorkSpaceRooms { get; set; } = new();
     }
 }

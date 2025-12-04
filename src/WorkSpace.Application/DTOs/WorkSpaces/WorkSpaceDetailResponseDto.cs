@@ -5,6 +5,7 @@ public class WorkSpaceDetailResponseDto
     public int Id { get; set; }
     public string Title { get; set; } = string.Empty;
     public string? Description { get; set; }
+    public List<string> ImageUrls { get; set; } = new();
     public int HostId { get; set; }
     public string? HostName { get; set; }
     public string? HostCompanyName { get; set; }

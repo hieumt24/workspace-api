@@ -5,6 +5,7 @@ using WorkSpace.Application.DTOs.Bookings;
 using WorkSpace.Application.DTOs.Customer;
 using WorkSpace.Application.Interfaces.Repositories;
 using WorkSpace.Application.Extensions;
+using WorkSpace.Infrastructure.Repositories;
 
 
 namespace WorkSpace.WebApi.Controllers.v1
@@ -15,22 +16,35 @@ namespace WorkSpace.WebApi.Controllers.v1
     {
         private readonly IBookingService _bookingService;
         private readonly IBookingRepository _bookingRepository;
-        public BookingController(IBookingService bookingService, IBookingRepository bookingRepository)
+        private readonly IPromotionRepository _promotionRepository;
+        public BookingController(IBookingService bookingService, IBookingRepository bookingRepository, IPromotionRepository promotionRepository)
         {
             _bookingService = bookingService;
             _bookingRepository = bookingRepository;
+            _promotionRepository = promotionRepository;
         }
 
         [HttpGet("customer")]
         public async Task<IActionResult> GetBookingById()
         {
-            var userId= User.GetUserId();
+            var userId = User.GetUserId();
             var bookings = await _bookingRepository.GetBookingsByUserIdAsync(userId);
             if (bookings == null)
             {
                 return NotFound(new { Message = "Booking not found." });
             }
             return Ok(bookings);
+        }
+
+        [HttpGet("code")]
+        public async Task<IActionResult> GetPromotionByCode([FromQuery] string promotionCode)
+        {
+            var result = await _promotionRepository.GetPromotionByCodeAsync(promotionCode);
+            if (result == null)
+            {
+                return NotFound();
+            }
+            return Ok(result);
         }
 
         [HttpGet("booking-code")]

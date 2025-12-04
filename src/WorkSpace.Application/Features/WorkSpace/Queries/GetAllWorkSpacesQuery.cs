@@ -1,43 +1,32 @@
 using AutoMapper;
 using MediatR;
+using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using WorkSpace.Application.DTOs.WorkSpaces;
 using WorkSpace.Application.Interfaces.Repositories;
-using WorkSpace.Application.Wrappers;
 
 namespace WorkSpace.Application.Features.WorkSpace.Queries;
 
-public record GetAllWorkSpacesQuery(
-    int PageNumber = 1,
-    int PageSize = 10,
-    bool? IsVerified = null
-) : IRequest<PagedResponse<IEnumerable<WorkSpaceModerationDto>>>;
+
+public record GetAllWorkSpacesQuery(bool? IsVerified = null) : IRequest<IEnumerable<WorkSpaceModerationDto>>;
 
 public class GetAllWorkSpacesHandler(
     IWorkSpaceRepository repository,
-    IMapper mapper) 
-    : IRequestHandler<GetAllWorkSpacesQuery, PagedResponse<IEnumerable<WorkSpaceModerationDto>>>
+    IMapper mapper)
+    : IRequestHandler<GetAllWorkSpacesQuery, IEnumerable<WorkSpaceModerationDto>>
 {
-    public async Task<PagedResponse<IEnumerable<WorkSpaceModerationDto>>> Handle(
+    public async Task<IEnumerable<WorkSpaceModerationDto>> Handle(
         GetAllWorkSpacesQuery request,
         CancellationToken cancellationToken)
     {
-        var (workSpaces, totalCount) = await repository.GetAllWorkSpacesForAdminAsync(
-            request.PageNumber, 
-            request.PageSize,
+
+        var (workSpaces, _) = await repository.GetAllWorkSpacesForAdminAsync(
+            1,
+            int.MaxValue,
             request.IsVerified,
             cancellationToken);
 
-        var dtoList = mapper.Map<IEnumerable<WorkSpaceModerationDto>>(workSpaces);
-
-        var pagedResponse = new PagedResponse<IEnumerable<WorkSpaceModerationDto>>(
-            dtoList, 
-            request.PageNumber, 
-            request.PageSize)
-        {
-            Message = $"Tìm thấy {totalCount} workspace."
-        };
-        
-        return pagedResponse;
+        return mapper.Map<IEnumerable<WorkSpaceModerationDto>>(workSpaces);
     }
 }
-

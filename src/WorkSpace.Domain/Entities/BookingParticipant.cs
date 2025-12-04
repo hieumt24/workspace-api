@@ -14,6 +14,6 @@ public class BookingParticipant : AuditableBaseEntity
     [MaxLength(255)]
     public string? Email { get; set; }
 
-    // Navigation properties
+
     public virtual Booking? Booking { get; set; }
 }

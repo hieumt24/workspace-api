@@ -23,6 +23,7 @@ namespace WorkSpace.Infrastructure.Repositories
                 .Include(w => w.WorkSpaceType)
                 .Include(w => w.WorkSpaceRooms)
                     .ThenInclude(wr => wr.WorkSpaceRoomType)
+                .Include(w => w.WorkSpaceImages)
                 .Include(w => w.WorkSpaceRooms)
                     .ThenInclude(wr => wr.WorkSpaceRoomImages)
                 .Include(w => w.WorkSpaceRooms)
@@ -172,7 +173,11 @@ namespace WorkSpace.Infrastructure.Repositories
                 .Include(w => w.Host)
                     .ThenInclude(h => h.User)
                 .Include(w => w.WorkSpaceType)
+                .Include(w => w.WorkSpaceImages)
                 .Include(w => w.WorkSpaceRooms)
+                    .ThenInclude(wr => wr.WorkSpaceRoomImages)
+  
+
                 .AsNoTracking()
                 .Where(w => w.WorkSpaceTypeId == typeId)
                 .OrderByDescending(w => w.IsVerified)
@@ -187,7 +192,7 @@ namespace WorkSpace.Infrastructure.Repositories
             int pageSize,
             CancellationToken cancellationToken = default)
         {
-         
+
             var startUtc = request.StartTime;
             var endUtc = request.EndTime;
 
@@ -205,7 +210,7 @@ namespace WorkSpace.Infrastructure.Repositories
                 .AsNoTracking()
                 .AsQueryable();
 
-      
+
             if (request.OnlyActive)
             {
                 query = query.Where(wr => wr.IsActive && wr.WorkSpace.IsActive);
@@ -241,7 +246,7 @@ namespace WorkSpace.Infrastructure.Repositories
                 query = query.Where(wr => wr.Capacity >= request.MinCapacity.Value);
             }
 
-       
+
             query = query.Where(wr => !wr.BlockedTimeSlots.Any(bts =>
                 bts.StartTime < endUtc && bts.EndTime > startUtc
             ));
@@ -277,6 +282,7 @@ namespace WorkSpace.Infrastructure.Repositories
                     .ThenInclude(h => h.User)
                 .Include(w => w.WorkSpaceType)
                 .Include(w => w.WorkSpaceRooms)
+                .Include(w => w.WorkSpaceImages)
                 .AsNoTracking()
                 .Where(w => !w.IsVerified)
                 .OrderByDescending(w => w.CreateUtc);
@@ -302,8 +308,13 @@ namespace WorkSpace.Infrastructure.Repositories
                 .Include(w => w.Host)
                     .ThenInclude(h => h.User)
                 .Include(w => w.WorkSpaceType)
-                .Include(w => w.WorkSpaceRooms)
-                .AsNoTracking()
+           .Include(w => w.WorkSpaceRooms)
+            .ThenInclude(r => r.WorkSpaceRoomImages) 
+        .Include(w => w.WorkSpaceRooms)
+            .ThenInclude(r => r.Reviews)           
+                                                    
+        .Include(w => w.WorkSpaceImages)
+        .AsNoTracking()
                 .AsQueryable();
 
             if (isVerified.HasValue)

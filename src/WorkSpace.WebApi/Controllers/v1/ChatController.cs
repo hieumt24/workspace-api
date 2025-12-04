@@ -30,7 +30,7 @@ public class ChatController : BaseApiController
         return Ok(result);
     }
     
-    // GET: api/chat/threads/{threadId}/messages
+
     [HttpGet("threads/{threadId:int}/messages")]
     public async Task<ActionResult<Response<IEnumerable<ChatMessageDto>>>> GetMessages(
         [FromRoute] int threadId,
@@ -48,7 +48,7 @@ public class ChatController : BaseApiController
         return Ok(result);
     }
 
-    // POST: api/chat/threads/{threadId}/messages
+ 
     [HttpPost("threads/messages")]
     public async Task<ActionResult<Response<ChatMessageDto>>> SendMessage(
         [FromBody] SendChatMessageCommand dto,
@@ -80,9 +80,7 @@ public class ChatController : BaseApiController
         return Ok(result);
     }
     
-    /// <summary>
-    /// Mark messages as read in a thread
-    /// </summary>
+
     [HttpPut("threads/{threadId:int}/mark-read")]
     public async Task<ActionResult<Response<bool>>> MarkAsRead(
         [FromRoute] int threadId,

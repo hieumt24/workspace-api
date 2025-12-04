@@ -27,13 +27,13 @@ public class AIChatbotService : IAIChatbotService
         ChatbotRequestDto request,
         CancellationToken cancellationToken = default)
     {
-        // Step 1: Extract intent and parameters from user message
+   
         var intent = await ExtractIntentAsync(request.Message, request.UserId, cancellationToken);
         
         var parsedStartTime = intent.GetParsedStartTime();
         var parsedEndTime = intent.GetParsedEndTime();
 
-        // Step 2: Get recommendations based on extracted intent
+    
         List<RecommendedWorkSpaceDto>? recommendations = null;
 
         if (intent.Intent == "search_workspace")
@@ -57,7 +57,7 @@ public class AIChatbotService : IAIChatbotService
             recommendations = recommendedWorkspaces;
         }
 
-        // Step 3: Generate natural language response
+    
         var responseMessage = await GenerateResponseAsync(
             request.Message,
             intent,
@@ -149,7 +149,7 @@ CHỈ trả về JSON, không thêm text khác.";
     var completion = await _chatClient.CompleteChatAsync(messages, chatCompletionOptions, cancellationToken);
     var jsonResponse = completion.Value.Content[0].Text;
 
-    // Parse JSON response
+
     var intent = JsonSerializer.Deserialize<ExtractedIntentDto>(
         jsonResponse, 
         new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
@@ -182,8 +182,8 @@ CHỈ trả về JSON, không thêm text khác.";
             new SystemChatMessage(systemPrompt)
         };
 
-        // Add conversation history
-        foreach (var msg in conversationHistory.TakeLast(5)) // Only last 5 messages
+      
+        foreach (var msg in conversationHistory.TakeLast(5)) 
         {
             if (msg.Role == "user")
                 messages.Add(new UserChatMessage(msg.Content));
@@ -191,7 +191,7 @@ CHỈ trả về JSON, không thêm text khác.";
                 messages.Add(new AssistantChatMessage(msg.Content));
         }
 
-        // Add current context
+   
         messages.Add(new UserChatMessage(userMessage));
 
         if (recommendations?.Any() == true)

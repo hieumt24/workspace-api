@@ -24,17 +24,17 @@ namespace WorkSpace.Infrastructure.Repositories
             int pageSize,
             bool? isVerified,
             string? companyName,
-            string? city, // Tham số 'city' được dùng để tìm theo Ward
+            string? city, 
             CancellationToken cancellationToken)
         {
             var query = _hosts
                 .Include(h => h.User)
                 .Include(h => h.Workspaces)
-                    .ThenInclude(w => w.Address) // Cần Include Address để query
+                    .ThenInclude(w => w.Address) 
                 .AsNoTracking()
                 .AsQueryable();
 
-            // Apply filters
+           
             if (isVerified.HasValue)
             {
                 query = query.Where(h => h.IsVerified == isVerified.Value);
@@ -45,7 +45,7 @@ namespace WorkSpace.Infrastructure.Repositories
                 query = query.Where(h => h.CompanyName!.Contains(companyName));
             }
 
-            // Filter by city (using Ward field)
+         
             if (!string.IsNullOrEmpty(city))
             {
                 query = query.Where(h => h.Workspaces.Any(w => w.Address!.Ward == city));

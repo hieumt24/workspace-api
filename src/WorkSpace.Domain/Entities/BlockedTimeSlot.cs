@@ -15,6 +15,6 @@ public class BlockedTimeSlot : AuditableBaseEntity
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-    // Navigation properties
+
     public virtual WorkSpaceRoom? WorkSpaceRoom { get; set; }
 }

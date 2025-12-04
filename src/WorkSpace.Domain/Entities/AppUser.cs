@@ -23,7 +23,7 @@ public class AppUser : IdentityUser<int>
     public DateTime? LastLoginDate { get; set; }
     
     
-    // Navigation properties
+
     public virtual List<Booking> Bookings { get; set; } = new();
     public virtual HostProfile? HostProfile { get; set; }
     public virtual List<Review> Reviews { get; set; } = new();

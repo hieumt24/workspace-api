@@ -10,7 +10,7 @@ namespace WorkSpace.Application.Features.HostProfile.Queries.GetHostProfileById;
 public class GetHostProfileByIdQuery : IRequest<Response<HostProfileDto>>
 {
     public int Id { get; set; }
-    
+
     public GetHostProfileByIdQuery(int id)
     {
         Id = id;
@@ -31,11 +31,19 @@ public class GetHostProfileByIdQueryHandler : IRequestHandler<GetHostProfileById
     public async Task<Response<HostProfileDto>> Handle(GetHostProfileByIdQuery request, CancellationToken cancellationToken)
     {
         var hostProfile = await _hostProfileRepository.GetByIdAsync(request.Id, cancellationToken);
-        
+
         if (hostProfile == null)
         {
-            return new Response<HostProfileDto>($"Host profile with ID {request.Id} not found.");
+            return new Response<HostProfileDto>($"Host profile with ID {request.Id} not found.") { Succeeded = false };
         }
+
+      
+        if (!hostProfile.IsVerified)
+        {
+            
+            return new Response<HostProfileDto>("H? s? Host này ch?a ???c xác th?c ho?c ?ang ch? duy?t.") { Succeeded = false };
+        }
+
 
         var hostProfileDto = _mapper.Map<HostProfileDto>(hostProfile);
         return new Response<HostProfileDto>(hostProfileDto);

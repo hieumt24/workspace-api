@@ -47,9 +47,9 @@ namespace WorkSpace.Infrastructure
 
         public DbSet<Guest> Guests { get; set; }
         
-        public DbSet<GuestChatSession> GuestChatSessions { get; set; }
+        public DbSet<CustomerChatSession> CustomerChatSessions { get; set; }
         
-        public DbSet<GuestChatMessage> GuestChatMessages { get; set; }
+        public DbSet<CustomerChatMessage> CustomerChatMessages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -282,25 +282,31 @@ namespace WorkSpace.Infrastructure
                 });
                 
                 
-                modelBuilder.Entity<GuestChatSession>(entity =>
+                modelBuilder.Entity<CustomerChatSession>(entity =>
                 {
-                    entity.ToTable("GuestChatSessions");
+                    entity.ToTable("CustomerChatSessions");
                     
                     entity.HasKey(e => e.Id);
                     
                     entity.HasIndex(e => e.SessionId)
                         .IsUnique()
-                        .HasDatabaseName("IX_GuestChatSessions_SessionId");
+                        .HasDatabaseName("IX_CustomerChatSessions_SessionId");
                     
                     entity.HasIndex(e => e.IsActive)
-                        .HasDatabaseName("IX_GuestChatSessions_IsActive");
+                        .HasDatabaseName("IX_CustomerChatSessions_IsActive");
                     
-                    entity.HasIndex(e => e.AssignedStaffId)
-                        .HasDatabaseName("IX_GuestChatSessions_AssignedStaffId");
+                    entity.HasIndex(e => e.AssignedOwnerId)
+                        .HasDatabaseName("IX_CustomerChatSessions_AssignedOwnerId");
                     
-                    entity.HasOne(e => e.AssignedStaff)
+                    // Customer relationship
+                    entity.HasOne(e => e.Customer)
+                        .WithMany()
+                        .HasForeignKey(e => e.CustomerId)
+                        .OnDelete(DeleteBehavior.Restrict);
+                    
+                    entity.HasOne(e => e.AssignedOwner)
                         .WithMany() 
-                        .HasForeignKey(e => e.AssignedStaffId)
+                        .HasForeignKey(e => e.AssignedOwnerId)
                         .OnDelete(DeleteBehavior.SetNull); 
                     
                     // Properties configuration
@@ -308,11 +314,11 @@ namespace WorkSpace.Infrastructure
                         .IsRequired()
                         .HasMaxLength(100);
                     
-                    entity.Property(e => e.GuestName)
+                    entity.Property(e => e.CustomerName)
                         .IsRequired()
                         .HasMaxLength(100);
                     
-                    entity.Property(e => e.GuestEmail)
+                    entity.Property(e => e.CustomerEmail)
                         .HasMaxLength(255);
                     
                     entity.Property(e => e.IsActive)
@@ -320,30 +326,30 @@ namespace WorkSpace.Infrastructure
                 });
                 
                
-                modelBuilder.Entity<GuestChatMessage>(entity =>
+                modelBuilder.Entity<CustomerChatMessage>(entity =>
                 {
-                    entity.ToTable("GuestChatMessages");
+                    entity.ToTable("CustomerChatMessages");
                     
                     entity.HasKey(e => e.Id);
                     
             
-                    entity.HasIndex(e => e.GuestChatSessionId)
-                        .HasDatabaseName("IX_GuestChatMessages_SessionId");
+                    entity.HasIndex(e => e.CustomerChatSessionId)
+                        .HasDatabaseName("IX_CustomerChatMessages_SessionId");
                     
                 
                     entity.HasIndex(e => e.CreateUtc)
-                        .HasDatabaseName("IX_GuestChatMessages_CreateUtc");
+                        .HasDatabaseName("IX_CustomerChatMessages_CreateUtc");
                     
                  
-                    entity.HasOne(e => e.GuestChatSession)
+                    entity.HasOne(e => e.CustomerChatSession)
                         .WithMany(s => s.Messages)
-                        .HasForeignKey(e => e.GuestChatSessionId)
+                        .HasForeignKey(e => e.CustomerChatSessionId)
                         .OnDelete(DeleteBehavior.Cascade); 
                     
                
-                    entity.HasOne(e => e.Staff)
+                    entity.HasOne(e => e.Owner)
                         .WithMany()
-                        .HasForeignKey(e => e.StaffId)
+                        .HasForeignKey(e => e.OwnerId)
                         .OnDelete(DeleteBehavior.SetNull); 
                     
               
@@ -355,7 +361,7 @@ namespace WorkSpace.Infrastructure
                         .IsRequired()
                         .HasMaxLength(100);
                     
-                    entity.Property(e => e.IsStaff)
+                    entity.Property(e => e.IsOwner)
                         .HasDefaultValue(false);
                 });
 

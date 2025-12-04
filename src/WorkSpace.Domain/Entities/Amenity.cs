@@ -15,6 +15,6 @@ public class Amenity : AuditableBaseEntity
     [MaxLength(50)]
     public string? IconClass { get; set; } 
 
-    // Navigation properties
+
     public virtual List<WorkSpaceRoomAmenity> WorkspaceAmenities { get; set; } = new();
 }

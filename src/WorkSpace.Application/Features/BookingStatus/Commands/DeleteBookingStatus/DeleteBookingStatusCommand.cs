@@ -25,7 +25,7 @@ public class DeleteBookingStatusCommandHandler : IRequestHandler<DeleteBookingSt
             return new Response<int>($"Booking status with id {request.Id} not found.");
         }
 
-        // Check if there are any bookings using this status
+
         if (bookingStatus.Bookings != null && bookingStatus.Bookings.Any())
         {
             return new Response<int>($"Cannot delete booking status. There are {bookingStatus.Bookings.Count} booking(s) using this status.");

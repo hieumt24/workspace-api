@@ -22,7 +22,7 @@ public class ChatThread : AuditableBaseEntity
 
     public bool HasUnreadMessages { get; set; }
     
-    // Navigation properties
+
     public virtual List<ChatMessage> Messages { get; set; } = new();
     public virtual Booking? Booking { get; set;  }
     public virtual AppUser? Customer { get; set;  }

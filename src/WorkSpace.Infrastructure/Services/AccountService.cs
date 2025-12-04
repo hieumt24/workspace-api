@@ -89,7 +89,7 @@ public class AccountService : IAccountService
                 var refreshToken = GenerateRefreshToken(ipAddress);
                 response.RefreshToken = refreshToken.Token;
                 
-                // Save refresh token to database
+         
                 user.RefreshToken = refreshToken.Token;
                 user.RefreshTokenExpiryTime = refreshToken.Expires;
                 user.LastLoginDate = DateTime.UtcNow;
@@ -101,7 +101,7 @@ public class AccountService : IAccountService
             }
             catch (ApiException)
             {
-                throw; // Re-throw ApiException as-is
+                throw; 
             }
             catch (Exception ex)
             {
@@ -116,7 +116,7 @@ public class AccountService : IAccountService
             {
                 _logger.LogInformation("Registration attempt for email: {Email}, username: {UserName}", request.Email, request.UserName);
                 
-                // Check if Customer role exists
+             
                 var customerRole = Roles.Customer.ToString();
                 if (!await _roleManager.RoleExistsAsync(customerRole))
                 {
@@ -124,14 +124,14 @@ public class AccountService : IAccountService
                     throw new ApiException($"Role '{customerRole}' does not exist. Please contact administrator.");
                 }
                 
-                // Check username
+           
                 var userWithSameUserName = await _userManager.FindByNameAsync(request.UserName);
                 if (userWithSameUserName != null)
                 {
                     throw new ApiException($"Username '{request.UserName}' is already taken.");
                 }
                 
-                // Check email
+          
                 var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
                 if (userWithSameEmail != null)
                 {
@@ -154,19 +154,19 @@ public class AccountService : IAccountService
                     throw new ApiException($"Registration failed: {errors}");
                 }
                 
-                // Add to Customer role
+        
                 var roleResult = await _userManager.AddToRoleAsync(user, customerRole);
                 if (!roleResult.Succeeded)
                 {
                     var errors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
                     _logger.LogError("Failed to add role '{Role}' to user {UserId}: {Errors}", customerRole, user.Id, errors);
                     
-                    // Rollback: delete the user if role assignment fails
+                
                     await _userManager.DeleteAsync(user);
                     throw new ApiException($"Failed to assign customer role: {errors}");
                 }
                 
-                // Auto confirm email for now (skip email verification)
+  
                 var emailConfirmToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
                 var confirmResult = await _userManager.ConfirmEmailAsync(user, emailConfirmToken);
                 if (!confirmResult.Succeeded)
@@ -176,7 +176,7 @@ public class AccountService : IAccountService
                 
                 _logger.LogInformation("User registered successfully: {UserId} ({Email})", user.Id, user.Email);
                 
-                // Auto login after registration - Generate JWT token
+              
                 JwtSecurityToken jwtSecurityToken = await GenerateJWToken(user);
                 AuthenticationResponse response = new AuthenticationResponse();
                 response.Id = user.Id.ToString();
@@ -189,7 +189,7 @@ public class AccountService : IAccountService
                 var refreshToken = GenerateRefreshToken(ipAddress);
                 response.RefreshToken = refreshToken.Token;
                 
-                // Save refresh token to database
+           
                 user.RefreshToken = refreshToken.Token;
                 user.RefreshTokenExpiryTime = refreshToken.Expires;
                 user.LastLoginDate = DateTime.UtcNow;
@@ -252,7 +252,7 @@ public class AccountService : IAccountService
             {
                 rng.GetBytes(randomBytes);
             }
-            // convert random bytes to hex string
+     
             return BitConverter.ToString(randomBytes).Replace("-", "");
         }
         
@@ -264,7 +264,7 @@ public class AccountService : IAccountService
             var _enpointUri = new Uri(string.Concat($"{origin}/", route));
             var verificationUri = QueryHelpers.AddQueryString(_enpointUri.ToString(), "userId", user.Id.ToString());
             verificationUri = QueryHelpers.AddQueryString(verificationUri, "code", code);
-            //Email Service Call Here
+
             return verificationUri;
         }
 
@@ -324,22 +324,22 @@ public class AccountService : IAccountService
             }
             else
             {
-                // Parse specific errors
+             
                 var errors = string.Join(", ", result.Errors.Select(e => e.Description));
                 
-                // Check for token errors
+               
                 if (result.Errors.Any(e => e.Code.Contains("InvalidToken") || e.Description.Contains("Invalid token")))
                 {
                     throw new ApiException($"Invalid or expired reset token.");
                 }
                 
-                // Check for password errors
+             
                 if (result.Errors.Any(e => e.Code.Contains("Password")))
                 {
                     throw new ApiException($"Password validation failed: {errors}");
                 }
                 
-                // Generic error with details
+             
                 throw new ApiException($"Error occurred while resetting the password: {errors}");
             }
         }
@@ -362,7 +362,7 @@ public class AccountService : IAccountService
                 {
                     Token = request.RefreshToken,
                     Expires = user.RefreshTokenExpiryTime ?? DateTime.UtcNow.AddDays(-1),
-                    Created = DateTime.UtcNow.AddDays(-7), // Assume created 7 days ago
+                    Created = DateTime.UtcNow.AddDays(-7), 
                     CreatedByIp = ipAddress
                 };
 
@@ -372,16 +372,15 @@ public class AccountService : IAccountService
                     throw new ApiException("Refresh token has expired");
                 }
 
-                // Generate new JWT token
+         
                 var jwtToken = await GenerateJWToken(user);
                 var newRefreshToken = GenerateRefreshToken(ipAddress);
 
-                // Revoke old refresh token
                 user.RefreshToken = null;
                 user.RefreshTokenExpiryTime = null;
                 await _userManager.UpdateAsync(user);
 
-                // Set new refresh token
+             
                 user.RefreshToken = newRefreshToken.Token;
                 user.RefreshTokenExpiryTime = newRefreshToken.Expires;
                 await _userManager.UpdateAsync(user);
@@ -403,7 +402,7 @@ public class AccountService : IAccountService
             }
             catch (ApiException)
             {
-                throw; // Re-throw ApiException as-is
+                throw; 
             }
             catch (Exception ex)
             {
@@ -436,7 +435,7 @@ public class AccountService : IAccountService
             }
             catch (ApiException)
             {
-                throw; // Re-throw ApiException as-is
+                throw; 
             }
             catch (Exception ex)
             {
@@ -445,84 +444,75 @@ public class AccountService : IAccountService
             }
         }
 
-        // Admin functions
-        public async Task<PagedResponse<List<UserDto>>> GetAllUsersAsync(GetAllUsersRequestDto request)
+
+    public async Task<List<UserDto>> GetAllUsersAsync(GetAllUsersRequestDto request)
+    {
+        try
         {
-            try
+            _logger.LogInformation("Getting all users (No Pagination)");
+
+            var query = _userManager.Users.AsQueryable();
+
+            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-                _logger.LogInformation("Getting all users - Page: {PageNumber}, PageSize: {PageSize}", request.PageNumber, request.PageSize);
-                
-                var query = _userManager.Users.AsQueryable();
-
-                // Apply filters
-                if (!string.IsNullOrWhiteSpace(request.SearchTerm))
-                {
-                    var searchTerm = request.SearchTerm.ToLower();
-                    query = query.Where(u => 
-                        u.UserName.ToLower().Contains(searchTerm) || 
-                        u.Email.ToLower().Contains(searchTerm) ||
-                        (u.FirstName != null && u.FirstName.ToLower().Contains(searchTerm)) ||
-                        (u.LastName != null && u.LastName.ToLower().Contains(searchTerm))
-                    );
-                }
-
-                if (request.IsActive.HasValue)
-                {
-                    query = query.Where(u => u.IsActive == request.IsActive.Value);
-                }
-
-                // Get total count before pagination
-                var totalRecords = await query.CountAsync();
-
-                // Apply pagination
-                var users = await query
-                    .OrderByDescending(u => u.DateCreated)
-                    .Skip((request.PageNumber - 1) * request.PageSize)
-                    .Take(request.PageSize)
-                    .ToListAsync();
-
-                var userDtos = new List<UserDto>();
-
-                foreach (var user in users)
-                {
-                    var roles = await _userManager.GetRolesAsync(user);
-                    
-                    // Filter by role if specified
-                    if (!string.IsNullOrWhiteSpace(request.Role) && !roles.Contains(request.Role))
-                    {
-                        continue;
-                    }
-
-                    userDtos.Add(new UserDto
-                    {
-                        Id = user.Id,
-                        UserName = user.UserName,
-                        Email = user.Email,
-                        FirstName = user.FirstName,
-                        LastName = user.LastName,
-                        Avatar = user.Avatar,
-                        IsActive = user.IsActive,
-                        EmailConfirmed = user.EmailConfirmed,
-                        DateCreated = user.DateCreated,
-                        Dob = user.Dob,
-                        LastLoginDate = user.LastLoginDate,
-                        Roles = roles.ToList(),
-                        FullName = user.GetFullName()
-                    });
-                }
-
-                _logger.LogInformation("Retrieved {Count} users out of {Total} total", userDtos.Count, totalRecords);
-
-                return new PagedResponse<List<UserDto>>(userDtos, request.PageNumber, request.PageSize, totalRecords);
+                var searchTerm = request.SearchTerm.ToLower();
+                query = query.Where(u =>
+                    u.UserName.ToLower().Contains(searchTerm) ||
+                    u.Email.ToLower().Contains(searchTerm) ||
+                    (u.FirstName != null && u.FirstName.ToLower().Contains(searchTerm)) ||
+                    (u.LastName != null && u.LastName.ToLower().Contains(searchTerm))
+                );
             }
-            catch (Exception ex)
+
+            if (request.IsActive.HasValue)
             {
-                _logger.LogError(ex, "Error getting all users");
-                throw new ApiException("An error occurred while retrieving users");
+                query = query.Where(u => u.IsActive == request.IsActive.Value);
             }
+
+            // Bỏ Skip/Take để lấy toàn bộ
+            var users = await query
+                .OrderByDescending(u => u.DateCreated)
+                .ToListAsync();
+
+            var userDtos = new List<UserDto>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+
+                // Filter role trên memory (vì Identity lưu role ở bảng riêng)
+                if (!string.IsNullOrWhiteSpace(request.Role) && !roles.Contains(request.Role))
+                {
+                    continue;
+                }
+
+                userDtos.Add(new UserDto
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Avatar = user.Avatar,
+                    IsActive = user.IsActive,
+                    EmailConfirmed = user.EmailConfirmed,
+                    DateCreated = user.DateCreated,
+                    Dob = user.Dob,
+                    LastLoginDate = user.LastLoginDate,
+                    Roles = roles.ToList(),
+                    FullName = user.GetFullName()
+                });
+            }
+
+            return userDtos; 
         }
-
-        public async Task<Response<UserDto>> GetUserByIdAsync(int userId)
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error getting all users");
+            throw new ApiException("An error occurred while retrieving users");
+        }
+    }
+    public async Task<Response<UserDto>> GetUserByIdAsync(int userId)
         {
             try
             {
@@ -571,21 +561,20 @@ public class AccountService : IAccountService
             {
                 _logger.LogInformation("Admin creating user with email: {Email}", request.Email);
                 
-                // Validate role exists
+           
                 var roleExists = await _roleManager.RoleExistsAsync(request.Role);
                 if (!roleExists)
                 {
                     throw new ApiException($"Role '{request.Role}' does not exist");
                 }
 
-                // Check if username already exists
+              
                 var userWithSameUserName = await _userManager.FindByNameAsync(request.UserName);
                 if (userWithSameUserName != null)
                 {
                     throw new ApiException($"Username '{request.UserName}' is already taken");
                 }
 
-                // Check if email already exists
                 var userWithSameEmail = await _userManager.FindByEmailAsync(request.Email);
                 if (userWithSameEmail != null)
                 {
@@ -612,7 +601,7 @@ public class AccountService : IAccountService
                     throw new ApiException($"User creation failed: {errors}");
                 }
 
-                // Add role
+            
                 await _userManager.AddToRoleAsync(user, request.Role);
 
                 var roles = await _userManager.GetRolesAsync(user);
@@ -709,7 +698,7 @@ public class AccountService : IAccountService
             {
                 _logger.LogInformation("Google login attempt from IP: {IpAddress}", ipAddress);
                 
-                // Verify Google ID Token
+               
                 GoogleJsonWebSignature.Payload payload;
                 try
                 {
@@ -731,15 +720,15 @@ public class AccountService : IAccountService
                     throw new ApiException("Email not provided by Google");
                 }
                 
-                // Check if user exists
+     
                 var user = await _userManager.FindByEmailAsync(payload.Email);
                 
                 if (user == null)
                 {
-                    // Create new user
+                
                     _logger.LogInformation("Creating new user from Google login: {Email}", payload.Email);
                     
-                    // Check if Customer role exists
+                 
                     var customerRole = Roles.Customer.ToString();
                     if (!await _roleManager.RoleExistsAsync(customerRole))
                     {
@@ -751,7 +740,7 @@ public class AccountService : IAccountService
                     {
                         Email = payload.Email,
                         UserName = payload.Email,
-                        EmailConfirmed = true, // Auto-confirm since Google verified it
+                        EmailConfirmed = true, 
                         FirstName = payload.GivenName ?? "",
                         LastName = payload.FamilyName ?? "",
                         Avatar = payload.Picture,
@@ -767,14 +756,14 @@ public class AccountService : IAccountService
                         throw new ApiException($"User creation failed: {errors}");
                     }
                     
-                    // Add to Customer role
+             
                     var roleResult = await _userManager.AddToRoleAsync(user, customerRole);
                     if (!roleResult.Succeeded)
                     {
                         var errors = string.Join(", ", roleResult.Errors.Select(e => e.Description));
                         _logger.LogError("Failed to add role to Google user {UserId}: {Errors}", user.Id, errors);
                         
-                        // Rollback: delete the user
+                   
                         await _userManager.DeleteAsync(user);
                         throw new ApiException($"Failed to assign customer role: {errors}");
                     }
@@ -783,7 +772,7 @@ public class AccountService : IAccountService
                 }
                 else
                 {
-                    // Check if user is active
+              
                     if (!user.IsActive)
                     {
                         _logger.LogWarning("Inactive user attempted Google login: {Email}", user.Email);
@@ -793,7 +782,7 @@ public class AccountService : IAccountService
                     _logger.LogInformation("Existing user logging in via Google: {UserId} ({Email})", user.Id, user.Email);
                 }
                 
-                // Generate JWT token
+         
                 JwtSecurityToken jwtSecurityToken = await GenerateJWToken(user);
                 AuthenticationResponse response = new AuthenticationResponse
                 {
@@ -808,7 +797,7 @@ public class AccountService : IAccountService
                 var refreshToken = GenerateRefreshToken(ipAddress);
                 response.RefreshToken = refreshToken.Token;
                 
-                // Save refresh token to database
+              
                 user.RefreshToken = refreshToken.Token;
                 user.RefreshTokenExpiryTime = refreshToken.Expires;
                 user.LastLoginDate = DateTime.UtcNow;

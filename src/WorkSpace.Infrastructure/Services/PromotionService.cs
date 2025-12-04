@@ -23,7 +23,7 @@ public class PromotionService : IPromotionService
             decimal totalAmount, 
             CancellationToken cancellationToken = default)
     {
-        // Find promotion by code
+       
         var promotion = await _context.Promotions
             .FirstOrDefaultAsync(p => p.Code == promotionCode, cancellationToken);
 
@@ -32,13 +32,13 @@ public class PromotionService : IPromotionService
             return (false, 0, null, "Promotion code not found.");
         }
 
-        // Check if promotion is active
+       
         if (!promotion.IsActive)
         {
             return (false, 0, null, "Promotion is not active.");
         }
 
-        // Check date validity
+       
         var now = DateTime.UtcNow;
         if (now < promotion.StartDate)
         {
@@ -50,23 +50,23 @@ public class PromotionService : IPromotionService
             return (false, 0, null, "Promotion has expired.");
         }
 
-        // Check usage limit
+      
         if (promotion.UsageLimit > 0 && promotion.UsedCount >= promotion.UsageLimit)
         {
             return (false, 0, null, "Promotion usage limit reached.");
         }
 
-        // Calculate discount based on type
+  
         decimal discountAmount = 0;
 
         if (promotion.DiscountType?.ToLower() == "percent")
         {
-            // Percent discount: totalAmount * (discountValue / 100)
+            
             discountAmount = totalAmount * (promotion.DiscountValue / 100);
         }
         else if (promotion.DiscountType?.ToLower() == "amount")
         {
-            // Fixed amount discount
+         
             discountAmount = promotion.DiscountValue;
         }
         else
@@ -74,13 +74,13 @@ public class PromotionService : IPromotionService
             return (false, 0, null, "Invalid promotion discount type.");
         }
 
-        // Ensure discount doesn't exceed total amount
+       
         if (discountAmount > totalAmount)
         {
             discountAmount = totalAmount;
         }
 
-        // Ensure discount is not negative
+       
         if (discountAmount < 0)
         {
             discountAmount = 0;
@@ -96,7 +96,7 @@ public class PromotionService : IPromotionService
         decimal discountAmount, 
         CancellationToken cancellationToken = default)
     {
-        // Create promotion usage record
+      
         var promotionUsage = new PromotionUsage
         {
             PromotionId = promotionId,
@@ -108,7 +108,7 @@ public class PromotionService : IPromotionService
 
         await _context.PromotionUsages.AddAsync(promotionUsage, cancellationToken);
 
-        // Increment promotion used count
+      
         var promotion = await _context.Promotions.FindAsync(new object[] { promotionId }, cancellationToken);
         if (promotion != null)
         {

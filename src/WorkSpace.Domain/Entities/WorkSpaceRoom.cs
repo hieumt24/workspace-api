@@ -22,12 +22,12 @@ namespace WorkSpace.Domain.Entities
         public decimal PricePerMonth { get; set; }
 
         public int Capacity { get; set; }
-        public double Area { get; set; } // mét vuông
+        public double Area { get; set; } 
 
         public bool IsActive { get; set; } = true;
         public bool IsVerified { get; set; } = false;
 
-        // Navigation properties
+
         public virtual WorkSpace? WorkSpace { get; set; }
         public virtual WorkSpaceRoomType? WorkSpaceRoomType { get; set; }
         public virtual List<WorkSpaceRoomImage> WorkSpaceRoomImages { get; set; } = new();

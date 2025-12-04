@@ -1,16 +1,19 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkSpace.Application.DTOs.Recommendations;
 using WorkSpace.Application.Interfaces.Services;
+using WorkSpace.Domain.Entities;
 
 namespace WorkSpace.Infrastructure.Services;
 
 public class RecommendationService : IRecommendationService
 {
     private readonly WorkSpaceContext _context;
+
     public RecommendationService(WorkSpaceContext context)
     {
         _context = context;
     }
+
     public async Task<UserPreferenceDto> AnalyzeUserPreferencesAsync(int userId, CancellationToken cancellationToken = default)
     {
         var bookings = await _context.Bookings
@@ -26,17 +29,19 @@ public class RecommendationService : IRecommendationService
             .Take(50)
             .AsNoTracking()
             .ToListAsync(cancellationToken);
+
         if (!bookings.Any())
         {
             return new UserPreferenceDto { UserId = userId };
         }
+
         var preference = new UserPreferenceDto
         {
             UserId = userId,
             TotalBookings = bookings.Count
         };
-        
-         // Analyze location preferences
+
+       
         var wardGroups = bookings
             .Where(b => b.WorkSpaceRoom?.WorkSpace?.Address?.Ward != null)
             .GroupBy(b => b.WorkSpaceRoom.WorkSpace.Address.Ward)
@@ -46,7 +51,7 @@ public class RecommendationService : IRecommendationService
         preference.FrequentWards = wardGroups.Select(g => g.Key).Take(5).ToList();
         preference.MostFrequentWard = wardGroups.FirstOrDefault()?.Key;
 
-        // Analyze price preferences
+     
         var prices = bookings
             .Select(b => b.WorkSpaceRoom.PricePerDay)
             .Where(p => p > 0)
@@ -59,7 +64,7 @@ public class RecommendationService : IRecommendationService
             preference.MaxPriceBooked = prices.Max();
         }
 
-        // Analyze capacity preferences
+  
         var capacities = bookings
             .Select(b => b.NumberOfParticipants)
             .Where(c => c > 0)
@@ -71,7 +76,7 @@ public class RecommendationService : IRecommendationService
             preference.MaxCapacity = capacities.Max();
         }
 
-        // Analyze amenity preferences
+       
         var amenityCounts = bookings
             .SelectMany(b => b.WorkSpaceRoom.WorkSpaceRoomAmenities)
             .Where(a => a.Amenity != null)
@@ -83,7 +88,7 @@ public class RecommendationService : IRecommendationService
 
         preference.PreferredAmenities = amenityCounts;
 
-        // Analyze workspace type preferences
+     
         preference.PreferredWorkSpaceTypes = bookings
             .Where(b => b.WorkSpaceRoom?.WorkSpace?.WorkSpaceTypeId != null)
             .GroupBy(b => b.WorkSpaceRoom.WorkSpace.WorkSpaceTypeId.Value)
@@ -92,7 +97,7 @@ public class RecommendationService : IRecommendationService
             .Select(g => g.Key)
             .ToList();
 
-        // Analyze booking duration
+      
         var durations = bookings
             .Select(b => (b.EndTimeUtc - b.StartTimeUtc).TotalHours)
             .Where(h => h > 0)
@@ -103,7 +108,6 @@ public class RecommendationService : IRecommendationService
             preference.AverageBookingDurationHours = (int)Math.Ceiling(durations.Average());
         }
 
-        // Analyze day of week preferences
         preference.PreferredDaysOfWeek = bookings
             .GroupBy(b => b.StartTimeUtc.DayOfWeek)
             .OrderByDescending(g => g.Count())
@@ -114,18 +118,20 @@ public class RecommendationService : IRecommendationService
         return preference;
     }
 
-    public async Task<(List<RecommendedWorkSpaceDto> Recommendations, int TotalCount)> GetPersonalizedRecommendationsAsync(GetRecommendationsRequestDto request,
+    public async Task<(List<RecommendedWorkSpaceDto> Recommendations, int TotalCount)> GetPersonalizedRecommendationsAsync(
+        GetRecommendationsRequestDto request,
         CancellationToken cancellationToken = default)
     {
-        // Step 1: Analyze user preferences
+     
         var userPreference = await AnalyzeUserPreferencesAsync(request.UserId, cancellationToken);
 
-        // Step 2: Get candidate workspaces
+   
         var query = _context.Workspaces
             .Include(w => w.Address)
             .Include(w => w.Host)
                 .ThenInclude(h => h.User)
             .Include(w => w.WorkSpaceType)
+            .Include(w => w.WorkSpaceImages)
             .Include(w => w.WorkSpaceRooms)
                 .ThenInclude(r => r.WorkSpaceRoomImages)
             .Include(w => w.WorkSpaceRooms)
@@ -138,37 +144,36 @@ public class RecommendationService : IRecommendationService
             .AsNoTracking()
             .AsQueryable();
 
-        // Apply filters from request
+   
         if (!string.IsNullOrWhiteSpace(request.PreferredWard))
         {
             query = query.Where(w => w.Address.Ward == request.PreferredWard);
         }
         else if (userPreference.MostFrequentWard != null)
         {
-            // Prioritize user's frequent location
-            query = query.Where(w => 
+            query = query.Where(w =>
                 w.Address.Ward == userPreference.MostFrequentWard ||
                 userPreference.FrequentWards.Contains(w.Address.Ward));
         }
 
         if (request.DesiredCapacity.HasValue)
         {
-            query = query.Where(w => w.WorkSpaceRooms.Any(r => 
+            query = query.Where(w => w.WorkSpaceRooms.Any(r =>
                 r.Capacity >= request.DesiredCapacity.Value && r.IsActive && r.IsVerified));
         }
         else if (userPreference.AverageCapacity > 0)
         {
-            query = query.Where(w => w.WorkSpaceRooms.Any(r => 
+            query = query.Where(w => w.WorkSpaceRooms.Any(r =>
                 r.Capacity >= userPreference.AverageCapacity && r.IsActive && r.IsVerified));
         }
 
         if (request.MaxBudgetPerDay.HasValue)
         {
-            query = query.Where(w => w.WorkSpaceRooms.Any(r => 
+            query = query.Where(w => w.WorkSpaceRooms.Any(r =>
                 r.PricePerDay <= request.MaxBudgetPerDay.Value && r.IsActive && r.IsVerified));
         }
 
-        // Filter by availability if time specified
+   
         if (request.DesiredStartTime.HasValue && request.DesiredEndTime.HasValue)
         {
             var start = request.DesiredStartTime.Value;
@@ -178,8 +183,8 @@ public class RecommendationService : IRecommendationService
                 room.IsActive && room.IsVerified &&
                 !room.Bookings.Any(b =>
                     b.StartTimeUtc < end && b.EndTimeUtc > start &&
-                    (b.BookingStatus.Name == "Confirmed" || 
-                     b.BookingStatus.Name == "InProgress" || 
+                    (b.BookingStatus.Name == "Confirmed" ||
+                     b.BookingStatus.Name == "InProgress" ||
                      b.BookingStatus.Name == "Pending")) &&
                 !room.BlockedTimeSlots.Any(slot =>
                     slot.StartTime < end && slot.EndTime > start)
@@ -188,18 +193,18 @@ public class RecommendationService : IRecommendationService
 
         var workspaces = await query.ToListAsync(cancellationToken);
 
-        // Step 3: Calculate scores and create recommendations
+      
         var recommendations = new List<RecommendedWorkSpaceDto>();
 
         foreach (var workspace in workspaces)
         {
             var score = await CalculateWorkspaceScore(workspace, userPreference);
-            
+
             var recommendation = MapToRecommendedDto(workspace, score, userPreference);
             recommendations.Add(recommendation);
         }
 
-        // Step 4: Sort by score and paginate
+    
         var sortedRecommendations = recommendations
             .OrderByDescending(r => r.RecommendationScore)
             .ThenByDescending(r => r.AverageRating)
@@ -225,6 +230,7 @@ public class RecommendationService : IRecommendationService
             .Include(w => w.Host)
                 .ThenInclude(h => h.User)
             .Include(w => w.WorkSpaceType)
+            .Include(w => w.WorkSpaceImages)
             .Include(w => w.WorkSpaceRooms)
                 .ThenInclude(r => r.WorkSpaceRoomImages)
             .Include(w => w.WorkSpaceRooms)
@@ -256,7 +262,6 @@ public class RecommendationService : IRecommendationService
                 .SelectMany(r => r.Reviews)
                 .Count(r => r.IsPublic);
 
-            // Trending score: combines recent bookings, rating, and reviews
             var trendingScore = (recentBookings * 2.0) + (avgRating * 10) + (totalReviews * 0.5);
 
             return new { Workspace = w, TrendingScore = trendingScore, AvgRating = avgRating, TotalReviews = totalReviews };
@@ -266,8 +271,8 @@ public class RecommendationService : IRecommendationService
         .ToList();
 
         return trendingList.Select(x => MapToRecommendedDto(
-            x.Workspace, 
-            x.TrendingScore, 
+            x.Workspace,
+            x.TrendingScore,
             null,
             "Trending workspace with high booking volume and ratings"
         )).ToList();
@@ -278,6 +283,8 @@ public class RecommendationService : IRecommendationService
     {
         var workspace = await _context.Workspaces
             .Include(w => w.Address)
+
+            .Include(w => w.WorkSpaceImages)
             .Include(w => w.WorkSpaceRooms)
             .ThenInclude(r => r.WorkSpaceRoomAmenities)
             .ThenInclude(a => a.Amenity)
@@ -290,15 +297,15 @@ public class RecommendationService : IRecommendationService
 
         return await CalculateWorkspaceScore(workspace, userPreference);
     }
-    
+
     private async Task<double> CalculateWorkspaceScore(
         Domain.Entities.WorkSpace workspace,
         UserPreferenceDto userPreference)
     {
         double score = 0;
-        var matchedFeatures = new List<string>();
+        // var matchedFeatures = new List<string>();
 
-        // If no user history, use base popularity score
+   
         if (userPreference.TotalBookings == 0)
         {
             var averageRating = workspace.WorkSpaceRooms
@@ -308,18 +315,18 @@ public class RecommendationService : IRecommendationService
                 .DefaultIfEmpty(0)
                 .Average();
 
-            return averageRating * 20; // Base score from rating
+            return averageRating * 20; 
         }
 
-        // 1. Location Match (Weight: 30 points)
-        if (workspace.Address?.Ward != null && 
+       
+        if (workspace.Address?.Ward != null &&
             userPreference.FrequentWards.Contains(workspace.Address.Ward))
         {
             var locationScore = workspace.Address.Ward == userPreference.MostFrequentWard ? 30 : 20;
             score += locationScore;
         }
 
-        // 2. Price Match (Weight: 25 points)
+    
         var avgPricePerDay = workspace.WorkSpaceRooms
             .Where(r => r.IsActive)
             .Select(r => r.PricePerDay)
@@ -330,22 +337,22 @@ public class RecommendationService : IRecommendationService
         {
             var priceDiff = Math.Abs(avgPricePerDay - userPreference.AveragePricePerDay);
             var priceRange = userPreference.MaxPriceBooked - userPreference.MinPriceBooked;
-            
+
             if (priceRange > 0)
             {
                 var priceScore = 25 * (1 - Math.Min(priceDiff / priceRange, 1));
-                // Convert decimal to double
+            
                 score += (double)priceScore;
             }
-            else if (priceDiff < userPreference.AveragePricePerDay * 0.2m) // Within 20%
+            else if (priceDiff < userPreference.AveragePricePerDay * 0.2m) 
             {
                 score += 25;
             }
         }
 
-        // 3. Capacity Match (Weight: 15 points)
+ 
         var hasMatchingCapacity = workspace.WorkSpaceRooms
-            .Any(r => r.Capacity >= userPreference.AverageCapacity && 
+            .Any(r => r.Capacity >= userPreference.AverageCapacity &&
                      r.Capacity <= userPreference.MaxCapacity + 5);
 
         if (hasMatchingCapacity)
@@ -353,7 +360,7 @@ public class RecommendationService : IRecommendationService
             score += 15;
         }
 
-        // 4. Amenities Match (Weight: 20 points)
+   
         if (userPreference.PreferredAmenities.Any())
         {
             var workspaceAmenities = workspace.WorkSpaceRooms
@@ -371,14 +378,14 @@ public class RecommendationService : IRecommendationService
             score += amenityScore;
         }
 
-        // 5. Workspace Type Match (Weight: 10 points)
-        if (workspace.WorkSpaceTypeId.HasValue && 
+   
+        if (workspace.WorkSpaceTypeId.HasValue &&
             userPreference.PreferredWorkSpaceTypes.Contains(workspace.WorkSpaceTypeId.Value))
         {
             score += 10;
         }
 
-        // 6. Rating Bonus (Weight: Up to 20 points)
+      
         var avgRating = workspace.WorkSpaceRooms
             .SelectMany(r => r.Reviews)
             .Where(r => r.IsPublic)
@@ -386,14 +393,13 @@ public class RecommendationService : IRecommendationService
             .DefaultIfEmpty(0)
             .Average();
 
-        score += avgRating * 4; // Max 20 points for 5-star rating
+        score += avgRating * 4; 
 
-        // 7. Review Count Bonus (Weight: Up to 10 points)
         var reviewCount = workspace.WorkSpaceRooms
             .SelectMany(r => r.Reviews)
             .Count(r => r.IsPublic);
 
-        score += Math.Min(reviewCount / 10.0 * 10, 10); // Max 10 points
+        score += Math.Min(reviewCount / 10.0 * 10, 10); 
 
         return Math.Round(score, 2);
     }
@@ -419,8 +425,26 @@ public class RecommendationService : IRecommendationService
             AvailableRooms = activeRooms.Count,
             HostName = workspace.Host?.User?.GetFullName(),
             IsHostVerified = workspace.Host?.IsVerified ?? false,
-            RecommendationScore = score
+            RecommendationScore = score,
+            ImageUrls = new List<string>() 
         };
+
+   
+        var workspaceImages = workspace.WorkSpaceImages?
+            .Select(img => img.ImageUrl)
+            .ToList() ?? new List<string>();
+
+        var roomImages = activeRooms
+            .SelectMany(r => r.WorkSpaceRoomImages)
+            .Select(img => img.ImageUrl)
+            .ToList();
+
+        dto.ImageUrls = workspaceImages.Concat(roomImages).Distinct().ToList();
+
+ 
+        dto.ThumbnailUrl = dto.ImageUrls.FirstOrDefault();
+
+   
 
         if (activeRooms.Any())
         {
@@ -443,17 +467,8 @@ public class RecommendationService : IRecommendationService
                 .Select(a => a.Amenity.Name)
                 .Distinct()
                 .ToList();
-
-            dto.ImageUrls = activeRooms
-                .SelectMany(r => r.WorkSpaceRoomImages)
-                .Select(img => img.ImageUrl)
-                .Distinct()
-                .ToList();
-
-            dto.ThumbnailUrl = dto.ImageUrls.FirstOrDefault();
         }
 
-        // Build recommendation reason
         if (customReason != null)
         {
             dto.RecommendationReason = customReason;
@@ -494,8 +509,8 @@ public class RecommendationService : IRecommendationService
                 dto.MatchedFeatures.Add("High Rating");
             }
 
-            dto.RecommendationReason = reasons.Any() 
-                ? string.Join(" • ", reasons) 
+            dto.RecommendationReason = reasons.Any()
+                ? string.Join(" • ", reasons)
                 : "Quality workspace matching your preferences";
         }
 

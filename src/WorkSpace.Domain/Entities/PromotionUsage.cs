@@ -12,7 +12,7 @@ public class PromotionUsage : AuditableBaseEntity
 
     public DateTime UsedAt { get; set; } = DateTime.UtcNow;
 
-    // Navigation properties
+    
     public virtual Promotion? Promotion { get; set; } 
     public virtual Booking? Booking { get; set; }
     public virtual AppUser? User { get; set; }

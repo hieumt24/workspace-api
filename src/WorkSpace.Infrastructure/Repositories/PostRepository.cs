@@ -18,7 +18,7 @@ namespace WorkSpace.Infrastructure.Repositories
             _context = dbContext;
         }
 
-        // 🟩 Lấy tất cả bài viết
+     
         public async Task<List<Post>> GetAllPostsAsync()
         {
             return await _context.Posts
@@ -27,7 +27,7 @@ namespace WorkSpace.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        // 🟩 Lấy danh sách bài viết nổi bật (trả về DTO)
+    
         public async Task<List<PostDto>> GetAllFeaturedPostsAsync()
         {
             return await _context.Posts
@@ -48,7 +48,7 @@ namespace WorkSpace.Infrastructure.Repositories
                 .ToListAsync();
         }
 
-        // 🟩 Lấy bài viết theo ID
+     
         public async Task<Post?> GetPostByIdAsync(int id)
         {
             return await _context.Posts
@@ -56,7 +56,7 @@ namespace WorkSpace.Infrastructure.Repositories
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
-        // 🟩 Thêm bài viết mới
+     
         public async Task AddPostAsync(int userId, Post post)
         {
             post.UserId = userId;
@@ -67,7 +67,7 @@ namespace WorkSpace.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        // 🟩 Cập nhật bài viết
+   
         public async Task UpdatePostAsync(int userId, Post post)
         {
             var existingPost = await _context.Posts.FindAsync(post.Id);
@@ -86,7 +86,7 @@ namespace WorkSpace.Infrastructure.Repositories
             await _context.SaveChangesAsync();
         }
 
-        // 🟩 Xóa bài viết
+
         public async Task DeletePostAsync(int id)
         {
             var post = await _context.Posts.FindAsync(id);

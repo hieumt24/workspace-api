@@ -26,11 +26,11 @@ public class VNPayService : IVNPayService
     {
         var vnpay = new VNPayLibrary();
 
-        // Tạo mã giao dịch duy nhất
+
         var tick = DateTime.Now.Ticks.ToString();
         var vnpTxnRef = $"{request.BookingId}_{tick}";
 
-        // Build full return URL
+      
         var fullReturnUrl = _settings.GetFullReturnUrl(_applicationUrl);
 
         Console.WriteLine("=== VNPay Request Debug ===");
@@ -40,7 +40,7 @@ public class VNPayService : IVNPayService
         Console.WriteLine($"ReturnUrl: {fullReturnUrl}");
         Console.WriteLine($"TxnRef: {vnpTxnRef}");
 
-        // Thêm các tham số
+      
         vnpay.AddRequestData("vnp_Version", _settings.Version);
         vnpay.AddRequestData("vnp_Command", _settings.Command);
         vnpay.AddRequestData("vnp_TmnCode", _settings.TmnCode);
@@ -66,8 +66,7 @@ public class VNPayService : IVNPayService
     {
         var vnpay = new VNPayLibrary();
 
-        // Thêm tất cả các tham số từ callback THEO THỨ TỰ ALPHABET (VNPay yêu cầu)
-        // KHÔNG thêm vnp_SecureHash và vnp_SecureHashType
+
         if (!string.IsNullOrEmpty(callback.vnp_Amount))
             vnpay.AddResponseData("vnp_Amount", callback.vnp_Amount);
         if (!string.IsNullOrEmpty(callback.vnp_BankCode))
@@ -91,7 +90,7 @@ public class VNPayService : IVNPayService
         if (!string.IsNullOrEmpty(callback.vnp_TxnRef))
             vnpay.AddResponseData("vnp_TxnRef", callback.vnp_TxnRef);
 
-        // Validate signature
+  
         var isValidSignature = vnpay.ValidateSignature(callback.vnp_SecureHash, _settings.HashSecret);
 
         if (!isValidSignature)
@@ -103,11 +102,11 @@ public class VNPayService : IVNPayService
             };
         }
 
-        // Parse booking ID từ vnp_TxnRef
+     
         var txnRefParts = callback.vnp_TxnRef.Split('_');
         var bookingId = int.Parse(txnRefParts[0]);
 
-        // Parse amount (VNPay trả về đơn vị xu)
+   
         var amount = decimal.Parse(callback.vnp_Amount) / 100;
 
         var result = new PaymentResultDto
@@ -119,7 +118,7 @@ public class VNPayService : IVNPayService
             PaymentDate = ParseVNPayDate(callback.vnp_PayDate)
         };
 
-        // Kiểm tra response code
+    
         if (callback.vnp_ResponseCode == "00" && callback.vnp_TransactionStatus == "00")
         {
             result.Status = "Success";
@@ -144,12 +143,10 @@ public class VNPayService : IVNPayService
         _logger.LogInformation($"[MOCK REFUND] Amount: {refundAmount} VND");
         _logger.LogInformation($"[MOCK REFUND] IP: {ipAddress}, Staff: {staffUserId}, Info: {orderInfo}");
 
-        // Đây là nơi bạn sẽ gọi API VNPAY refund thực sự.
-        // Vì chúng ta không có API key/secret và logic, chúng ta sẽ giả lập thành công.
 
-        await Task.Delay(500); // Giả lập độ trễ mạng
+        await Task.Delay(500);
 
-        // Giả lập kết quả thành công
+ 
         return new PaymentGatewayRefundResponse
         {
             Success = true,
@@ -169,7 +166,7 @@ public class VNPayService : IVNPayService
 
     private DateTimeOffset ParseVNPayDate(string vnpayDate)
     {
-        // Format: yyyyMMddHHmmss
+       
         if (DateTime.TryParseExact(vnpayDate, "yyyyMMddHHmmss", 
             System.Globalization.CultureInfo.InvariantCulture, 
             System.Globalization.DateTimeStyles.None, 

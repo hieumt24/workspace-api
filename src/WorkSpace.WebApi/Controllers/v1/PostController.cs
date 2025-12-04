@@ -43,7 +43,7 @@ namespace WorkSpace.WebApi.Controllers.v1
         [HttpPost]
         public async Task<IActionResult> CreatePost([FromBody] WorkSpace.Domain.Entities.Post post)
         {
-            // For demonstration, using a fixed userId. In real scenarios, retrieve from authenticated user context.
+            
             int userId = User.GetUserId();
             await _postRepository.AddPostAsync(userId, post);
             return CreatedAtAction(nameof(GetPostById), new { id = post.Id }, post);
@@ -56,7 +56,7 @@ namespace WorkSpace.WebApi.Controllers.v1
             {
                 return BadRequest();
             }
-            // For demonstration, using a fixed userId. In real scenarios, retrieve from authenticated user context.
+          
             int userId = User.GetUserId();
             await _postRepository.UpdatePostAsync(userId, post);
             return NoContent();

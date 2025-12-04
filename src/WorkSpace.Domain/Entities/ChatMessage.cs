@@ -18,7 +18,7 @@ public class ChatMessage : AuditableBaseEntity
     
     public DateTimeOffset? ReadAtUtc { get; set; }
     
-    // Navigation properties
+
     public virtual ChatThread? Thread { get; set; }
     public virtual AppUser? Sender { get; set; }
 }

@@ -44,17 +44,16 @@ public class VNPayLibrary
         {
             Console.WriteLine($"  {key} = {value}");
             
-            // For URL: ONLY encode value, NOT key (VNPay requirement)
+         
             data.Append(key + "=" + WebUtility.UrlEncode(value) + "&");
             
-            // For signature: do NOT encode (VNPay requirement)
+        
             signData.Append(key + "=" + value + "&");
         }
 
         var queryString = data.ToString();
         var hashData = signData.ToString();
-        
-        // Remove trailing '&'
+  
         if (queryString.Length > 0)
         {
             queryString = queryString.Remove(queryString.Length - 1, 1);
@@ -67,13 +66,12 @@ public class VNPayLibrary
         Console.WriteLine($"\nRaw Hash Data (for signing):");
         Console.WriteLine(hashData);
         
-        // Calculate hash using non-encoded data
+
         var vnpSecureHash = HmacSHA512(vnpHashSecret, hashData);
         
         Console.WriteLine($"\nGenerated SecureHash:");
         Console.WriteLine(vnpSecureHash);
-        
-        // Build final URL
+ 
         baseUrl += "?" + queryString + "&vnp_SecureHash=" + vnpSecureHash;
         
         Console.WriteLine($"\nFinal URL:");
@@ -122,7 +120,6 @@ public class VNPayLibrary
 
         foreach (var (key, value) in _responseData.Where(kv => !string.IsNullOrEmpty(kv.Value)))
         {
-            // For signature validation: do NOT encode (VNPay requirement)
             data.Append(key + "=" + value + "&");
         }
 

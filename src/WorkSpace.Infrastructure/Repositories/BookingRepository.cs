@@ -38,7 +38,7 @@ public class BookingRepository : IBookingRepository
             ServiceFee = bookingDto.ServiceFee,
             FinalAmount = bookingDto.FinalAmount,
             Currency = "VND",
-            BookingStatusId = 3 // 'Pending'
+            BookingStatusId = 11 // 'Pending'
         };
         _context.Bookings.Add(booking);
         await _context.SaveChangesAsync();
@@ -62,7 +62,7 @@ public class BookingRepository : IBookingRepository
             ServiceFee = bookingDto.ServiceFee,
             FinalAmount = bookingDto.FinalAmount,
             Currency = "VND",
-            BookingStatusId = 3 // 'Pending'
+            BookingStatusId = 11 // 'Pending'
         };
         _context.Bookings.Add(booking);
         await _context.SaveChangesAsync();

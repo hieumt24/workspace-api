@@ -105,9 +105,9 @@ namespace WorkSpace.WebApi.Controllers.v1
                 if (result.IsSuccess)
                 {
                     // Status 9 = Confirmed/Paid (example)
-                    if (booking.BookingStatusId != 9)
+                    if (booking.BookingStatusId != 3)
                     {
-                        var confirmedStatusId = 9;
+                        var confirmedStatusId = 3;
                         var vnpayMethodId = 2; // Assuming ID 2 is VNPay
 
                         booking.BookingStatusId = confirmedStatusId;
@@ -129,7 +129,7 @@ namespace WorkSpace.WebApi.Controllers.v1
                 else
                 {
                     // Status 10 = PaymentFailed/Cancelled (example)
-                    if (booking.BookingStatusId != 10 && booking.BookingStatusId != 9)
+                    if (booking.BookingStatusId != 10 && booking.BookingStatusId != 3)
                     {
                         booking.BookingStatusId = 10;
                         await _bookingRepository.UpdateBookingAsync(booking.Id, booking);

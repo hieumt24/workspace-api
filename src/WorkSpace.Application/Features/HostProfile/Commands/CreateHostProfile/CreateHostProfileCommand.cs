@@ -5,11 +5,13 @@ using Microsoft.EntityFrameworkCore;
 using WorkSpace.Application.Interfaces.Repositories;
 using WorkSpace.Application.Interfaces.Services;
 using WorkSpace.Application.Wrappers;
+using System.Text.Json.Serialization;
 
 namespace WorkSpace.Application.Features.HostProfile.Commands.CreateHostProfile;
 
 public partial class CreateHostProfileCommand : IRequest<Response<int>>
 {
+    [JsonIgnore]
     public int UserId { get; set; }
 
     public string? CompanyName { get; set; }
@@ -20,6 +22,9 @@ public partial class CreateHostProfileCommand : IRequest<Response<int>>
     
     public string? LogoUrl { get; set; }
     public string? WebsiteUrl { get; set; }
+
+    public string? Avatar { get; set; }
+    public string? CoverPhoto { get; set; }
 
 }
 

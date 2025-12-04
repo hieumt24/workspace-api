@@ -13,9 +13,9 @@ public interface  IAccountService
     Task<Response<AuthenticationResponse>> RefreshTokenAsync(RefreshTokenRequest request, string ipAddress);
     Task<Response<string>> RevokeTokenAsync(string token, string ipAddress);
     Task<Response<AuthenticationResponse>> GoogleLoginAsync(GoogleLoginRequest request, string ipAddress);
-    
-    // Admin functions
-    Task<PagedResponse<List<UserDto>>> GetAllUsersAsync(GetAllUsersRequestDto request);
+
+
+    Task<List<UserDto>> GetAllUsersAsync(GetAllUsersRequestDto request);
     Task<Response<UserDto>> GetUserByIdAsync(int userId);
     Task<Response<UserDto>> CreateUserByAdminAsync(CreateUserByAdminDto request);
     Task<Response<UserDto>> UpdateUserStatusAsync(int userId, UpdateUserStatusDto request);

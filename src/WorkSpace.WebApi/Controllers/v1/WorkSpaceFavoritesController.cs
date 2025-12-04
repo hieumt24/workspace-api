@@ -72,7 +72,6 @@ namespace WorkSpace.WebApi.Controllers.v1
         }
 
 
-        //GetFavoriteWorkSpaceIdsAsync
         [HttpGet("userfavoriteids")]
         public async Task<IActionResult> GetFavoriteWorkSpaceIds()
         {

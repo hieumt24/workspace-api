@@ -11,9 +11,7 @@ namespace WorkSpace.WebApi.Controllers.v1;
 [ApiController]
 public class RecommendationsController : BaseApiController
 {
-    /// <summary>
-    /// Lấy các workspace được đề xuất cá nhân hóa dựa trên lịch sử booking của user
-    /// </summary>
+
     [HttpPost("personalized")]
     [Authorize]
     public async Task<IActionResult> GetPersonalizedRecommendations(
@@ -26,7 +24,7 @@ public class RecommendationsController : BaseApiController
             return Unauthorized("Invalid user token");
         }
     
-        // Override userId from token for security
+  
         request.UserId = userId;
     
         var query = new GetPersonalizedRecommendationsQuery(request);
@@ -35,9 +33,6 @@ public class RecommendationsController : BaseApiController
         return Ok(result);
     }
 
-    /// <summary>
-    /// Lấy danh sách trending workspaces (hot nhất trong 30 ngày qua)
-    /// </summary>
     [HttpGet("trending")]
     public async Task<IActionResult> GetTrendingWorkSpaces(
         [FromQuery] int count = 10,
@@ -49,9 +44,7 @@ public class RecommendationsController : BaseApiController
         return Ok(result);
     }
 
-    /// <summary>
-    /// Lấy thông tin phân tích preferences của user (cho debugging/admin)
-    /// </summary>
+
     [HttpGet("my-preferences")]
     [Authorize]
     public async Task<IActionResult> GetMyPreferences(
@@ -69,9 +62,7 @@ public class RecommendationsController : BaseApiController
         return Ok(result);
     }
 
-    /// <summary>
-    /// Admin: Lấy preferences của bất kỳ user nào
-    /// </summary>
+
     [HttpGet("users/{userId}/preferences")]
     [Authorize(Roles = "Admin,Staff")]
     public async Task<IActionResult> GetUserPreferences(

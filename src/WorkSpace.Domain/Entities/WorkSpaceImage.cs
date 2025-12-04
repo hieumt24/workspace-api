@@ -19,7 +19,7 @@ namespace WorkSpace.Domain.Entities
         [MaxLength(255)]
         public string? Caption { get; set; }
 
-        // Navigation properties
+
         public virtual WorkSpace? WorkSpace { get; set; }
     }
 }

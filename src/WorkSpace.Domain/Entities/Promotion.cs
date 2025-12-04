@@ -5,7 +5,6 @@ namespace WorkSpace.Domain.Entities;
 
 public class Promotion : AuditableBaseEntity
 {
-
     [Required]
     [MaxLength(100)]
     public string Code { get; set; }
@@ -19,12 +18,14 @@ public class Promotion : AuditableBaseEntity
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
 
-    public int UsageLimit { get; set; } = 0; 
+    public int UsageLimit { get; set; } = 0;
     public int UsedCount { get; set; } = 0;
     public double MinimumAmount { get; set; } = 0;
 
     public bool IsActive { get; set; } = true;
-    
+
+    public int? HostId { get; set; }
+    public virtual HostProfile? Host { get; set; }
 
 
     public virtual List<PromotionUsage> PromotionUsages { get; set; } = new();

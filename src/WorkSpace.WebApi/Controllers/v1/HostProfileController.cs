@@ -1,9 +1,12 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using WorkSpace.Application.Extensions;
+using Microsoft.AspNetCore.Authorization;
 using WorkSpace.Application.Features.HostProfile.Commands.CreateHostProfile;
 using WorkSpace.Application.Features.HostProfile.Commands.UpdateHostProfile;
 using WorkSpace.Application.Features.HostProfile.Commands.DeleteHostProfile;
 using WorkSpace.Application.Features.HostProfile.Queries.GetHostProfileById;
 using WorkSpace.Application.Features.HostProfile.Queries.GetAllHostProfiles;
+using WorkSpace.Application.Features.HostProfile.Queries.GetHostProfileByUserId; 
 
 namespace WorkSpace.WebApi.Controllers.v1;
 
@@ -11,64 +14,61 @@ namespace WorkSpace.WebApi.Controllers.v1;
 [ApiController]
 public class HostProfileController : BaseApiController
 {
-    /// <summary>
-    /// Create a new host profile
-    /// </summary>
+
     [HttpPost]
+    [Authorize]
     public async Task<IActionResult> Create([FromBody] CreateHostProfileCommand command)
     {
+        var userId = User.GetUserId();
+        command.UserId = userId;
+
         var result = await Mediator.Send(command);
         return Ok(result.Data);
     }
 
-    /// <summary>
-    /// Get host profile by ID
-    /// </summary>
+   
     [HttpGet("{id}")]
     public async Task<IActionResult> GetById(int id)
     {
         var result = await Mediator.Send(new GetHostProfileByIdQuery(id));
+      
+        if (!result.Succeeded) return NotFound(result.Message);
         return Ok(result.Data);
     }
 
-    /// <summary>
-    /// Get all host profiles with optional filtering
-    /// </summary>
     [HttpGet]
     public async Task<IActionResult> GetAll(
-        [FromQuery] int pageNumber = 1,
-        [FromQuery] int pageSize = 20,
-        [FromQuery] bool? isVerified = null,
-        [FromQuery] string? companyName = null,
-        [FromQuery] string? city = null)
+            [FromQuery] bool? isVerified = null,
+            [FromQuery] string? companyName = null,
+            [FromQuery] string? city = null)
     {
         var query = new GetAllHostProfilesQuery
         {
-            PageNumber = pageNumber,
-            PageSize = pageSize,
+            PageNumber = 1,
+            PageSize = int.MaxValue,
             IsVerified = isVerified,
             CompanyName = companyName,
             City = city
         };
-        
+
         var result = await Mediator.Send(query);
         return Ok(result.Data);
     }
 
-    /// <summary>
-    /// Update host profile
-    /// </summary>
     [HttpPut("{id}")]
+    [Authorize]
     public async Task<IActionResult> Update(int id, [FromBody] UpdateHostProfileCommand command)
     {
         command.Id = id;
+      
+        command.RequestingUserId = User.GetUserId();
+
         var result = await Mediator.Send(command);
+        if (!result.Succeeded) return BadRequest(result.Message);
+
         return Ok(result.Data);
     }
 
-    /// <summary>
-    /// Delete host profile
-    /// </summary>
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(int id)
     {
@@ -76,20 +76,18 @@ public class HostProfileController : BaseApiController
         return Ok(result.Data);
     }
 
-    /// <summary>
-    /// Get host profile by user ID
-    /// </summary>
-    [HttpGet("user/{userId}")]
-    public async Task<IActionResult> GetByUserId(int userId)
+  
+    [HttpGet("me")] 
+    [Authorize]
+    public async Task<IActionResult> GetMyProfile()
     {
-        // This would need a separate query, but for now we can use GetAll with filtering
-        var query = new GetAllHostProfilesQuery
-        {
-            PageNumber = 1,
-            PageSize = 1
-        };
-        
+        var userId = User.GetUserId();
+
+        var query = new GetHostProfileByUserIdQuery(userId);
+
         var result = await Mediator.Send(query);
+        if (!result.Succeeded) return NotFound(result.Message);
+
         return Ok(result.Data);
     }
 }

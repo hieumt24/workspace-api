@@ -44,7 +44,6 @@ public class AIChatbotServiceImproved : IAIChatbotService
     {
         try
         {
-            // Validation
             if (string.IsNullOrWhiteSpace(request.Message))
             {
                 throw new InvalidMessageException("Message cannot be empty");
@@ -59,7 +58,7 @@ public class AIChatbotServiceImproved : IAIChatbotService
                 "Processing chatbot message for UserId: {UserId}, ConversationId: {ConversationId}",
                 request.UserId, request.ConversationId);
 
-            // Step 1: Get or create conversation
+    
             var conversation = request.ConversationId.HasValue
                 ? await _conversationRepository.GetChatbotConversationWithMessagesAsync(
                     request.ConversationId.Value, cancellationToken)
@@ -71,7 +70,7 @@ public class AIChatbotServiceImproved : IAIChatbotService
                 throw new ConversationNotFoundException(request.ConversationId ?? 0);
             }
 
-            // Step 2: Extract intent with error handling
+         
             ExtractedIntentDto intent;
             try
             {
@@ -81,7 +80,7 @@ public class AIChatbotServiceImproved : IAIChatbotService
             {
                 _logger.LogError(ex, "Failed to extract intent from message: {Message}", request.Message);
                 
-                // Fallback: Create default intent
+              
                 intent = new ExtractedIntentDto
                 {
                     Intent = "general_query"
@@ -91,7 +90,6 @@ public class AIChatbotServiceImproved : IAIChatbotService
             var parsedStartTime = intent.GetParsedStartTime();
             var parsedEndTime = intent.GetParsedEndTime();
 
-            // Step 3: Get recommendations with error handling
             List<RecommendedWorkSpaceDto>? recommendations = null;
             
             if (intent.Intent == "search_workspace")
@@ -119,11 +117,11 @@ public class AIChatbotServiceImproved : IAIChatbotService
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, "Failed to get recommendations for UserId: {UserId}", request.UserId);
-                    // Continue without recommendations
+                
                 }
             }
 
-            // Step 4: Save user message to conversation
+          
             await _conversationRepository.AddMessageAsync(
                 conversation.Id,
                 "user",
@@ -131,13 +129,11 @@ public class AIChatbotServiceImproved : IAIChatbotService
                 JsonSerializer.Serialize(intent),
                 cancellationToken: cancellationToken);
 
-            // Step 5: Get recent messages for context
             var recentMessages = await _conversationRepository.GetRecentMessagesAsync(
                 conversation.Id,
                 count: 10,
                 cancellationToken);
 
-            // Convert to ChatbotMessageDto for backward compatibility
             var conversationHistory = recentMessages
                 .OrderBy(m => m.CreateUtc)
                 .Select(m => new ChatbotMessageDto
@@ -148,7 +144,7 @@ public class AIChatbotServiceImproved : IAIChatbotService
                 })
                 .ToList();
 
-            // Step 6: Generate natural language response with error handling
+         
             string responseMessage;
             try
             {

@@ -13,7 +13,7 @@ public class BookingStatus : AuditableBaseEntity
     [MaxLength(255)]
     public string? Description { get; set; }
 
-    // Navigation properties
+
     public virtual List<Booking> Bookings { get; set; } = new();
 }
 

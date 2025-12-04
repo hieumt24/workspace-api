@@ -15,11 +15,11 @@ public class Payment : AuditableBaseEntity
 
     [Required]
     [StringLength(50)]
-    public string PaymentMethod { get; set; } = "VNPay"; // Mặc định là VNPay
+    public string PaymentMethod { get; set; } = "VNPay";
 
     [Required]
     [StringLength(20)]
-    public string Status { get; set; } = "Pending"; // Pending, Completed, Failed
+    public string Status { get; set; } = "Pending"; 
 
     [StringLength(255)]
     public string? TransactionId { get; set; } 

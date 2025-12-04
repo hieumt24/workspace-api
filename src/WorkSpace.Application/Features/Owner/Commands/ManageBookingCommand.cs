@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace WorkSpace.Application.Features.Owner.Commands
 {
-    public enum BookingAction { Confirm, Cancel, Reject, CheckIn, CheckOut }
+    public enum BookingAction { Confirm, Cancel, Reject, CheckIn, CheckOut, Complete }
 
     public class ManageBookingCommand : IRequest<Response<bool>>
     {
@@ -63,15 +63,32 @@ namespace WorkSpace.Application.Features.Owner.Commands
                 case BookingAction.Confirm:
                     newStatusId = 4; 
 
-                    bool isBlocked = await _blockedTimeSlotRepo.IsTimeSlotBlockedAsync(
+                
+                    var overlappingSlots = await _blockedTimeSlotRepo.GetBlockedTimeSlotsForRoomAsync(
                         booking.WorkSpaceRoomId, booking.StartTimeUtc, booking.EndTimeUtc, cancellationToken);
 
-                    if (isBlocked) return new Response<bool>("Khung giờ này đã bị khóa.");
+             
+                    var realConflicts = overlappingSlots.Where(slot =>
+                        slot.Reason == null || !slot.Reason.Contains($"booking ID: {booking.Id}")
+                    ).ToList();
 
-                    await _blockedTimeSlotRepo.CreateBlockedTimeSlotForBookingAsync(
-                        booking.WorkSpaceRoomId, booking.Id, booking.StartTimeUtc, booking.EndTimeUtc, cancellationToken);
+                 
+                    if (realConflicts.Any())
+                    {
+                        return new Response<bool>("Khung giờ này đã bị khóa bởi một đơn đặt hoặc lịch chặn khác.");
+                    }
+
+                    var isAlreadyBlockedByThisBooking = overlappingSlots.Any(slot =>
+                        slot.Reason != null && slot.Reason.Contains($"booking ID: {booking.Id}")
+                    );
+
+                    if (!isAlreadyBlockedByThisBooking)
+                    {
+                        await _blockedTimeSlotRepo.CreateBlockedTimeSlotForBookingAsync(
+                            booking.WorkSpaceRoomId, booking.Id, booking.StartTimeUtc, booking.EndTimeUtc, cancellationToken);
+                    }
+
                     break;
-
                 case BookingAction.Cancel:
                     newStatusId = 7; 
                     booking.CancellationReason = string.IsNullOrWhiteSpace(request.Reason)
@@ -97,17 +114,23 @@ namespace WorkSpace.Application.Features.Owner.Commands
                     newStatusId = 5; 
                     booking.CheckedInAt = now;
                     break;
-
                 case BookingAction.CheckOut:
-    
                     if (booking.BookingStatusId != 5)
                     {
                         throw new ApiException("Chỉ có thể Check-Out các đơn có trạng thái CheckedIn (5).");
                     }
                     newStatusId = 6;
                     booking.CheckedOutAt = now;
+                    break;
 
-       
+               
+                case BookingAction.Complete:
+            
+                    if (booking.BookingStatusId != 6)
+                    {
+                        throw new ApiException("Chỉ có thể Hoàn tất (Complete) các đơn đã Check-Out (6).");
+                    }
+                    newStatusId = 9;
                     break;
 
                 default:
@@ -120,7 +143,6 @@ namespace WorkSpace.Application.Features.Owner.Commands
 
             await _context.SaveChangesAsync(cancellationToken);
 
-  
             string actionName = request.Action.ToString();
             return new Response<bool>(true, $"Booking {actionName} successfully (New Status ID: {newStatusId}).");
         }
