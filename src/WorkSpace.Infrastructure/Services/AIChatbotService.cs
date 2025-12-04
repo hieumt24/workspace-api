@@ -158,6 +158,11 @@ CHỈ trả về JSON, không thêm text khác.";
     return intent;
 }
 
+    public Task<GuestChatbotResponseDto> ProcessGuestMessageAsync(GuestChatbotRequestDto request, CancellationToken cancellationToken = default)
+    {
+        throw new NotImplementedException();
+    }
+
     private async Task<string> GenerateResponseAsync(
         string userMessage,
         ExtractedIntentDto intent,

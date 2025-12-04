@@ -12,4 +12,8 @@ public interface IAIChatbotService
         string userMessage, 
         int userId,
         CancellationToken cancellationToken = default);
+    
+    Task<GuestChatbotResponseDto> ProcessGuestMessageAsync(
+        GuestChatbotRequestDto request,
+        CancellationToken cancellationToken = default);
 }

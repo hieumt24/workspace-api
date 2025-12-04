@@ -6,7 +6,7 @@ using WorkSpace.Application.Interfaces.Repositories;
 using WorkSpace.Application.Interfaces.Services;
 
 namespace WorkSpace.WebApi.Controllers.v1;
-[Route("api/v1/ai-chatbot-improved")]
+[Route("api/v1/ai-chatbot")]
 [ApiController]
 [Authorize]
 public class AIChatbotControllerImproved : ControllerBase
