@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc;
 using WorkSpace.Application.DTOs.WorkSpaces;
 using WorkSpace.Application.Features.WorkSpace.Commands;
 using WorkSpace.Application.Features.WorkSpace.Queries;
+using WorkSpace.Application.Features.WorkSpace.Queries.GetByWard;
+using WorkSpace.Application.Features.WorkSpace.Queries.GetWards;
 
 namespace WorkSpace.WebApi.Controllers.v1
 {
@@ -86,6 +88,20 @@ namespace WorkSpace.WebApi.Controllers.v1
             return Ok(result.Data);
         }
 
+        [HttpGet("all-ward")]
+        public async Task<IActionResult> GetAllWards(CancellationToken cancellationToken)
+        {
+            var result = await Mediator.Send(new GetAllWardsQuery(), cancellationToken);
+            return Ok(result);
+        }
+
+
+        [HttpGet("all-ward/{wardName}")]
+        public async Task<IActionResult> GetWorkSpacesByWard([FromRoute] string wardName, CancellationToken cancellationToken)
+        {
+            var result = await Mediator.Send(new GetWorkSpacesByWardQuery(wardName), cancellationToken);
+            return Ok(result);
+        }
 
         [HttpGet("rooms/{roomId}")]
         public async Task<IActionResult> GetRoomById([FromRoute] int roomId, CancellationToken cancellationToken)

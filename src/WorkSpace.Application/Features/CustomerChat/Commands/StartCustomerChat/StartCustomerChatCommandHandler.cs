@@ -14,12 +14,17 @@ public class StartCustomerChatCommandHandler : IRequestHandler<StartCustomerChat
     private readonly IGenericRepositoryAsync<CustomerChatMessage> _messageRepository;
     private readonly IGenericRepositoryAsync<AppUser> _userRepository;
     private readonly IDateTimeService _dateTimeService;
+    private readonly IHostProfileAsyncRepository _hostProfileRepository;
+    private readonly IWorkSpaceRepository _workSpaceRepository;
 
     public StartCustomerChatCommandHandler(
         ICustomerChatSessionRepository sessionRepository,
         IGenericRepositoryAsync<CustomerChatMessage> messageRepository,
         IGenericRepositoryAsync<AppUser> userRepository,
-        IDateTimeService dateTimeService)
+        IDateTimeService dateTimeService,
+        IHostProfileAsyncRepository hostProfileRepository,
+        IWorkSpaceRepository workSpaceRepository)
+    
     {
         _sessionRepository = sessionRepository;
         _messageRepository = messageRepository;
@@ -37,12 +42,30 @@ public class StartCustomerChatCommandHandler : IRequestHandler<StartCustomerChat
              throw new ApiException("Customer not found");
          }
 
+         int ownerId = 0;
+
+         if (request.WorkSpaceId.HasValue)
+         {
+             var workspace = await _workSpaceRepository.GetByIdAsync(request.WorkSpaceId.Value, cancellationToken);
+                if (workspace == null)
+                {
+                    throw new ApiException("WorkSpace not found");
+                }
+                var hostProfile = await _hostProfileRepository.GetByIdAsync(workspace.HostId, cancellationToken);
+                if (hostProfile == null)
+                {
+                    throw new ApiException("Host profile not found");
+                }
+                ownerId = hostProfile.UserId;
+         }
+
          var session = new CustomerChatSession()
          {
             SessionId = Guid.NewGuid().ToString(),
             CustomerId = customer.Id,
             CustomerName = customer.GetFullName(),
             CustomerEmail = customer.Email,
+            AssignedOwnerId = ownerId,
             IsActive = true,
             CreatedById = customer.Id,
             CreateUtc = now,

@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 
 namespace WorkSpace.Application.DTOs.Owner
 {
@@ -22,6 +22,7 @@ namespace WorkSpace.Application.DTOs.Owner
         public int Capacity { get; set; }
         [Range(0, double.MaxValue)]
         public double Area { get; set; }
-        public List<string>? ImageUrls { get; set; } = new List<string>(); 
+        public List<string>? ImageUrls { get; set; } = new List<string>();    
+        public List<int>? AmenityIds { get; set; } = new List<int>();
     }
 }

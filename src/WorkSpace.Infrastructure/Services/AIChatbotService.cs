@@ -43,7 +43,7 @@ public class AIChatbotService : IAIChatbotService
                 UserId = request.UserId,
                 PreferredWard = intent.Ward,
                 DesiredCapacity = intent.Capacity,
-                MaxBudgetPerDay = intent.MaxBudget,
+                MaxBudgetPerHour = intent.MaxBudget,
                 DesiredStartTime = parsedStartTime,
                 DesiredEndTime = parsedEndTime,
                 RequiredAmenities = intent.Amenities,
@@ -90,7 +90,7 @@ Nhiệm vụ: Trích xuất thông tin từ tin nhắn người dùng và trả 
 
 Thông tin người dùng (để tham khảo):
 - Vùng thường đặt: {userPreferences.MostFrequentWard ?? "chưa có"}
-- Giá trung bình: {userPreferences.AveragePricePerDay:N0} VND/ngày
+- Giá trung bình: {userPreferences.AveragePricePerHour:N0} VND/giờ
 - Sức chứa trung bình: {userPreferences.AverageCapacity} người
 - Tiện ích ưa thích: {string.Join(", ", userPreferences.PreferredAmenities.Take(5))}
 
@@ -99,7 +99,7 @@ Trả về JSON với format:
   ""intent"": ""search_workspace"",
   ""ward"": ""tên phường/quận hoặc null"",
   ""capacity"": số người hoặc null,
-  ""maxBudget"": giá tối đa/ngày hoặc null,
+  ""maxBudget"": giá tối đa/giờ hoặc null,
   ""startTime"": ""mô tả thời gian (ví dụ: 'ngày mai 9:00', 'hôm nay 14:00', '2025-01-21 09:00')"",
   ""endTime"": ""mô tả thời gian"",
   ""amenities"": [""WiFi"", ""Máy chiếu""] hoặc []
@@ -206,7 +206,7 @@ CHỈ trả về JSON, không thêm text khác.";
 
                 {string.Join("\n\n", top3.Select((ws, i) => $@"{i + 1}. {ws.Title}
                    - Vị trí: {ws.Ward}, {ws.Street}
-                   - Giá: {ws.AveragePricePerDay:N0} VND/ngày
+                   - Giá: {ws.AveragePricePerHour:N0} VND/giờ
                    - Sức chứa: {ws.MinCapacity}-{ws.MaxCapacity} người
                    - Đánh giá: {ws.AverageRating:F1}★ ({ws.TotalReviews} reviews)
                    - Lý do phù hợp: {ws.RecommendationReason}"))}

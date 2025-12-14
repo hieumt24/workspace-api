@@ -53,13 +53,13 @@ public class RecommendationService : IRecommendationService
 
      
         var prices = bookings
-            .Select(b => b.WorkSpaceRoom.PricePerDay)
+            .Select(b => b.WorkSpaceRoom.PricePerHour)
             .Where(p => p > 0)
             .ToList();
 
         if (prices.Any())
         {
-            preference.AveragePricePerDay = prices.Average();
+            preference.AveragePricePerHour = prices.Average();
             preference.MinPriceBooked = prices.Min();
             preference.MaxPriceBooked = prices.Max();
         }
@@ -140,6 +140,7 @@ public class RecommendationService : IRecommendationService
             .Include(w => w.WorkSpaceRooms)
                 .ThenInclude(r => r.Reviews)
             .Where(w => w.IsActive && w.IsVerified)
+            .Where(w => w.Host != null && w.Host.User != null && w.Host.User.IsActive)
             .Where(w => w.WorkSpaceRooms.Any(r => r.IsActive && r.IsVerified))
             .AsNoTracking()
             .AsQueryable();
@@ -167,10 +168,10 @@ public class RecommendationService : IRecommendationService
                 r.Capacity >= userPreference.AverageCapacity && r.IsActive && r.IsVerified));
         }
 
-        if (request.MaxBudgetPerDay.HasValue)
+        if (request.MaxBudgetPerHour.HasValue)
         {
             query = query.Where(w => w.WorkSpaceRooms.Any(r =>
-                r.PricePerDay <= request.MaxBudgetPerDay.Value && r.IsActive && r.IsVerified));
+                r.PricePerHour <= request.MaxBudgetPerHour.Value && r.IsActive && r.IsVerified));
         }
 
    
@@ -241,6 +242,7 @@ public class RecommendationService : IRecommendationService
             .Include(w => w.WorkSpaceRooms)
                 .ThenInclude(r => r.Bookings)
             .Where(w => w.IsActive && w.IsVerified)
+            .Where(w => w.Host != null && w.Host.User != null && w.Host.User.IsActive)
             .Where(w => w.WorkSpaceRooms.Any(r => r.IsActive && r.IsVerified))
             .AsNoTracking()
             .ToListAsync(cancellationToken);
@@ -327,15 +329,15 @@ public class RecommendationService : IRecommendationService
         }
 
     
-        var avgPricePerDay = workspace.WorkSpaceRooms
+        var avgPricePerHour = workspace.WorkSpaceRooms
             .Where(r => r.IsActive)
-            .Select(r => r.PricePerDay)
+            .Select(r => r.PricePerHour)
             .DefaultIfEmpty(0)
             .Average();
 
-        if (avgPricePerDay > 0 && userPreference.AveragePricePerDay > 0)
+        if (avgPricePerHour > 0 && userPreference.AveragePricePerHour > 0)
         {
-            var priceDiff = Math.Abs(avgPricePerDay - userPreference.AveragePricePerDay);
+            var priceDiff = Math.Abs(avgPricePerHour - userPreference.AveragePricePerHour);
             var priceRange = userPreference.MaxPriceBooked - userPreference.MinPriceBooked;
 
             if (priceRange > 0)
@@ -344,7 +346,7 @@ public class RecommendationService : IRecommendationService
             
                 score += (double)priceScore;
             }
-            else if (priceDiff < userPreference.AveragePricePerDay * 0.2m) 
+            else if (priceDiff < userPreference.AveragePricePerHour * 0.2m) 
             {
                 score += 25;
             }
@@ -448,9 +450,9 @@ public class RecommendationService : IRecommendationService
 
         if (activeRooms.Any())
         {
-            dto.MinPricePerDay = activeRooms.Min(r => r.PricePerDay);
-            dto.MaxPricePerDay = activeRooms.Max(r => r.PricePerDay);
-            dto.AveragePricePerDay = activeRooms.Average(r => r.PricePerDay);
+            dto.MinPricePerHour = activeRooms.Min(r => r.PricePerHour);
+            dto.MaxPricePerHour = activeRooms.Max(r => r.PricePerHour);
+            dto.AveragePricePerHour = activeRooms.Average(r => r.PricePerHour);
             dto.MinCapacity = activeRooms.Min(r => r.Capacity);
             dto.MaxCapacity = activeRooms.Max(r => r.Capacity);
 
@@ -483,10 +485,10 @@ public class RecommendationService : IRecommendationService
                 dto.MatchedFeatures.Add("Preferred Location");
             }
 
-            if (dto.AveragePricePerDay > 0 && userPreference.AveragePricePerDay > 0)
+            if (dto.AveragePricePerHour > 0 && userPreference.AveragePricePerHour > 0)
             {
-                var priceDiff = Math.Abs(dto.AveragePricePerDay - userPreference.AveragePricePerDay);
-                if (priceDiff < userPreference.AveragePricePerDay * 0.2m)
+                var priceDiff = Math.Abs(dto.AveragePricePerHour - userPreference.AveragePricePerHour);
+                if (priceDiff < userPreference.AveragePricePerHour * 0.2m)
                 {
                     reasons.Add("Matches your typical budget");
                     dto.MatchedFeatures.Add("Price Range Match");

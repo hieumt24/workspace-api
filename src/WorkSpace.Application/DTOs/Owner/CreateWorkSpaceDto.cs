@@ -12,7 +12,6 @@ namespace WorkSpace.Application.DTOs.Owner
         [MaxLength(1000)]
         public string? Description { get; set; }
 
- 
         [Required]
         [MaxLength(255)]
         public string Street { get; set; }
@@ -22,21 +21,22 @@ namespace WorkSpace.Application.DTOs.Owner
         public string Ward { get; set; }
 
         [MaxLength(100)]
-        public string? State { get; set; } 
+        public string? State { get; set; }
 
         [MaxLength(20)]
-        public string? PostalCode { get; set; } 
+        public string? PostalCode { get; set; }
 
         [Required]
-        public double Latitude { get; set; } 
+        public double Latitude { get; set; }
 
         [Required]
-        public double Longitude { get; set; } 
-
-
+        public double Longitude { get; set; }
 
         public int WorkSpaceTypeId { get; set; }
 
         public List<string>? ImageUrls { get; set; } = new List<string>();
+
+    
+        public List<CreateWorkSpaceRoomDto>? Rooms { get; set; }
     }
 }

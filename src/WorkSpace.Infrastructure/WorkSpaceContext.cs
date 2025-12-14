@@ -50,6 +50,7 @@ namespace WorkSpace.Infrastructure
         public DbSet<CustomerChatSession> CustomerChatSessions { get; set; }
         
         public DbSet<CustomerChatMessage> CustomerChatMessages { get; set; }
+        public DbSet<HostProfileDocument> HostProfileDocuments { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -324,8 +325,20 @@ namespace WorkSpace.Infrastructure
                     entity.Property(e => e.IsActive)
                         .HasDefaultValue(true);
                 });
-                
-               
+                modelBuilder.Entity<HostProfileDocument>(entity =>
+                {
+                    entity.ToTable("HostProfileDocuments");
+
+                    entity.HasKey(e => e.Id);
+
+                    entity.HasOne(e => e.HostProfile)
+                        .WithMany(hp => hp.Documents) 
+                        .HasForeignKey(e => e.HostProfileId)
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+
+
                 modelBuilder.Entity<CustomerChatMessage>(entity =>
                 {
                     entity.ToTable("CustomerChatMessages");

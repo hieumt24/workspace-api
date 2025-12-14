@@ -32,4 +32,5 @@ public class HostProfile : AuditableBaseEntity
   
     public virtual AppUser? User { get; set; }
     public virtual List<WorkSpace> Workspaces { get; set; } = new();
+    public virtual List<HostProfileDocument> Documents { get; set; } = new();
 }

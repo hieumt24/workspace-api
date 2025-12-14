@@ -5,7 +5,7 @@ using WorkSpace.Application.Wrappers;
 using WorkSpace.Domain.Entities;
 using WorkSpace.Application.Exceptions;
 using Microsoft.EntityFrameworkCore;
-using WorkSpace.Application.Interfaces; 
+using WorkSpace.Application.Interfaces;
 
 namespace WorkSpace.Application.Features.Owner.Commands
 {
@@ -21,13 +21,13 @@ namespace WorkSpace.Application.Features.Owner.Commands
         private readonly IGenericRepositoryAsync<WorkSpaceRoom> _roomRepo;
         private readonly IWorkSpaceRepository _workSpaceRepo;
         private readonly IHostProfileAsyncRepository _hostRepo;
-        private readonly IApplicationDbContext _context; 
+        private readonly IApplicationDbContext _context;
 
         public CreateWorkSpaceRoomCommandHandler(
             IGenericRepositoryAsync<WorkSpaceRoom> roomRepo,
             IWorkSpaceRepository workSpaceRepo,
             IHostProfileAsyncRepository hostRepo,
-            IApplicationDbContext context) 
+            IApplicationDbContext context)
         {
             _roomRepo = roomRepo;
             _workSpaceRepo = workSpaceRepo;
@@ -45,7 +45,7 @@ namespace WorkSpace.Application.Features.Owner.Commands
                 throw new ApiException("Invalid workspace or permission denied.");
             }
 
-
+    
             var newRoom = new WorkSpaceRoom
             {
                 WorkSpaceId = request.WorkspaceId,
@@ -64,22 +64,34 @@ namespace WorkSpace.Application.Features.Owner.Commands
             };
 
             await _roomRepo.AddAsync(newRoom, cancellationToken);
-
-            // 2. Add Images
+   
             if (request.Dto.ImageUrls != null && request.Dto.ImageUrls.Any())
             {
                 var images = request.Dto.ImageUrls.Select(url => new WorkSpaceRoomImage
                 {
                     WorkSpaceRoomId = newRoom.Id,
                     ImageUrl = url,
-                    Caption = newRoom.Title, 
+                    Caption = newRoom.Title,
                     CreateUtc = DateTime.UtcNow,
                     CreatedById = request.OwnerUserId
                 }).ToList();
 
                 await _context.Set<WorkSpaceRoomImage>().AddRangeAsync(images, cancellationToken);
-                await _context.SaveChangesAsync(cancellationToken);
             }
+
+            
+            if (request.Dto.AmenityIds != null && request.Dto.AmenityIds.Any())
+            {
+                var amenities = request.Dto.AmenityIds.Select(amenityId => new WorkSpaceRoomAmenity
+                {
+                    WorkSpaceRoomId = newRoom.Id,
+                    AmenityId = amenityId
+                }).ToList();
+
+                await _context.Set<WorkSpaceRoomAmenity>().AddRangeAsync(amenities, cancellationToken);
+            }
+
+            await _context.SaveChangesAsync(cancellationToken);
 
             return new Response<int>(newRoom.Id, "Workspace room created successfully.");
         }

@@ -15,9 +15,9 @@ public class RecommendedWorkSpaceDto
     public double Longitude { get; set; }
     
     // Pricing
-    public decimal MinPricePerDay { get; set; }
-    public decimal MaxPricePerDay { get; set; }
-    public decimal AveragePricePerDay { get; set; }
+    public decimal MinPricePerHour { get; set; }
+    public decimal MaxPricePerHour { get; set; }
+    public decimal AveragePricePerHour { get; set; }
     
     // Features
     public int TotalRooms { get; set; }

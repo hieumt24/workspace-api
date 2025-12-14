@@ -9,7 +9,7 @@ public class UserPreferenceDto
     public string? MostFrequentWard { get; set; }
     
     // Price preferences
-    public decimal AveragePricePerDay { get; set; }
+    public decimal AveragePricePerHour { get; set; }
     public decimal MinPriceBooked { get; set; }
     public decimal MaxPriceBooked { get; set; }
     

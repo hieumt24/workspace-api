@@ -167,4 +167,9 @@ public class BookingRepository : IBookingRepository
             .FirstOrDefaultAsync();
     }
 
+    public async Task<Booking?> GetBookingByTransactionIdAsync(string transactionId)
+    {
+        return await _context.Bookings
+            .FirstOrDefaultAsync(b => b.PaymentTransactionId == transactionId);
+    }
 }

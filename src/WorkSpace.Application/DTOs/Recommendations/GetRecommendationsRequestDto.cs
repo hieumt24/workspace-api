@@ -11,7 +11,7 @@ public class GetRecommendationsRequestDto
     
     public string? PreferredWard { get; set; }
     public int? DesiredCapacity { get; set; }
-    public decimal? MaxBudgetPerDay { get; set; }
+    public decimal? MaxBudgetPerHour { get; set; }
     public DateTime? DesiredStartTime { get; set; }
     public DateTime? DesiredEndTime { get; set; }
     public List<string>? RequiredAmenities { get; set; }

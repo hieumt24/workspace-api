@@ -17,5 +17,7 @@ namespace WorkSpace.Application.DTOs.Owner
 
         public string? LogoUrl { get; set; }
         public string? WebsiteUrl { get; set; }
+
+        public List<string>? DocumentUrls { get; set; } = new();
     }
 }
