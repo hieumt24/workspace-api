@@ -30,12 +30,38 @@ builder.Services.AddSignalR(options =>
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("SignalRCorsPolicy", builder =>
+    // Development policy - allow local testing
+    options.AddPolicy("Development", policy =>
     {
-        builder
+        policy
             .WithOrigins(
-                "http://localhost:3000",  
-                "http://localhost:5173"
+                // VS Code Live Server
+                "http://127.0.0.1:5500",
+                "http://localhost:5500",
+                // Python http.server
+                "http://localhost:8080",
+                "http://127.0.0.1:8080",
+                // React/Vite dev servers
+                "http://localhost:3000",
+                "http://localhost:5173",
+                // Backend URLs
+                "https://localhost:44361",
+                "https://localhost:7105",
+                "http://localhost:7949",
+                "http://localhost:5022"
+            )
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+
+    // Production policy - specify your production domains
+    options.AddPolicy("Production", policy =>
+    {
+        policy
+            .WithOrigins(
+                "https://your-production-domain.com",
+                "https://www.your-production-domain.com"
             )
             .AllowAnyHeader()
             .AllowAnyMethod()
@@ -74,27 +100,36 @@ app.UseHttpsRedirection();
 // Use CORS - Phải đặt TRƯỚC UseAuthentication
 if (app.Environment.IsDevelopment())
 {
-    // Development: Allow all origins for easier testing
-    app.UseCors("AllowAll");
+    app.UseCors("Development");
 }
 else
 {
-    // Production: Only allow specific origins from appsettings
     app.UseCors("Production");
 }
-app.UseCors("SignalRCorsPolicy");
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 app.MapHub<OrderHub>("/orderHub");
 
-
+// FIXED: Only one hub per path
 app.MapHub<ChatHub>("/hubs/chat");
-app.MapHub<EnhancedChatHub>("/hubs/chat", options =>
+
+// If you need EnhancedChatHub, use different path:
+app.MapHub<EnhancedChatHub>("/hubs/enhanced-chat", options =>
 {
     options.Transports = 
         Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets |
         Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling;
 });
+
+// Customer Chat Hub
+app.MapHub<CustomerChatHub>("/hubs/customer-chat", options =>
+{
+    options.Transports = 
+        Microsoft.AspNetCore.Http.Connections.HttpTransportType.WebSockets |
+        Microsoft.AspNetCore.Http.Connections.HttpTransportType.LongPolling;
+});
+
+
 app.Run();

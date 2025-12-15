@@ -30,6 +30,8 @@ public class StartCustomerChatCommandHandler : IRequestHandler<StartCustomerChat
         _messageRepository = messageRepository;
         _userRepository = userRepository;
         _dateTimeService = dateTimeService;
+        _hostProfileRepository = hostProfileRepository;
+        _workSpaceRepository = workSpaceRepository;
     }
     public async Task<Response<CustomerChatSessionDto>> Handle(StartCustomerChatCommand request, CancellationToken cancellationToken)
     {
@@ -43,10 +45,12 @@ public class StartCustomerChatCommandHandler : IRequestHandler<StartCustomerChat
          }
 
          int ownerId = 0;
+         string ownerName = string.Empty;
+         
 
-         if (request.WorkSpaceId.HasValue)
+         if (request.RequestDto.WorkSpaceId.HasValue)
          {
-             var workspace = await _workSpaceRepository.GetByIdAsync(request.WorkSpaceId.Value, cancellationToken);
+             var workspace = await _workSpaceRepository.GetByIdAsync(request.RequestDto.WorkSpaceId.Value, cancellationToken);
                 if (workspace == null)
                 {
                     throw new ApiException("WorkSpace not found");
@@ -57,6 +61,11 @@ public class StartCustomerChatCommandHandler : IRequestHandler<StartCustomerChat
                     throw new ApiException("Host profile not found");
                 }
                 ownerId = hostProfile.UserId;
+                var owner = await _userRepository.GetByIdAsync(ownerId, cancellationToken);
+                if (owner != null)
+                {
+                    ownerName = owner.GetFullName();
+                }
          }
 
          var session = new CustomerChatSession()
@@ -96,6 +105,8 @@ public class StartCustomerChatCommandHandler : IRequestHandler<StartCustomerChat
              SessionId = session.SessionId,
              CustomerName = session.CustomerName,
              CustomerEmail = session.CustomerEmail,
+             AssignedOwnerId = ownerId,
+             AssignedOwnerName = ownerName,
              CreatedAt = session.CreateUtc,
              LastMessageAt = session.LastMessageAt,
              IsActive = session.IsActive

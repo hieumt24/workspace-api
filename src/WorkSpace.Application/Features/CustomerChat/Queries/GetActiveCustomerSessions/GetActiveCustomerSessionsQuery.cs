@@ -9,6 +9,7 @@ namespace WorkSpace.Application.Features.CustomerChat.Queries.GetActiveCustomerS
 public class GetActiveCustomerSessionsQuery : IRequest<IEnumerable<CustomerChatSessionDto>>
 {
     public int? OwnerId { get; set; }
+    
 }
 
 

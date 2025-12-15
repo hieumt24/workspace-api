@@ -10,7 +10,7 @@ public class StartCustomerChatCommand : IRequest<Response<CustomerChatSessionDto
     public StartCustomerChatRequestDto RequestDto { get; set; } = null!;
     public int UserId { get; set; }
     
-    public int? WorkSpaceId { get; set; }
+
 }
 
 
